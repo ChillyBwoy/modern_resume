@@ -35,3 +35,7 @@ modern_resume-*.tar
 npm-debug.log
 /assets/node_modules/
 
+/priv/tmp
+
+.env
+.DS_Store

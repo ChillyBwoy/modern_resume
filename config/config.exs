@@ -43,14 +43,13 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.3",
+  version: "4.0.9",
   modern_resume: [
     args: ~w(
-      --config=tailwind.config.js
-      --input=css/app.css
-      --output=../priv/static/assets/app.css
+      --input=assets/css/app.css
+      --output=priv/static/assets/app.css
     ),
-    cd: Path.expand("../assets", __DIR__)
+    cd: Path.expand("../", __DIR__)
   ]
 
 # Configures Elixir's Logger
@@ -60,6 +59,11 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :iona,
+  helpers: [Iona.Template.Helper],
+  preprocess: [],
+  processors: [pdf: "lualatex"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

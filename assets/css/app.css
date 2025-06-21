@@ -1,5 +1,55 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* default is to use prefers-color-scheme */
+/* if you want dark mode via class: */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+@plugin "../heroicons.tailwind.plugin.js";
+
+@import "tailwindcss" source("../..");
 
 /* This file is for your main application CSS */
+
+:root {
+  --color-background: #fff;
+}
+
+[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
+  pointer-events: none;
+  display: block;
+}
+
+.sortable-drag {
+  @apply rounded-lg shadow-xl ring-1 ring-gray-100 bg-white;
+}
+
+.scroll-container-v {
+  overflow: auto;
+  background: linear-gradient(
+      var(--color-background) 30%,
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(rgba(255, 255, 255, 0), var(--color-background) 70%) 0 100%,
+    radial-gradient(
+      farthest-side at 50% 0,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ),
+    radial-gradient(
+        farthest-side at 50% 100%,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0)
+      )
+      0 100%;
+
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+
+  background-attachment: local, local, scroll, scroll;
+}
