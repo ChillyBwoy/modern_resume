@@ -6,7 +6,7 @@ defmodule ModernResume.Resume.CV do
   @foreign_key_type :binary_id
   schema "cvs" do
     field :title, :string
-    embeds_one :content, ModernResume.Resume.Content, on_replace: :update
+    embeds_one :content, ModernResume.Resume.Content, on_replace: :delete
 
     belongs_to :user, ModernResume.Accounts.User
 

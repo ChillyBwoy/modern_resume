@@ -4,7 +4,6 @@ defmodule ModernResume.Resume.Education do
 
   alias ModernResume.Validation
 
-  @primary_key false
   embedded_schema do
     field :description, :string
     field :degree, :string
@@ -13,7 +12,6 @@ defmodule ModernResume.Resume.Education do
     field :location, :string
     field :date_start, :date
     field :date_end, :date
-    field :sort_order, :integer
   end
 
   @doc false
@@ -26,13 +24,9 @@ defmodule ModernResume.Resume.Education do
       :field_of_study,
       :description,
       :date_start,
-      :date_end,
-      :sort_order
+      :date_end
     ])
-    |> validate_required([
-      :institution,
-      :date_start
-    ])
+    |> validate_required([:institution, :date_start])
     |> Validation.validate_latex_chars([
       :institution,
       :location,

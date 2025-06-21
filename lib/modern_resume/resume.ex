@@ -4,9 +4,12 @@ defmodule ModernResume.Resume do
   """
 
   import Ecto.Query, warn: false
-  alias ModernResume.Repo
+  # import ModernResume.Guards
 
+  alias ModernResume.Repo
   alias ModernResume.Resume.CV
+  alias ModernResume.Resume.Content
+  alias ModernResume.Resume.Skill
 
   @doc """
   Returns the list of cvs.
@@ -89,16 +92,33 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cv changes.
+  def add_skill(%CV{} = cv, %{title: _, description: _} = params) do
+    skills = cv.content.skills ++ [Skill.changeset(%Skill{}, params)]
 
-  ## Examples
+    content =
+      cv.content
+      |> Content.changeset(%{})
+      |> Ecto.Changeset.put_embed(:skills, skills)
 
-      iex> change_cv(cv)
-      %Ecto.Changeset{data: %CV{}}
-
-  """
-  def change_cv(%CV{} = cv, attrs \\ %{}) do
-    CV.changeset(cv, attrs)
+    cv
+    |> CV.changeset(%{})
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
   end
+
+  def add_skill(_, _), do: raise("Invalid skill params")
+
+  # def update_skill(%CV{} = cv, id, attrs) when is_uuid(id) and is_map(attrs) do
+  #   skills =
+  #     cv.content.skills
+  #     |> Enum.map(fn skill ->
+  #       case skill.id do
+  #         ^id ->
+  #           Skill.changeset(skill, attrs)
+
+  #         _ ->
+  #           skill
+  #       end
+  #     end)
+  # end
 end

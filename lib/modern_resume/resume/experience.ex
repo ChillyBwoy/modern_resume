@@ -5,7 +5,6 @@ defmodule ModernResume.Resume.Experience do
   alias ModernResume.Validation
   alias ModernResume.Resume.ExperienceDetail
 
-  @primary_key false
   embedded_schema do
     field :description, :string
     field :title, :string
@@ -13,7 +12,6 @@ defmodule ModernResume.Resume.Experience do
     field :organization, :string
     field :date_start, :date
     field :date_end, :date
-    field :sort_order, :integer
 
     embeds_many :details, ExperienceDetail, on_replace: :delete
 
@@ -40,8 +38,7 @@ defmodule ModernResume.Resume.Experience do
       :date_start,
       :date_end,
       :employment_type,
-      :organization,
-      :sort_order
+      :organization
     ])
     |> validate_required([:title, :date_start])
     |> Validation.validate_latex_chars([

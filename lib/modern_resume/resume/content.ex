@@ -4,6 +4,13 @@ defmodule ModernResume.Resume.Content do
 
   @primary_key false
   embedded_schema do
+    field :name, :string
+    field :position, :string
+    field :email, :string
+    field :phone, :string
+    field :birthdate, :date
+    field :location, :string
+
     embeds_many :skills, ModernResume.Resume.Skill, on_replace: :delete
     embeds_many :experiences, ModernResume.Resume.Experience, on_replace: :delete
     embeds_many :educations, ModernResume.Resume.Education, on_replace: :delete
@@ -12,7 +19,8 @@ defmodule ModernResume.Resume.Content do
 
   def changeset(content, attrs) do
     content
-    |> cast(attrs, [])
+    |> cast(attrs, [:name, :position, :email, :phone, :birthdate, :location])
+    |> validate_required([:name, :position])
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
     |> cast_embed(:educations)

@@ -12,17 +12,15 @@ defmodule ModernResume.Resume.Language do
     :native
   ]
 
-  @primary_key false
   embedded_schema do
     field :name, :string
     field :fluency, Ecto.Enum, values: @fluency_types
-    field :sort_order, :integer
   end
 
   @doc false
   def changeset(language, attrs) do
     language
-    |> cast(attrs, [:name, :fluency, :sort_order])
+    |> cast(attrs, [:name, :fluency])
     |> validate_required([:name, :fluency])
     |> Validation.validate_latex_chars([:name])
   end

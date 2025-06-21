@@ -12,6 +12,8 @@ defmodule ModernResume.ResumeFixtures do
       attrs
       |> Enum.into(%{
         content: %{
+          name: "John Doe",
+          position: "Test Sampe",
           skills: [],
           experiences: [],
           educations: [],
