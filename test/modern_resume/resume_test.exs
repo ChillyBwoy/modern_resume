@@ -5,6 +5,7 @@ defmodule ModernResume.ResumeTest do
 
   describe "cvs" do
     alias ModernResume.Resume.CV
+    alias ModernResume.Resume.Content
 
     import ModernResume.ResumeFixtures
 
@@ -25,7 +26,13 @@ defmodule ModernResume.ResumeTest do
 
       assert {:ok, %CV{} = cv} = Resume.create_cv(valid_attrs)
       assert cv.title == "some title"
-      assert cv.content == %{}
+
+      assert cv.content == %Content{
+               skills: [],
+               experiences: [],
+               educations: [],
+               languages: []
+             }
     end
 
     test "create_cv/1 with invalid data returns error changeset" do
@@ -38,7 +45,13 @@ defmodule ModernResume.ResumeTest do
 
       assert {:ok, %CV{} = cv} = Resume.update_cv(cv, update_attrs)
       assert cv.title == "some updated title"
-      assert cv.content == %{}
+
+      assert cv.content == %Content{
+               skills: [],
+               experiences: [],
+               educations: [],
+               languages: []
+             }
     end
 
     test "update_cv/2 with invalid data returns error changeset" do

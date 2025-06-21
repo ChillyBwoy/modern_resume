@@ -6,7 +6,7 @@ defmodule ModernResume.Resume.CV do
   @foreign_key_type :binary_id
   schema "cvs" do
     field :title, :string
-    field :content, :map
+    embeds_one :content, ModernResume.Resume.Content, on_replace: :update
 
     belongs_to :user, ModernResume.Accounts.User
 
@@ -16,7 +16,8 @@ defmodule ModernResume.Resume.CV do
   @doc false
   def changeset(cv, attrs) do
     cv
-    |> cast(attrs, [:title, :content])
+    |> cast(attrs, [:title])
     |> validate_required([:title])
+    |> cast_embed(:content)
   end
 end

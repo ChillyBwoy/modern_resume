@@ -11,7 +11,12 @@ defmodule ModernResume.ResumeFixtures do
     {:ok, cv} =
       attrs
       |> Enum.into(%{
-        content: %{},
+        content: %{
+          skills: [],
+          experiences: [],
+          educations: [],
+          languages: []
+        },
         title: "some title"
       })
       |> ModernResume.Resume.create_cv()
