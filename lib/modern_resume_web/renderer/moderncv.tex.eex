@@ -16,8 +16,8 @@
 \\usepackage{enumerate}
 \\usepackage{fontawesome5}
 
-\\title{<%= str(@cv.content.position) %>}
-\\name{<%= str(@cv.first_name) %>}{<%= str(@cv.last_name) %>}
+\\title{<%= str(@cv.position) %>}
+\\name{<%= str(@cv.name) %>}{}
 
 <%= if @cv.email != nil do %>
 \\email{<%= str(@cv.email) %>}
@@ -30,11 +30,6 @@
 <% end %>
 <%= if @cv.birthdate != nil do %>
 \\born{<%= str(@cv.birthdate) %>}
-<% end %>
-
-<%= if @cv.socials != [] do %>
-\\social[github]{Github Name}
-\\social[linkedin][linkedin.com/in/name/]{Linkedin Name}
 <% end %>
 
 \\begin{document}
@@ -58,8 +53,8 @@
     {<%= str(exp.location) %>}
     {}
     {<%= str(exp.description) %>}
-<%= if exp.experience_details != [] do %>
-<%= for detail <- exp.experience_details do %>
+<%= if exp.details != [] do %>
+<%= for detail <- exp.details do %>
 \\cvlistitem
   {<%= str(detail.content) %>}
 <% end %>

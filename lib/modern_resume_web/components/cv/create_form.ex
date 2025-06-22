@@ -58,6 +58,11 @@ defmodule ModernResumeWeb.CV.CreateForm do
       <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="submit">
         <.input field={@form[:title]} label="Title" />
 
+        <.inputs_for :let={content} field={@form[:content]}>
+          <.input field={content[:name]} label="Name" />
+          <.input field={content[:position]} label="Position" />
+        </.inputs_for>
+
         <:actions>
           <.button type="submit">Save</.button>
         </:actions>

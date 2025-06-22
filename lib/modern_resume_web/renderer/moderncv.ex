@@ -23,7 +23,7 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
   # https://tex.stackexchange.com/questions/15516/how-to-write-japanese-with-latex
 
   def render!(%CV{} = cv) do
-    Template.new("moderncv") |> Template.eval(assigns: [cv: cv])
+    Template.new("moderncv") |> Template.eval(assigns: [cv: cv.content])
   end
 
   def render(%CV{} = cv, :string) do

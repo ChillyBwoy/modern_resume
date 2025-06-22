@@ -8,11 +8,11 @@ defmodule ModernResume.Resume.SkillTest do
 
     import ModernResume.ResumeFixtures
 
-    test "add_skill/2 adds a new skill" do
+    test "create_skill/2 adds a new skill" do
       cv = cv_fixture()
 
       assert {:ok, %CV{} = cv} =
-               Resume.add_skill(cv, %{title: "test title", description: "test description"})
+               Resume.create_skill(cv, %{title: "test title", description: "test description"})
 
       skill = cv.content.skills |> List.last()
 
@@ -20,10 +20,10 @@ defmodule ModernResume.Resume.SkillTest do
       assert skill.description == "test description"
     end
 
-    test "add_skill/2 adds a new skill with invalid params" do
+    test "create_skill/2 adds a new skill with invalid params" do
       cv = cv_fixture()
 
-      assert {:error, changeset} = Resume.add_skill(cv, %{title: "", description: ""})
+      assert {:error, changeset} = Resume.create_skill(cv, %{title: "", description: ""})
 
       assert changeset.errors == [
                {:title, {"can't be blank", [validation: :required]}},
@@ -35,13 +35,13 @@ defmodule ModernResume.Resume.SkillTest do
       cv = cv_fixture()
 
       assert {:ok, cv} =
-               Resume.add_skill(cv, %{title: "test title 1", description: "test description 1"})
+               Resume.create_skill(cv, %{title: "test title 1", description: "test description 1"})
 
       assert {:ok, cv} =
-               Resume.add_skill(cv, %{title: "test title 2", description: "test description 2"})
+               Resume.create_skill(cv, %{title: "test title 2", description: "test description 2"})
 
       assert {:ok, cv} =
-               Resume.add_skill(cv, %{title: "test title 3", description: "test description 3"})
+               Resume.create_skill(cv, %{title: "test title 3", description: "test description 3"})
 
       assert Enum.at(cv.content.skills, 0).title == "test title 1"
       assert Enum.at(cv.content.skills, 0).description == "test description 1"

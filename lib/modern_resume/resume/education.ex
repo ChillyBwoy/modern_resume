@@ -5,8 +5,8 @@ defmodule ModernResume.Resume.Education do
   alias ModernResume.Validation
 
   embedded_schema do
-    field :description, :string
     field :degree, :string
+    field :description, :string
     field :field_of_study, :string
     field :institution, :string
     field :location, :string

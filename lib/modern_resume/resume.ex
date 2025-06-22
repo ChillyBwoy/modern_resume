@@ -7,10 +7,15 @@ defmodule ModernResume.Resume do
   import Ecto.Query, warn: false
   import ModernResume.Guards
 
-  alias ModernResume.Accounts.User
   alias ModernResume.Repo
-  alias ModernResume.Resume.CV
+
+  alias ModernResume.Accounts.User
+
   alias ModernResume.Resume.Content
+  alias ModernResume.Resume.CV
+  alias ModernResume.Resume.Education
+  alias ModernResume.Resume.Experience
+  alias ModernResume.Resume.Language
   alias ModernResume.Resume.Skill
 
   @doc """
@@ -27,7 +32,7 @@ defmodule ModernResume.Resume do
   end
 
   def list_cvs_for(%User{} = user) do
-    query = from cv in CV, where: cv.user_id == ^user.id
+    query = from(cv in CV, where: cv.user_id == ^user.id)
     Repo.all(query)
   end
 
@@ -101,7 +106,8 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  def add_skill(%CV{} = cv, %{title: _, description: _} = params) do
+  @deprecated "use embed, Luke"
+  def create_skill(%CV{} = cv, %{title: _, description: _} = params) do
     case Skill.changeset(%Skill{}, params) |> Ecto.Changeset.apply_action(:create) do
       {:ok, skill} ->
         content =
@@ -119,7 +125,30 @@ defmodule ModernResume.Resume do
     end
   end
 
-  def add_skill(_, _), do: raise("Invalid skill params")
+  def create_skill(_, _), do: raise("Invalid skill params")
+
+  defp add_entity(%Ecto.Changeset{} = changeset, key, entity) when is_atom(key) do
+    content = Ecto.Changeset.get_embed(changeset, :content)
+    entities = Ecto.Changeset.get_embed(content, key)
+    content = Ecto.Changeset.put_embed(content, key, entities ++ [entity])
+    Ecto.Changeset.put_embed(changeset, :content, content)
+  end
+
+  def add_skill(%Ecto.Changeset{} = changeset) do
+    add_entity(changeset, :skills, %Skill{})
+  end
+
+  def add_educatiion(%Ecto.Changeset{} = changeset) do
+    add_entity(changeset, :educations, %Education{})
+  end
+
+  def add_language(%Ecto.Changeset{} = changeset) do
+    add_entity(changeset, :languages, %Language{})
+  end
+
+  def add_experience(%Ecto.Changeset{} = changeset) do
+    add_entity(changeset, :experiences, %Experience{})
+  end
 
   def update_skill(%CV{} = cv, id, %{title: _, description: _} = attrs) when is_uuid(id) do
     with %Skill{} = skill <- Enum.find(cv.content.skills, &(&1.id == id)),

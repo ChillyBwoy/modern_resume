@@ -2,6 +2,7 @@ defmodule ModernResumeWeb.CVShowLive do
   use ModernResumeWeb, :live_view
 
   import ModernResumeWeb.CV.LatexPreview
+  import ModernResumeWeb.CV.Form
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
@@ -10,7 +11,11 @@ defmodule ModernResumeWeb.CVShowLive do
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
     case Resume.get_cv(id) do
       %CV{} = cv ->
-        {:ok, assign(socket, cv: cv, page_title: cv.title)}
+        {:ok,
+         socket
+         |> assign(cv: cv)
+         |> assign(form: CV.changeset(cv, %{}) |> to_form())
+         |> assign(page_title: cv.title)}
 
       _ ->
         {:error,
@@ -42,6 +47,80 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
+  def handle_event("skill:add", _, socket) do
+    {:noreply,
+     socket
+     |> update(:form, fn %{source: changeset} ->
+       changeset |> Resume.add_skill() |> to_form()
+     end)}
+  end
+
+  @impl true
+  def handle_event("skill:delete", _params, _socket) do
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("experience:add", _params, socket) do
+    {:noreply,
+     socket
+     |> update(:form, fn %{source: changeset} ->
+       changeset |> Resume.add_experience() |> to_form()
+     end)}
+  end
+
+  @impl true
+  def handle_event("experience:delete", _params, _socket) do
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("education:add", _, socket) do
+    {:noreply,
+     socket
+     |> update(:form, fn %{source: changeset} ->
+       changeset |> Resume.add_educatiion() |> to_form()
+     end)}
+  end
+
+  @impl true
+  def handle_event("education:delete", _params, _socket) do
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("language:add", _, socket) do
+    {:noreply,
+     socket
+     |> update(:form, fn %{source: changeset} ->
+       changeset |> Resume.add_language() |> to_form()
+     end)}
+  end
+
+  @impl true
+  def handle_event("language:delete", _params, _socket) do
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("cv:save", %{"cv" => attrs}, socket) do
+    case Resume.update_cv(socket.assigns.cv, attrs) do
+      {:ok, %CV{} = cv} ->
+        form = CV.changeset(cv, %{}) |> to_form()
+
+        {:noreply,
+         socket
+         |> assign(form: form)
+         |> assign(cv: cv)}
+
+      {:error, changeset} ->
+        {:noreply,
+         socket
+         |> assign(form: changeset |> to_form())}
+    end
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="grid grid-rows-[auto_1fr] h-full p-6">
@@ -61,23 +140,7 @@ defmodule ModernResumeWeb.CVShowLive do
       <div class="w-full grid grid-cols-2 gap-4">
         <div class="relative h-full">
           <div class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 pl-1 pr-5 pb-48 pt-4 flex flex-col gap-2 scroll-container-v">
-            <div>TODO: ContentForm</div>
-
-            <.cv_section title="Skills">
-              TODO: ContentSkillsForm
-            </.cv_section>
-
-            <.cv_section title="Experience">
-              TODO: ExperienceForm
-            </.cv_section>
-
-            <.cv_section title="Education">
-              TODO: EducationForm
-            </.cv_section>
-
-            <.cv_section title="Foreign Languages">
-              TODO: ForeignLanguages
-            </.cv_section>
+            <.cv_form form={@form} />
           </div>
         </div>
 
