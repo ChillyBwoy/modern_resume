@@ -4,7 +4,7 @@ defmodule ModernResume.Resume do
   """
 
   import Ecto.Query, warn: false
-  # import ModernResume.Guards
+  import ModernResume.Guards
 
   alias ModernResume.Repo
   alias ModernResume.Resume.CV
@@ -93,32 +93,49 @@ defmodule ModernResume.Resume do
   end
 
   def add_skill(%CV{} = cv, %{title: _, description: _} = params) do
-    skills = cv.content.skills ++ [Skill.changeset(%Skill{}, params)]
+    case Skill.changeset(%Skill{}, params) |> Ecto.Changeset.apply_action(:create) do
+      {:ok, skill} ->
+        content =
+          cv.content
+          |> Content.changeset(%{})
+          |> Ecto.Changeset.put_embed(:skills, cv.content.skills ++ [skill])
 
-    content =
-      cv.content
-      |> Content.changeset(%{})
-      |> Ecto.Changeset.put_embed(:skills, skills)
+        cv
+        |> CV.changeset(%{})
+        |> Ecto.Changeset.put_embed(:content, content)
+        |> Repo.update()
 
-    cv
-    |> CV.changeset(%{})
-    |> Ecto.Changeset.put_embed(:content, content)
-    |> Repo.update()
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def add_skill(_, _), do: raise("Invalid skill params")
 
-  # def update_skill(%CV{} = cv, id, attrs) when is_uuid(id) and is_map(attrs) do
-  #   skills =
-  #     cv.content.skills
-  #     |> Enum.map(fn skill ->
-  #       case skill.id do
-  #         ^id ->
-  #           Skill.changeset(skill, attrs)
+  def update_skill(%CV{} = cv, id, %{title: _, description: _} = attrs) when is_uuid(id) do
+    with %Skill{} = skill <- Enum.find(cv.content.skills, &(&1.id == id)),
+         {:ok, _} <- Skill.changeset(skill, attrs) |> Ecto.Changeset.apply_action(:update) do
+      updated_skills =
+        Enum.map(cv.content.skills, fn item ->
+          if item.id == id do
+            Skill.changeset(%Skill{}, attrs)
+          else
+            item
+          end
+        end)
 
-  #         _ ->
-  #           skill
-  #       end
-  #     end)
-  # end
+      content =
+        cv.content
+        |> Content.changeset(%{})
+        |> Ecto.Changeset.put_embed(:skills, updated_skills)
+
+      cv
+      |> CV.changeset(%{})
+      |> Ecto.Changeset.put_embed(:content, content)
+      |> Repo.update()
+    else
+      nil -> raise("No skill found")
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+    end
+  end
 end
