@@ -1,0 +1,90 @@
+<% import ModernResumeWeb.Renderer.Moderncv %>
+\\documentclass[sans]{moderncv}
+
+\\moderncvcolor{blue}
+\\moderncvstyle{banking}
+
+\\usepackage[scale=0.8]{geometry}
+
+\\setlength{\hintscolumnwidth}{3.5cm}
+\\recomputelengths
+
+\\usepackage[english]{babel}
+\\usepackage[unicode]{hyperref}
+
+\\usepackage{chemmacros}
+\\usepackage{enumerate}
+\\usepackage{fontawesome5}
+
+\\title{<%= str(@cv.content.position) %>}
+\\name{<%= str(@cv.first_name) %>}{<%= str(@cv.last_name) %>}
+
+<%= if @cv.email != nil do %>
+\\email{<%= str(@cv.email) %>}
+<% end %>
+<%= if @cv.location != nil do %>
+\\address{<%= str(@cv.location) %>}
+<% end %>
+<%= if @cv.phone != nil do %>
+\\phone{<%= str(@cv.phone) %>}
+<% end %>
+<%= if @cv.birthdate != nil do %>
+\\born{<%= str(@cv.birthdate) %>}
+<% end %>
+
+<%= if @cv.socials != [] do %>
+\\social[github]{Github Name}
+\\social[linkedin][linkedin.com/in/name/]{Linkedin Name}
+<% end %>
+
+\\begin{document}
+\\makecvtitle
+
+<%= if @cv.skills != [] do %>
+\\section{\\faCode{} Skills}
+<%= for skill <- @cv.skills do %>
+\\subsection{TODO: Add subheaeder}
+\\cvline{<%= str(skill.title) %>}{<%= str(skill.description) %>}
+<% end %>
+<% end %>
+
+<%= if @cv.experiences != [] do %>
+\\section{\\faBriefcase{} Working Experience}
+<%= for exp <- @cv.experiences do %>
+\\cventry
+    {<%= render_date_range(exp.date_start, exp.date_end) %>}
+    {<%= str(exp.title) %>}
+    {<%= str(exp.organization) %>}
+    {<%= str(exp.location) %>}
+    {}
+    {<%= str(exp.description) %>}
+<%= if exp.experience_details != [] do %>
+<%= for detail <- exp.experience_details do %>
+\\cvlistitem
+  {<%= str(detail.content) %>}
+<% end %>
+<% end %>
+<% end %>
+<% end %>
+
+<%= if @cv.educations != [] do %>
+\\section{\\faGraduationCap{}Education}
+<%= for education <- @cv.educations do %>
+\\cventry
+    {<%= render_date_range(education.date_start, education.date_end) %>}
+    {<%= str(education.degree) %>}
+    {<%= str(education.institution) %>}
+    {<%= str(education.location) %>}
+    {}
+    {<%= str(education.description) %>}
+<% end %>
+<% end %>
+
+<%= if @cv.languages != [] do %>
+\\section{\\faLanguage{} Foreign Languages}
+<%= for lang <- @cv.languages do %>
+\\cvitem{<%= str(lang.name) %>}{<%= lang_fluency(lang.fluency) %>}
+<% end %>
+<% end %>
+
+\\end{document}

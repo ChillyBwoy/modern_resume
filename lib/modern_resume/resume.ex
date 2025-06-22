@@ -2,10 +2,12 @@ defmodule ModernResume.Resume do
   @moduledoc """
   The Resume context.
   """
+  import ModernResume.Guards
 
   import Ecto.Query, warn: false
   import ModernResume.Guards
 
+  alias ModernResume.Accounts.User
   alias ModernResume.Repo
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Content
@@ -24,6 +26,11 @@ defmodule ModernResume.Resume do
     Repo.all(CV)
   end
 
+  def list_cvs_for(%User{} = user) do
+    query = from cv in CV, where: cv.user_id == ^user.id
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single cv.
 
@@ -38,7 +45,9 @@ defmodule ModernResume.Resume do
       ** (Ecto.NoResultsError)
 
   """
-  def get_cv!(id), do: Repo.get!(CV, id)
+  def get_cv(id) when is_uuid(id) do
+    Repo.get!(CV, id)
+  end
 
   @doc """
   Creates a cv.

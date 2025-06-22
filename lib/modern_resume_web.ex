@@ -53,7 +53,10 @@ defmodule ModernResumeWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {ModernResumeWeb.Layouts, :app}
+        layout: {ModernResumeWeb.Layouts, :app},
+        container: {:div, [class: "h-full"]}
+
+      import ModernResume.Guards
 
       unquote(html_helpers())
     end
@@ -89,6 +92,7 @@ defmodule ModernResumeWeb do
       import Phoenix.HTML
       # Core UI components
       import ModernResumeWeb.CoreComponents
+      import ModernResumeWeb.CVComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

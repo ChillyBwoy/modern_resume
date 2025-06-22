@@ -66,6 +66,10 @@ defmodule ModernResumeWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{ModernResumeWeb.UserAuth, :ensure_authenticated}] do
+      live "/cvs", CVListLive, :list
+      live "/cvs/new", CVListLive, :new
+      live "/cvs/:cv_id", CVShowLive, :show
+
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
