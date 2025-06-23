@@ -45,6 +45,13 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
 
   def render(_, _), do: {:error, "Unsupported format or CV"}
 
+  def render_date_range({start_year, start_month}, {end_year, end_month}) do
+    date_start = year_month_to_date(start_year, start_month)
+    date_end = year_month_to_date(end_year, end_month)
+
+    render_date_range(date_start, date_end)
+  end
+
   def render_date_range(%Date{} = date_start, %Date{} = date_end) do
     with {:ok, str_start} <- Timex.format(date_start, @date_format, :strftime),
          {:ok, str_end} <- Timex.format(date_end, @date_format, :strftime) do
@@ -58,7 +65,17 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
     end
   end
 
-  def render_date_range(_, _), do: "{}"
+  defp year_month_to_date(year, month) when is_integer(year) and is_integer(month) do
+    case Date.new(year, month, 1) do
+      {:ok, %Date{} = date} ->
+        date
+
+      {:error, _} ->
+        nil
+    end
+  end
+
+  defp year_month_to_date(_, _), do: nil
 
   def str(input) when is_binary(input) do
     Enum.reduce(@escapes, input, fn {pattern, replacement}, value ->

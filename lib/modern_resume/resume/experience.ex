@@ -21,8 +21,10 @@ defmodule ModernResume.Resume.Experience do
     field :description, :string
     field :location, :string
     field :organization, :string
-    field :date_start, :date
-    field :date_end, :date
+    field :date_start_month, :integer
+    field :date_start_year, :integer
+    field :date_end_month, :integer
+    field :date_end_year, :integer
     field :employment_type, Ecto.Enum, values: @employment_types
 
     embeds_many :details, ExperienceDetail, on_replace: :delete
@@ -35,12 +37,14 @@ defmodule ModernResume.Resume.Experience do
       :title,
       :description,
       :location,
-      :date_start,
-      :date_end,
+      :date_start_month,
+      :date_start_year,
+      :date_end_month,
+      :date_end_year,
       :employment_type,
       :organization
     ])
-    |> validate_required([:title, :date_start])
+    |> validate_required([:title, :date_start_month, :date_start_year])
     |> Validation.validate_latex_chars([
       :title,
       :description,

@@ -45,19 +45,6 @@ defmodule ModernResumeWeb.CVComponents do
     """
   end
 
-  slot :date_start, required: true
-  slot :date_end, required: true
-
-  def date_range(assigns) do
-    ~H"""
-    <div class="inline-flex w-min items-start gap-x-2 text-sm">
-      <div class="flex flex-col gap-1 items-end">{render_slot(@date_start)}</div>
-      <span>~</span>
-      <div class="flex flex-col gap-1">{render_slot(@date_end)}</div>
-    </div>
-    """
-  end
-
   attr :errors, :list, required: true
   attr :rest, :global
 

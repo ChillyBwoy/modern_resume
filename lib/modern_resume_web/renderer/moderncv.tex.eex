@@ -47,7 +47,7 @@
 \\section{\\faBriefcase{} Working Experience}
 <%= for exp <- @cv.experiences do %>
 \\cventry
-    {<%= render_date_range(exp.date_start, exp.date_end) %>}
+    {<%= render_date_range({exp.date_start_year, exp.date_start_month}, {exp.date_end_year, exp.date_end_month}) %>}
     {<%= str(exp.title) %>}
     {<%= str(exp.organization) %>}
     {<%= str(exp.location) %>}
@@ -66,7 +66,7 @@
 \\section{\\faGraduationCap{}Education}
 <%= for education <- @cv.educations do %>
 \\cventry
-    {<%= render_date_range(education.date_start, education.date_end) %>}
+    {<%= render_date_range({education.date_start_year, education.date_start_month}, {education.date_end_year, education.date_end_month}) %>}
     {<%= str(education.degree) %>}
     {<%= str(education.institution) %>}
     {<%= str(education.location) %>}

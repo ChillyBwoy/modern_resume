@@ -6,6 +6,44 @@ defmodule ModernResumeWeb.CV.Form do
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
 
+  defp get_date_options(%Phoenix.HTML.FormField{} = field, :year) do
+    year = Date.utc_today().year
+
+    Range.new(year, year - 100, -1)
+    |> Enum.map(&{"#{&1}", "#{&1}"})
+  end
+
+  defp get_date_options(%Phoenix.HTML.FormField{} = field, :month) do
+    1..12
+    |> Enum.map(fn month ->
+      {Timex.month_name(month), "#{month}"}
+    end)
+  end
+
+  attr :month, Phoenix.HTML.FormField, required: true
+  attr :year, Phoenix.HTML.FormField, required: true
+
+  defp month_picker(assigns) do
+    ~H"""
+    <div class="grid grid-cols-[2fr_1fr] gap-2">
+      <.input
+        type="select"
+        field={@month}
+        label="Month"
+        prompt="--"
+        options={get_date_options(@month, :month)}
+      />
+      <.input
+        type="select"
+        field={@year}
+        label="Year"
+        prompt="--"
+        options={get_date_options(@year, :year)}
+      />
+    </div>
+    """
+  end
+
   attr :on_delete, :string, required: true
   slot :inner_block, required: true
 
@@ -90,8 +128,8 @@ defmodule ModernResumeWeb.CV.Form do
       <.input field={@form[:institution]} label="Institution" phx-debounce="blur" />
       <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" />
       <div class="grid grid-cols-2 gap-4">
-        <.input field={@form[:date_start]} type="date" label="Date Start" phx-debounce="blur" />
-        <.input field={@form[:date_end]} type="date" label="Date End" phx-debounce="blur" />
+        <.month_picker month={@form[:date_start_month]} year={@form[:date_start_year]} />
+        <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
       </div>
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
       <.input field={@form[:field_of_study]} label="Field of Study" phx-debounce="blur" />
@@ -120,8 +158,8 @@ defmodule ModernResumeWeb.CV.Form do
       <.input field={@form[:title]} label="Title" phx-debounce="blur" />
       <.input field={@form[:organization]} label="Company, Organization, etc." phx-debounce="blur" />
       <div class="grid grid-cols-2 gap-4">
-        <.input field={@form[:date_start]} type="date" label="Date Start" phx-debounce="blur" />
-        <.input field={@form[:date_end]} type="date" label="Date End" phx-debounce="blur" />
+        <.month_picker month={@form[:date_start_month]} year={@form[:date_start_year]} />
+        <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
       </div>
       <.input
         type="select"
