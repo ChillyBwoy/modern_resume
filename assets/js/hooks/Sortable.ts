@@ -10,25 +10,10 @@ const CLASSES = {
   drag: "sortable-drag",
 } as const;
 
-function extractSortAction(el: HTMLElement) {
-  if (el.dataset.sortAction == null) {
-    return null;
-  }
-
-  try {
-    const sortAction: JSAction<"sort">[] = JSON.parse(el.dataset.sortAction);
-    const [_, { target, event }] = sortAction[0];
-
-    return { target, event };
-  } catch {
-    return null;
-  }
-}
-
 export default (): Hook => ({
   mounted() {
-    const sortAction = extractSortAction(this.el);
-    if (sortAction == null) {
+    const sortEvent = this.el.dataset.sortAction;
+    if (sortEvent == null) {
       return;
     }
 
@@ -37,10 +22,18 @@ export default (): Hook => ({
       dragClass: CLASSES.drag,
       handle: SELECTOR.handle,
       onEnd: () => {
-        const data = Array.from(this.el.children).map(
-          (el) => (el as HTMLElement).dataset.id
+        const data = Array.from(this.el.children).reduce<number[]>(
+          (acc, el) => {
+            const index = (el as HTMLElement).dataset.index;
+            if (index == null) {
+              return acc;
+            }
+            acc.push(parseInt(index, 10));
+            return acc;
+          },
+          []
         );
-        this.pushEventTo(sortAction.target, sortAction.event, data);
+        this.pushEvent(sortEvent, data);
       },
     });
   },

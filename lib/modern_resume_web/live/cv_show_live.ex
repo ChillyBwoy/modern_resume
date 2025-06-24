@@ -56,7 +56,14 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("skill:delete", _params, _socket) do
+  def handle_event("skill:delete", params, _socket) do
+    dbg(params)
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("skills:sort", params, _socket) do
+    dbg(params)
     raise "not implemented"
   end
 
@@ -70,7 +77,14 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("experience:delete", _params, _socket) do
+  def handle_event("experience:delete", params, _socket) do
+    dbg(params)
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("experiences:sort", params, _socket) do
+    dbg(params)
     raise "not implemented"
   end
 
@@ -84,7 +98,14 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("education:delete", _params, _socket) do
+  def handle_event("education:delete", params, _socket) do
+    dbg(params)
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("educations:sort", params, _socket) do
+    dbg(params)
     raise "not implemented"
   end
 
@@ -98,7 +119,14 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("language:delete", _params, _socket) do
+  def handle_event("language:delete", params, _socket) do
+    dbg(params)
+    raise "not implemented"
+  end
+
+  @impl true
+  def handle_event("languages:sort", params, _socket) do
+    dbg(params)
     raise "not implemented"
   end
 
