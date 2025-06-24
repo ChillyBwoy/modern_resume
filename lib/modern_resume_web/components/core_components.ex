@@ -330,7 +330,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div>
+    <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
       <select
         id={@id}
@@ -349,7 +349,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div>
+    <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
       <textarea
         id={@id}
@@ -369,7 +369,7 @@ defmodule ModernResumeWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div>
+    <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
       <input
         type={@type}
@@ -396,7 +396,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold text-zinc-800">
+    <label for={@for} class="block text-sm font-semibolds">
       {render_slot(@inner_block)}
     </label>
     """
