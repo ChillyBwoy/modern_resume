@@ -11,6 +11,7 @@ defmodule ModernResume.Resume do
 
   alias ModernResume.Accounts.User
 
+  alias ModernResume.Resume.Content
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Education
   alias ModernResume.Resume.Experience
@@ -105,26 +106,41 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  defp add_entity(%Ecto.Changeset{} = changeset, key, entity) when is_atom(key) do
+  defp add_entity_to_list(%Ecto.Changeset{} = changeset, key, entity) when is_atom(key) do
     content = Ecto.Changeset.get_embed(changeset, :content)
     entities = Ecto.Changeset.get_embed(content, key)
     content = Ecto.Changeset.put_embed(content, key, entities ++ [entity])
     Ecto.Changeset.put_embed(changeset, :content, content)
   end
 
-  def add_skill(%Ecto.Changeset{} = changeset) do
-    add_entity(changeset, :skills, %Skill{})
-  end
+  def add_entity(changeset, :skills), do: add_entity_to_list(changeset, :skills, %Skill{})
 
-  def add_educatiion(%Ecto.Changeset{} = changeset) do
-    add_entity(changeset, :educations, %Education{})
-  end
+  def add_entity(changeset, :educations),
+    do: add_entity_to_list(changeset, :educations, %Education{})
 
-  def add_language(%Ecto.Changeset{} = changeset) do
-    add_entity(changeset, :languages, %Language{})
-  end
+  def add_entity(changeset, :languages),
+    do: add_entity_to_list(changeset, :languages, %Language{})
 
-  def add_experience(%Ecto.Changeset{} = changeset) do
-    add_entity(changeset, :experiences, %Experience{})
+  def add_entity(changeset, :experiences),
+    do: add_entity_to_list(changeset, :experiences, %Experience{})
+
+  def sort_entities(%CV{} = cv, key, indexes) when is_atom(key) and is_list(indexes) do
+    {:ok, entries} = Map.fetch(cv.content, key)
+
+    new_entries =
+      indexes
+      |> Enum.map(fn idx ->
+        Enum.at(entries, idx)
+      end)
+
+    content =
+      cv.content
+      |> Content.changeset(%{})
+      |> Ecto.Changeset.put_embed(key, new_entries)
+
+    cv
+    |> CV.changeset(%{})
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
   end
 end

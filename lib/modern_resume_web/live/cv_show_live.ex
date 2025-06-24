@@ -31,28 +31,13 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_info(:update, socket) do
-    cv = Resume.get_cv(socket.assigns.cv.id)
-    {:noreply, socket |> assign(cv: cv)}
-  end
-
-  @impl true
-  def handle_info({:preview, :ok, _}, socket) do
-    {:noreply, socket |> put_flash(:info, "PDF created successfully")}
-  end
-
-  @impl true
   def handle_info({:preview, :error, reason}, socket) do
     {:noreply, socket |> put_flash(:error, "Error creating PDF: #{reason}")}
   end
 
   @impl true
   def handle_event("skill:add", _, socket) do
-    {:noreply,
-     socket
-     |> update(:form, fn %{source: changeset} ->
-       changeset |> Resume.add_skill() |> to_form()
-     end)}
+    {:noreply, socket |> add_entry(:skills)}
   end
 
   @impl true
@@ -62,18 +47,13 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("skills:sort", params, _socket) do
-    dbg(params)
-    raise "not implemented"
+  def handle_event("skills:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:skills, params)}
   end
 
   @impl true
   def handle_event("experience:add", _params, socket) do
-    {:noreply,
-     socket
-     |> update(:form, fn %{source: changeset} ->
-       changeset |> Resume.add_experience() |> to_form()
-     end)}
+    {:noreply, socket |> add_entry(:experiences)}
   end
 
   @impl true
@@ -83,18 +63,13 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("experiences:sort", params, _socket) do
-    dbg(params)
-    raise "not implemented"
+  def handle_event("experiences:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:experiences, params)}
   end
 
   @impl true
   def handle_event("education:add", _, socket) do
-    {:noreply,
-     socket
-     |> update(:form, fn %{source: changeset} ->
-       changeset |> Resume.add_educatiion() |> to_form()
-     end)}
+    {:noreply, socket |> add_entry(:educations)}
   end
 
   @impl true
@@ -104,18 +79,13 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("educations:sort", params, _socket) do
-    dbg(params)
-    raise "not implemented"
+  def handle_event("educations:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:educations, params)}
   end
 
   @impl true
   def handle_event("language:add", _, socket) do
-    {:noreply,
-     socket
-     |> update(:form, fn %{source: changeset} ->
-       changeset |> Resume.add_language() |> to_form()
-     end)}
+    {:noreply, socket |> add_entry(:languages)}
   end
 
   @impl true
@@ -125,9 +95,8 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("languages:sort", params, _socket) do
-    dbg(params)
-    raise "not implemented"
+  def handle_event("languages:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:languages, params)}
   end
 
   @impl true
@@ -138,14 +107,30 @@ defmodule ModernResumeWeb.CVShowLive do
 
         {:noreply,
          socket
-         |> assign(form: form)
-         |> assign(cv: cv)}
+         |> assign(cv: cv)
+         |> assign(form: form)}
 
       {:error, changeset} ->
         {:noreply,
          socket
          |> assign(form: changeset |> to_form())}
     end
+  end
+
+  defp add_entry(socket, key) do
+    socket
+    |> update(:form, fn %{source: changeset} ->
+      changeset |> Resume.add_entity(key) |> to_form()
+    end)
+  end
+
+  defp sort_entries(socket, key, params) when is_atom(key) and is_list(params) do
+    {:ok, cv} = Resume.sort_entities(socket.assigns.cv, key, params)
+    form = CV.changeset(cv, %{}) |> to_form()
+
+    socket
+    |> assign(cv: cv)
+    |> assign(form: form)
   end
 
   @impl true
