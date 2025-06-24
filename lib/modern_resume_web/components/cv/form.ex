@@ -6,14 +6,14 @@ defmodule ModernResumeWeb.CV.Form do
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
 
-  defp get_date_options(%Phoenix.HTML.FormField{} = field, :year) do
+  defp get_date_options(:year) do
     year = Date.utc_today().year
 
     Range.new(year, year - 100, -1)
     |> Enum.map(&{"#{&1}", "#{&1}"})
   end
 
-  defp get_date_options(%Phoenix.HTML.FormField{} = field, :month) do
+  defp get_date_options(:month) do
     1..12
     |> Enum.map(fn month ->
       {Timex.month_name(month), "#{month}"}
@@ -31,15 +31,9 @@ defmodule ModernResumeWeb.CV.Form do
         field={@month}
         label="Month"
         prompt="--"
-        options={get_date_options(@month, :month)}
+        options={get_date_options(:month)}
       />
-      <.input
-        type="select"
-        field={@year}
-        label="Year"
-        prompt="--"
-        options={get_date_options(@year, :year)}
-      />
+      <.input type="select" field={@year} label="Year" prompt="--" options={get_date_options(:year)} />
     </div>
     """
   end

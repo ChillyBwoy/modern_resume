@@ -36,5 +36,5 @@ defmodule ModernResume.Resume.Language do
   def display_fluency(:minimum), do: "Minimum Professional Proficiency"
   def display_fluency(:full), do: "Full Professional Proficiency"
   def display_fluency(:native), do: "Native or Bilingual Proficiency"
-  def display_fluency(_), do: raise("Unknown Fluency")
+  def display_fluency(_), do: ""
 end

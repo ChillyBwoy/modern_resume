@@ -8,6 +8,7 @@ defmodule ModernResume.ResumeTest do
     alias ModernResume.Resume.Content
 
     import ModernResume.ResumeFixtures
+    import ModernResume.AccountsFixtures
 
     @invalid_attrs %{title: nil, content: nil}
 
@@ -18,11 +19,12 @@ defmodule ModernResume.ResumeTest do
 
     test "get_cv!/1 returns the cv with given id" do
       cv = cv_fixture()
-      assert Resume.get_cv!(cv.id) == cv
+      assert Resume.get_cv(cv.id) == cv
     end
 
     test "create_cv/1 with valid data creates a cv" do
       valid_attrs = %{
+        user_id: user_fixture().id,
         title: "some title",
         content: %{
           name: "John Doe",
@@ -83,13 +85,13 @@ defmodule ModernResume.ResumeTest do
     test "update_cv/2 with invalid data returns error changeset" do
       cv = cv_fixture()
       assert {:error, %Ecto.Changeset{}} = Resume.update_cv(cv, @invalid_attrs)
-      assert cv == Resume.get_cv!(cv.id)
+      assert cv == Resume.get_cv(cv.id)
     end
 
     test "delete_cv/1 deletes the cv" do
       cv = cv_fixture()
       assert {:ok, %CV{}} = Resume.delete_cv(cv)
-      assert_raise Ecto.NoResultsError, fn -> Resume.get_cv!(cv.id) end
+      assert_raise Ecto.NoResultsError, fn -> Resume.get_cv(cv.id) end
     end
   end
 end

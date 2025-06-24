@@ -1,6 +1,8 @@
 defmodule ModernResumeWeb.Renderer.Moderncv do
   alias ModernResume.Resume.CV
+  alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Language
+
   alias ModernResumeWeb.Renderer.Template
 
   @date_format "%b %Y"
@@ -87,5 +89,9 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
 
   def lang_fluency(level) when is_atom(level) do
     Language.display_fluency(level)
+  end
+
+  def employment_type(type) do
+    Experience.display_employment_type(type)
   end
 end

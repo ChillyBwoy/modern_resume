@@ -67,5 +67,5 @@ defmodule ModernResume.Resume.Experience do
   def display_employment_type(:internship), do: "Internship"
   def display_employment_type(:apprenticeship), do: "Apprenticeship"
   def display_employment_type(:indirect_contract), do: "Indirect contract"
-  def display_employment_type(_), do: raise("Unknown Employment Type")
+  def display_employment_type(_), do: ""
 end

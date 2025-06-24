@@ -11,7 +11,6 @@ defmodule ModernResume.Resume do
 
   alias ModernResume.Accounts.User
 
-  alias ModernResume.Resume.Content
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Education
   alias ModernResume.Resume.Experience
@@ -106,27 +105,6 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  @deprecated "use embed, Luke"
-  def create_skill(%CV{} = cv, %{title: _, description: _} = params) do
-    case Skill.changeset(%Skill{}, params) |> Ecto.Changeset.apply_action(:create) do
-      {:ok, skill} ->
-        content =
-          cv.content
-          |> Content.changeset(%{})
-          |> Ecto.Changeset.put_embed(:skills, cv.content.skills ++ [skill])
-
-        cv
-        |> CV.changeset(%{})
-        |> Ecto.Changeset.put_embed(:content, content)
-        |> Repo.update()
-
-      {:error, changeset} ->
-        {:error, changeset}
-    end
-  end
-
-  def create_skill(_, _), do: raise("Invalid skill params")
-
   defp add_entity(%Ecto.Changeset{} = changeset, key, entity) when is_atom(key) do
     content = Ecto.Changeset.get_embed(changeset, :content)
     entities = Ecto.Changeset.get_embed(content, key)
@@ -148,32 +126,5 @@ defmodule ModernResume.Resume do
 
   def add_experience(%Ecto.Changeset{} = changeset) do
     add_entity(changeset, :experiences, %Experience{})
-  end
-
-  def update_skill(%CV{} = cv, id, %{title: _, description: _} = attrs) when is_uuid(id) do
-    with %Skill{} = skill <- Enum.find(cv.content.skills, &(&1.id == id)),
-         {:ok, _} <- Skill.changeset(skill, attrs) |> Ecto.Changeset.apply_action(:update) do
-      updated_skills =
-        Enum.map(cv.content.skills, fn item ->
-          if item.id == id do
-            Skill.changeset(%Skill{}, attrs)
-          else
-            item
-          end
-        end)
-
-      content =
-        cv.content
-        |> Content.changeset(%{})
-        |> Ecto.Changeset.put_embed(:skills, updated_skills)
-
-      cv
-      |> CV.changeset(%{})
-      |> Ecto.Changeset.put_embed(:content, content)
-      |> Repo.update()
-    else
-      nil -> raise("No skill found")
-      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-    end
   end
 end

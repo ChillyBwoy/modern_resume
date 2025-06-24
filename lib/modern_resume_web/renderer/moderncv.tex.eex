@@ -51,7 +51,7 @@
     {<%= str(exp.title) %>}
     {<%= str(exp.organization) %>}
     {<%= str(exp.location) %>}
-    {}
+    {<%= employment_type(exp.employment_type) %>}
     {<%= str(exp.description) %>}
 <%= if exp.details != [] do %>
 <%= for detail <- exp.details do %>

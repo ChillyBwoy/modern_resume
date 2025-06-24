@@ -17,8 +17,9 @@
         <ul class="relative flex items-center gap-4 p-4 w-full justify-end ">
           <%= if @current_user do %>
             <li>
-              <.link href={~p"/users/settings"}>{@current_user.email}</.link>
+              <.link href={~p"/users/settings"}>Settings</.link>
             </li>
+            <li>{@current_user.email}</li>
             <li>
               <.link href={~p"/users/log_out"} method="delete">Log out</.link>
             </li>
