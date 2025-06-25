@@ -31,7 +31,7 @@ defmodule ModernResume.Resume.Experience do
   end
 
   @doc false
-  def changeset(experience, attrs) do
+  def changeset(experience \\ %__MODULE__{}, attrs \\ %{}) do
     experience
     |> cast(attrs, [
       :title,

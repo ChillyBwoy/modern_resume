@@ -17,7 +17,7 @@ defmodule ModernResume.Resume.Education do
   end
 
   @doc false
-  def changeset(education, attrs) do
+  def changeset(education \\ %__MODULE__{}, attrs \\ %{}) do
     education
     |> cast(attrs, [
       :institution,

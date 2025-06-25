@@ -67,6 +67,7 @@ defmodule ModernResumeWeb.CV.Form do
           :if={@on_delete != nil}
           type="button"
           data-confirm="Delete this experience?"
+          phx-value-index={@index}
           phx-click={@on_delete}
           tabindex="-1"
           class="flex items-center"
@@ -86,8 +87,8 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp fieldset(assigns) do
     ~H"""
-    <fieldset class="flex flex-col gap-2">
-      <legend class="text-xl font-bold block">
+    <fieldset>
+      <legend class="text-xl font-bold block px-2 mb-2">
         {@title}
       </legend>
       <div
@@ -120,7 +121,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp language_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="language:delete" index={@form.index}>
+    <.entity sortable={@sortable} on_delete="languages:delete" index={@form.index}>
       <div class="grid grid-cols-2 gap-4">
         <.input field={@form[:name]} label="Name" phx-debounce="blur" />
         <.input
@@ -141,7 +142,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp education_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="education:delete" index={@form.index}>
+    <.entity sortable={@sortable} on_delete="educations:delete" index={@form.index}>
       <.input field={@form[:degree]} label="Degree" phx-debounce="blur" />
       <.input field={@form[:institution]} label="Institution" phx-debounce="blur" />
       <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" />
@@ -161,7 +162,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp skill_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="skill:delete" index={@form.index}>
+    <.entity sortable={@sortable} on_delete="skills:delete" index={@form.index}>
       <.input field={@form[:title]} label="Title" phx-debounce="blur" />
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
     </.entity>
@@ -174,7 +175,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp experience_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="experience:delete" index={@form.index}>
+    <.entity sortable={@sortable} on_delete="experiences:delete" index={@form.index}>
       <div class="grid grid-cols-[2fr_1fr] gap-4">
         <.input field={@form[:title]} label="Title" phx-debounce="blur" />
         <.input
@@ -222,7 +223,7 @@ defmodule ModernResumeWeb.CV.Form do
         <.basic_info_form form={@form} />
       </.fieldset>
 
-      <.fieldset id="skills" title="Skills" on_add="skill:add" on_sort="skills:sort">
+      <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
         <.inputs_for :let={skill} field={@form[:skills]}>
           <.skill_form form={skill} index={skill.index} sortable={is_sortable(@form, :skills)} />
         </.inputs_for>
@@ -231,7 +232,7 @@ defmodule ModernResumeWeb.CV.Form do
       <.fieldset
         id="experiences"
         title="Experience"
-        on_add="experience:add"
+        on_add="experiences:add"
         on_sort="experiences:sort"
       >
         <.inputs_for :let={experience} field={@form[:experiences]}>
@@ -243,7 +244,7 @@ defmodule ModernResumeWeb.CV.Form do
         </.inputs_for>
       </.fieldset>
 
-      <.fieldset id="educations" title="Education" on_add="education:add" on_sort="educations:sort">
+      <.fieldset id="educations" title="Education" on_add="educations:add" on_sort="educations:sort">
         <.inputs_for :let={education} field={@form[:educations]}>
           <.education_form
             form={education}
@@ -256,7 +257,7 @@ defmodule ModernResumeWeb.CV.Form do
       <.fieldset
         id="languages"
         title="Foreign Languages"
-        on_add="language:add"
+        on_add="languages:add"
         on_sort="languages:sort"
       >
         <.inputs_for :let={language} field={@form[:languages]}>

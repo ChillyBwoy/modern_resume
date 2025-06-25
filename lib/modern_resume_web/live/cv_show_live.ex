@@ -36,70 +36,6 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("skill:add", _, socket) do
-    {:noreply, socket |> add_entry(:skills)}
-  end
-
-  @impl true
-  def handle_event("skill:delete", params, _socket) do
-    dbg(params)
-    raise "not implemented"
-  end
-
-  @impl true
-  def handle_event("skills:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:skills, params)}
-  end
-
-  @impl true
-  def handle_event("experience:add", _params, socket) do
-    {:noreply, socket |> add_entry(:experiences)}
-  end
-
-  @impl true
-  def handle_event("experience:delete", params, _socket) do
-    dbg(params)
-    raise "not implemented"
-  end
-
-  @impl true
-  def handle_event("experiences:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:experiences, params)}
-  end
-
-  @impl true
-  def handle_event("education:add", _, socket) do
-    {:noreply, socket |> add_entry(:educations)}
-  end
-
-  @impl true
-  def handle_event("education:delete", params, _socket) do
-    dbg(params)
-    raise "not implemented"
-  end
-
-  @impl true
-  def handle_event("educations:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:educations, params)}
-  end
-
-  @impl true
-  def handle_event("language:add", _, socket) do
-    {:noreply, socket |> add_entry(:languages)}
-  end
-
-  @impl true
-  def handle_event("language:delete", params, _socket) do
-    dbg(params)
-    raise "not implemented"
-  end
-
-  @impl true
-  def handle_event("languages:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:languages, params)}
-  end
-
-  @impl true
   def handle_event("cv:save", %{"cv" => attrs}, socket) do
     case Resume.update_cv(socket.assigns.cv, attrs) do
       {:ok, %CV{} = cv} ->
@@ -117,7 +53,67 @@ defmodule ModernResumeWeb.CVShowLive do
     end
   end
 
-  defp add_entry(socket, key) do
+  @impl true
+  def handle_event("skills:add", _, socket) do
+    {:noreply, socket |> add_entity_to(:skills)}
+  end
+
+  @impl true
+  def handle_event("skills:delete", params, socket) do
+    {:noreply, socket |> delete_entry(:skills, params)}
+  end
+
+  @impl true
+  def handle_event("skills:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:skills, params)}
+  end
+
+  @impl true
+  def handle_event("experiences:add", _, socket) do
+    {:noreply, socket |> add_entity_to(:experiences)}
+  end
+
+  @impl true
+  def handle_event("experiences:delete", params, socket) do
+    {:noreply, socket |> delete_entry(:experiences, params)}
+  end
+
+  @impl true
+  def handle_event("experiences:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:experiences, params)}
+  end
+
+  @impl true
+  def handle_event("educations:add", _, socket) do
+    {:noreply, socket |> add_entity_to(:educations)}
+  end
+
+  @impl true
+  def handle_event("educations:delete", params, socket) do
+    {:noreply, socket |> delete_entry(:educations, params)}
+  end
+
+  @impl true
+  def handle_event("educations:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:educations, params)}
+  end
+
+  @impl true
+  def handle_event("languages:add", _, socket) do
+    {:noreply, socket |> add_entity_to(:languages)}
+  end
+
+  @impl true
+  def handle_event("languages:delete", params, socket) do
+    {:noreply, socket |> delete_entry(:languages, params)}
+  end
+
+  @impl true
+  def handle_event("languages:sort", params, socket) do
+    {:noreply, socket |> sort_entries(:languages, params)}
+  end
+
+  defp add_entity_to(socket, key) when is_atom(key) do
     socket
     |> update(:form, fn %{source: changeset} ->
       changeset |> Resume.add_entity(key) |> to_form()
@@ -131,6 +127,21 @@ defmodule ModernResumeWeb.CVShowLive do
     socket
     |> assign(cv: cv)
     |> assign(form: form)
+  end
+
+  defp delete_entry(socket, key, %{"index" => index}) when is_atom(key) do
+    idx = String.to_integer(index)
+
+    case Resume.delete_entity(socket.assigns.cv, key, idx) do
+      {:ok, cv} ->
+        socket
+        |> assign(cv: cv)
+        |> assign(form: CV.changeset(cv, %{}) |> to_form())
+
+      {:error, changeset} ->
+        socket
+        |> assign(form: changeset |> to_form())
+    end
   end
 
   @impl true

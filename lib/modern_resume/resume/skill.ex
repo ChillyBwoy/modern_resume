@@ -10,7 +10,7 @@ defmodule ModernResume.Resume.Skill do
   end
 
   @doc false
-  def changeset(skill, attrs) do
+  def changeset(skill \\ %__MODULE__{}, attrs \\ %{}) do
     skill
     |> cast(attrs, [:title, :description])
     |> validate_required([:title, :description])

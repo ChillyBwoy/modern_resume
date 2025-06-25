@@ -90,6 +90,10 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
+  def update_cv(%Ecto.Changeset{} = changeset) do
+    changeset |> Repo.update()
+  end
+
   @doc """
   Deletes a cv.
 
@@ -113,16 +117,19 @@ defmodule ModernResume.Resume do
     Ecto.Changeset.put_embed(changeset, :content, content)
   end
 
-  def add_entity(changeset, :skills), do: add_entity_to_list(changeset, :skills, %Skill{})
+  @spec add_entity(Ecto.Changeset.t(), :educations | :experiences | :languages | :skills) ::
+          Ecto.Changeset.t()
+  def add_entity(changeset, :skills),
+    do: add_entity_to_list(changeset, :skills, Skill.changeset())
 
   def add_entity(changeset, :educations),
-    do: add_entity_to_list(changeset, :educations, %Education{})
+    do: add_entity_to_list(changeset, :educations, Education.changeset())
 
   def add_entity(changeset, :languages),
-    do: add_entity_to_list(changeset, :languages, %Language{})
+    do: add_entity_to_list(changeset, :languages, Language.changeset())
 
   def add_entity(changeset, :experiences),
-    do: add_entity_to_list(changeset, :experiences, %Experience{})
+    do: add_entity_to_list(changeset, :experiences, Experience.changeset())
 
   def sort_entities(%CV{} = cv, key, indexes) when is_atom(key) and is_list(indexes) do
     {:ok, entries} = Map.fetch(cv.content, key)
@@ -135,7 +142,22 @@ defmodule ModernResume.Resume do
 
     content =
       cv.content
-      |> Content.changeset(%{})
+      |> Content.changeset()
+      |> Ecto.Changeset.put_embed(key, new_entries)
+
+    cv
+    |> CV.changeset(%{})
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
+  end
+
+  def delete_entity(%CV{} = cv, key, index) when is_atom(key) and is_number(index) do
+    {:ok, entries} = Map.fetch(cv.content, key)
+    new_entries = entries |> List.delete_at(index)
+
+    content =
+      cv.content
+      |> Content.changeset()
       |> Ecto.Changeset.put_embed(key, new_entries)
 
     cv

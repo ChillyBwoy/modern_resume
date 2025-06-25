@@ -18,10 +18,11 @@ defmodule ModernResume.Resume.Language do
   end
 
   @doc false
-  def changeset(language, attrs) do
+  def changeset(language \\ %__MODULE__{}, attrs \\ %{}) do
     language
     |> cast(attrs, [:name, :fluency])
     |> validate_required([:name, :fluency])
+    |> validate_length(:name, min: 1)
     |> Validation.validate_latex_chars([:name])
   end
 

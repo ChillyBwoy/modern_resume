@@ -17,7 +17,7 @@ defmodule ModernResume.Resume.Content do
     embeds_many :languages, ModernResume.Resume.Language, on_replace: :delete
   end
 
-  def changeset(content, attrs) do
+  def changeset(content \\ %__MODULE__{}, attrs \\ %{}) do
     content
     |> cast(attrs, [:name, :position, :email, :phone, :birthdate, :location])
     |> validate_required([:name, :position])
