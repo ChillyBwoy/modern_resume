@@ -50,8 +50,11 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp entity(assigns) do
     ~H"""
-    <div class="group relative px-2 pr-10" data-index={@index}>
-      <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-xl focus-within:ring-1 focus-within:ring-gray-100 relative p-3 ring-1 ring-gray-200">
+    <div
+      class="group relative px-2 pr-10 focus-within:scale-100 scale-98 transition-[scale]"
+      data-index={@index}
+    >
+      <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 focus-within:ring-1 focus-within:ring-gray-100 relative p-3 ring-1 ring-gray-200 focus-within:bg-zinc-100">
         {render_slot(@inner_block)}
       </div>
 
@@ -87,7 +90,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp fieldset(assigns) do
     ~H"""
-    <fieldset>
+    <fieldset class="flex flex-col gap-2">
       <legend class="text-xl font-bold block px-2 mb-2">
         {@title}
       </legend>

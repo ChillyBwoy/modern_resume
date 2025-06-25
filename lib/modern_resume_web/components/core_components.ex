@@ -396,7 +396,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibolds">
+    <label for={@for} class="block text-sm font-semibold text-gray-600">
       {render_slot(@inner_block)}
     </label>
     """

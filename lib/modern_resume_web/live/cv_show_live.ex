@@ -147,7 +147,7 @@ defmodule ModernResumeWeb.CVShowLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="grid grid-rows-[auto_1fr] h-full p-6">
+    <div class="grid grid-rows-[auto_1fr] h-full p-6 ">
       <div class="grid grid-cols-3 items-center py-2">
         <.link navigate={~p"/cvs"} class="flex items-center gap-1">
           <.icon name="hero-chevron-left" class="size-4" />
