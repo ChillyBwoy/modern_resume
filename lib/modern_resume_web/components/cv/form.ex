@@ -83,6 +83,7 @@ defmodule ModernResumeWeb.CV.Form do
   end
 
   attr :id, :string, required: true
+  attr :parent_id, :string, required: true
   attr :title, :string, required: true
   attr :on_add, :string, default: nil
   attr :on_sort, :string, default: nil
@@ -95,7 +96,7 @@ defmodule ModernResumeWeb.CV.Form do
         {@title}
       </legend>
       <div
-        id={"#{@id}:list"}
+        id={"#{@id}:#{@parent_id}:list"}
         class="flex flex-col gap-2"
         data-sort-action={@on_sort}
         phx-hook="Sortable"
@@ -108,8 +109,9 @@ defmodule ModernResumeWeb.CV.Form do
       >
         <button
           type="button"
+          phx-value-parent_id={@parent_id}
           phx-click={@on_add}
-          class="size-8 bg-black rounded-full flex items-center justify-center z-10"
+          class="size-8 bg-black rounded-full flex items-center justify-center z-10 cursor-pointer"
         >
           <.icon name="hero-plus" class="size-6 text-white" />
         </button>
@@ -176,6 +178,18 @@ defmodule ModernResumeWeb.CV.Form do
   attr :sortable, :boolean, required: true
   attr :index, :integer, required: true
 
+  defp experience_detail_form(assigns) do
+    ~H"""
+    <.entity sortable={@sortable} on_delete="experience_details:delete" index={@form.index}>
+      <.input field={@form[:content]} label="Content" phx-debounce="blur" />
+    </.entity>
+    """
+  end
+
+  attr :form, Phoenix.HTML.Form, required: true
+  attr :sortable, :boolean, required: true
+  attr :index, :integer, required: true
+
   defp experience_form(assigns) do
     ~H"""
     <.entity sortable={@sortable} on_delete="experiences:delete" index={@form.index}>
@@ -196,6 +210,23 @@ defmodule ModernResumeWeb.CV.Form do
         <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
       </div>
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
+
+      <.fieldset
+        :if={assigns.form.data.id != nil}
+        id="experience_details"
+        title="Details"
+        on_add="experience_details:add"
+        on_sort="experience_details:sort"
+        parent_id={assigns.form.data.id}
+      >
+        <.inputs_for :let={details} field={@form[:details]}>
+          <.experience_detail_form
+            form={details}
+            index={details.index}
+            sortable={is_sortable(@form, :details)}
+          />
+        </.inputs_for>
+      </.fieldset>
     </.entity>
     """
   end
@@ -222,11 +253,17 @@ defmodule ModernResumeWeb.CV.Form do
   defp content_form(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
-      <.fieldset id="basic_info" title="Basic Information">
+      <.fieldset id="basic_info" parent_id="content" title="Basic Information">
         <.basic_info_form form={@form} />
       </.fieldset>
 
-      <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
+      <.fieldset
+        id="skills"
+        parent_id="content"
+        title="Skills"
+        on_add="skills:add"
+        on_sort="skills:sort"
+      >
         <.inputs_for :let={skill} field={@form[:skills]}>
           <.skill_form form={skill} index={skill.index} sortable={is_sortable(@form, :skills)} />
         </.inputs_for>
@@ -234,6 +271,7 @@ defmodule ModernResumeWeb.CV.Form do
 
       <.fieldset
         id="experiences"
+        parent_id="content"
         title="Experience"
         on_add="experiences:add"
         on_sort="experiences:sort"
@@ -247,7 +285,13 @@ defmodule ModernResumeWeb.CV.Form do
         </.inputs_for>
       </.fieldset>
 
-      <.fieldset id="educations" title="Education" on_add="educations:add" on_sort="educations:sort">
+      <.fieldset
+        id="educations"
+        parent_id="content"
+        title="Education"
+        on_add="educations:add"
+        on_sort="educations:sort"
+      >
         <.inputs_for :let={education} field={@form[:educations]}>
           <.education_form
             form={education}
@@ -259,6 +303,7 @@ defmodule ModernResumeWeb.CV.Form do
 
       <.fieldset
         id="languages"
+        parent_id="content"
         title="Foreign Languages"
         on_add="languages:add"
         on_sort="languages:sort"

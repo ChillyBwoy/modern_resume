@@ -15,6 +15,7 @@ defmodule ModernResume.Resume do
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Education
   alias ModernResume.Resume.Experience
+  alias ModernResume.Resume.ExperienceDetail
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Skill
 
@@ -110,26 +111,46 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  defp add_entity_to_list(%Ecto.Changeset{} = changeset, key, entity) when is_atom(key) do
+  def add_nested_entity(%Ecto.Changeset{} = changeset, {src_key, target_key}, src_id, new_entity) do
     content = Ecto.Changeset.get_embed(changeset, :content)
-    entities = Ecto.Changeset.get_embed(content, key)
-    content = Ecto.Changeset.put_embed(content, key, entities ++ [entity])
+
+    entities =
+      Ecto.Changeset.get_embed(content, src_key)
+      |> Enum.map(fn entity ->
+        if entity.data.id == src_id do
+          target_list = Ecto.Changeset.get_embed(entity, target_key)
+          Ecto.Changeset.put_embed(entity, target_key, target_list ++ [new_entity])
+        else
+          entity
+        end
+      end)
+
+    content = Ecto.Changeset.put_embed(content, src_key, entities)
     Ecto.Changeset.put_embed(changeset, :content, content)
   end
 
-  @spec add_entity(Ecto.Changeset.t(), :educations | :experiences | :languages | :skills) ::
-          Ecto.Changeset.t()
+  def add_nested_entity(%Ecto.Changeset{} = changeset, :experience_details, src_id) do
+    add_nested_entity(changeset, {:experiences, :details}, src_id, ExperienceDetail.changeset())
+  end
+
+  def add_entity(%Ecto.Changeset{} = changeset, key, new_entity) when is_atom(key) do
+    content = Ecto.Changeset.get_embed(changeset, :content)
+    entities = Ecto.Changeset.get_embed(content, key)
+    content = Ecto.Changeset.put_embed(content, key, entities ++ [new_entity])
+    Ecto.Changeset.put_embed(changeset, :content, content)
+  end
+
   def add_entity(changeset, :skills),
-    do: add_entity_to_list(changeset, :skills, Skill.changeset())
+    do: add_entity(changeset, :skills, Skill.changeset())
 
   def add_entity(changeset, :educations),
-    do: add_entity_to_list(changeset, :educations, Education.changeset())
+    do: add_entity(changeset, :educations, Education.changeset())
 
   def add_entity(changeset, :languages),
-    do: add_entity_to_list(changeset, :languages, Language.changeset())
+    do: add_entity(changeset, :languages, Language.changeset())
 
   def add_entity(changeset, :experiences),
-    do: add_entity_to_list(changeset, :experiences, Experience.changeset())
+    do: add_entity(changeset, :experiences, Experience.changeset())
 
   def sort_entities(%CV{} = cv, key, indexes) when is_atom(key) and is_list(indexes) do
     {:ok, entries} = Map.fetch(cv.content, key)

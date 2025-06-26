@@ -14,7 +14,7 @@ defmodule ModernResume.Resume.CV do
   end
 
   @doc false
-  def changeset(cv, attrs) do
+  def changeset(cv \\ %__MODULE__{}, attrs \\ %{}) do
     cv
     |> cast(attrs, [:title, :user_id])
     |> validate_required([:title, :user_id])

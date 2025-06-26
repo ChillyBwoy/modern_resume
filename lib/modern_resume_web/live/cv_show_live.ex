@@ -60,12 +60,12 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("skills:delete", params, socket) do
-    {:noreply, socket |> delete_entry(:skills, params)}
+    {:noreply, socket |> delete_entity(:skills, params)}
   end
 
   @impl true
   def handle_event("skills:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:skills, params)}
+    {:noreply, socket |> sort_entities(:skills, params)}
   end
 
   @impl true
@@ -75,12 +75,16 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("experiences:delete", params, socket) do
-    {:noreply, socket |> delete_entry(:experiences, params)}
+    {:noreply, socket |> delete_entity(:experiences, params)}
   end
 
   @impl true
   def handle_event("experiences:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:experiences, params)}
+    {:noreply, socket |> sort_entities(:experiences, params)}
+  end
+
+  def handle_event("experience_details:add", %{"parent_id" => experience_id}, socket) do
+    {:noreply, socket |> add_nested_entity_to(:experience_details, experience_id)}
   end
 
   @impl true
@@ -90,12 +94,12 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("educations:delete", params, socket) do
-    {:noreply, socket |> delete_entry(:educations, params)}
+    {:noreply, socket |> delete_entity(:educations, params)}
   end
 
   @impl true
   def handle_event("educations:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:educations, params)}
+    {:noreply, socket |> sort_entities(:educations, params)}
   end
 
   @impl true
@@ -105,12 +109,19 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("languages:delete", params, socket) do
-    {:noreply, socket |> delete_entry(:languages, params)}
+    {:noreply, socket |> delete_entity(:languages, params)}
   end
 
   @impl true
   def handle_event("languages:sort", params, socket) do
-    {:noreply, socket |> sort_entries(:languages, params)}
+    {:noreply, socket |> sort_entities(:languages, params)}
+  end
+
+  defp add_nested_entity_to(socket, key, id) do
+    socket
+    |> update(:form, fn %{source: changeset} ->
+      changeset |> Resume.add_nested_entity(key, id) |> to_form()
+    end)
   end
 
   defp add_entity_to(socket, key) when is_atom(key) do
@@ -120,7 +131,7 @@ defmodule ModernResumeWeb.CVShowLive do
     end)
   end
 
-  defp sort_entries(socket, key, params) when is_atom(key) and is_list(params) do
+  defp sort_entities(socket, key, params) when is_atom(key) and is_list(params) do
     {:ok, cv} = Resume.sort_entities(socket.assigns.cv, key, params)
     form = CV.changeset(cv, %{}) |> to_form()
 
@@ -129,7 +140,7 @@ defmodule ModernResumeWeb.CVShowLive do
     |> assign(form: form)
   end
 
-  defp delete_entry(socket, key, %{"index" => index}) when is_atom(key) do
+  defp delete_entity(socket, key, %{"index" => index}) when is_atom(key) do
     idx = String.to_integer(index)
 
     case Resume.delete_entity(socket.assigns.cv, key, idx) do

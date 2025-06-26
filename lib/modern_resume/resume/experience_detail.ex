@@ -9,7 +9,7 @@ defmodule ModernResume.Resume.ExperienceDetail do
   end
 
   @doc false
-  def changeset(experience_detail, attrs) do
+  def changeset(experience_detail \\ %__MODULE__{}, attrs \\ %{}) do
     experience_detail
     |> cast(attrs, [:content])
     |> validate_required([:content])
