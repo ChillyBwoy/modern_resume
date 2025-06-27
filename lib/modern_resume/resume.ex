@@ -19,15 +19,6 @@ defmodule ModernResume.Resume do
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Skill
 
-  @doc """
-  Returns the list of cvs.
-
-  ## Examples
-
-      iex> list_cvs()
-      [%CV{}, ...]
-
-  """
   def list_cvs do
     Repo.all(CV)
   end
@@ -37,54 +28,16 @@ defmodule ModernResume.Resume do
     Repo.all(query)
   end
 
-  @doc """
-  Gets a single cv.
-
-  Raises `Ecto.NoResultsError` if the Cv does not exist.
-
-  ## Examples
-
-      iex> get_cv!(123)
-      %CV{}
-
-      iex> get_cv!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_cv(id) when is_uuid(id) do
     Repo.get!(CV, id)
   end
 
-  @doc """
-  Creates a cv.
-
-  ## Examples
-
-      iex> create_cv(%{field: value})
-      {:ok, %CV{}}
-
-      iex> create_cv(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_cv(attrs \\ %{}) do
     %CV{}
     |> CV.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a cv.
-
-  ## Examples
-
-      iex> update_cv(cv, %{field: new_value})
-      {:ok, %CV{}}
-
-      iex> update_cv(cv, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_cv(%CV{} = cv, attrs) do
     cv
     |> CV.changeset(attrs)
@@ -95,42 +48,8 @@ defmodule ModernResume.Resume do
     changeset |> Repo.update()
   end
 
-  @doc """
-  Deletes a cv.
-
-  ## Examples
-
-      iex> delete_cv(cv)
-      {:ok, %CV{}}
-
-      iex> delete_cv(cv)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_cv(%CV{} = cv) do
     Repo.delete(cv)
-  end
-
-  def add_nested_entity(%Ecto.Changeset{} = changeset, {src_key, target_key}, src_id, new_entity) do
-    content = Ecto.Changeset.get_embed(changeset, :content)
-
-    entities =
-      Ecto.Changeset.get_embed(content, src_key)
-      |> Enum.map(fn entity ->
-        if entity.data.id == src_id do
-          target_list = Ecto.Changeset.get_embed(entity, target_key)
-          Ecto.Changeset.put_embed(entity, target_key, target_list ++ [new_entity])
-        else
-          entity
-        end
-      end)
-
-    content = Ecto.Changeset.put_embed(content, src_key, entities)
-    Ecto.Changeset.put_embed(changeset, :content, content)
-  end
-
-  def add_nested_entity(%Ecto.Changeset{} = changeset, :experience_details, src_id) do
-    add_nested_entity(changeset, {:experiences, :details}, src_id, ExperienceDetail.changeset())
   end
 
   def add_entity(%Ecto.Changeset{} = changeset, key, new_entity) when is_atom(key) do
@@ -160,7 +79,7 @@ defmodule ModernResume.Resume do
     else
       entities_map = Enum.map(entities, &{&1.id, &1}) |> Map.new()
 
-      new_entries =
+      new_entities =
         Enum.map(ordered_ids, fn id ->
           Map.fetch!(entities_map, id)
         end)
@@ -168,7 +87,7 @@ defmodule ModernResume.Resume do
       content =
         cv.content
         |> Content.changeset()
-        |> Ecto.Changeset.put_embed(key, new_entries)
+        |> Ecto.Changeset.put_embed(key, new_entities)
 
       cv
       |> CV.changeset(%{})
@@ -178,17 +97,65 @@ defmodule ModernResume.Resume do
   end
 
   def delete_entity(%CV{} = cv, key, id) when is_atom(key) and is_uuid(id) do
-    {:ok, entries} = Map.fetch(cv.content, key)
-    new_entries = entries |> Enum.filter(&(&1.id != id))
+    {:ok, entities} = Map.fetch(cv.content, key)
+    new_entities = Enum.filter(entities, &(&1.id != id))
 
     content =
       cv.content
       |> Content.changeset()
-      |> Ecto.Changeset.put_embed(key, new_entries)
+      |> Ecto.Changeset.put_embed(key, new_entities)
 
     cv
     |> CV.changeset(%{})
     |> Ecto.Changeset.put_embed(:content, content)
     |> Repo.update()
   end
+
+  def add_nested_entity(%Ecto.Changeset{} = changeset, {parent_key, child_key}, src_id) do
+    content = Ecto.Changeset.get_embed(changeset, :content)
+    new_entity = get_nested_child_changeset({parent_key, child_key})
+
+    entities =
+      Ecto.Changeset.get_embed(content, parent_key)
+      |> Enum.map(fn entity ->
+        if entity.data.id == src_id do
+          target_list = Ecto.Changeset.get_embed(entity, child_key)
+          Ecto.Changeset.put_embed(entity, child_key, target_list ++ [new_entity])
+        else
+          entity
+        end
+      end)
+
+    content = Ecto.Changeset.put_embed(content, parent_key, entities)
+    Ecto.Changeset.put_embed(changeset, :content, content)
+  end
+
+  def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, id) when is_uuid(id) do
+    {:ok, entities} = Map.fetch(cv.content, parent_key)
+
+    new_entities =
+      entities
+      |> Enum.map(fn entity ->
+        {:ok, nested_entities} = Map.fetch(entity, child_key)
+        new_nested_entities = nested_entities |> Enum.filter(&(&1.id != id))
+
+        entity
+        |> get_nested_parent_changeset(parent_key)
+        |> Ecto.Changeset.put_embed(child_key, new_nested_entities)
+      end)
+
+    content =
+      cv.content
+      |> Content.changeset()
+      |> Ecto.Changeset.put_embed(parent_key, new_entities)
+
+    cv
+    |> CV.changeset(%{})
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
+  end
+
+  defp get_nested_child_changeset({:experiences, :details}), do: ExperienceDetail.changeset()
+
+  defp get_nested_parent_changeset(exp, :experiences), do: Experience.changeset(exp)
 end

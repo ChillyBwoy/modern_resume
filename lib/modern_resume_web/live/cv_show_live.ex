@@ -74,8 +74,28 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("experience_details:add", %{"parent_id" => experience_id}, socket) do
-    {:noreply, socket |> add_nested_entity_to(:experience_details, experience_id)}
+  def handle_event("experience_details:add", %{"parent_id" => parent_id}, socket) do
+    {:noreply,
+     socket
+     |> update(:form, fn %{source: changeset} ->
+       changeset |> Resume.add_nested_entity({:experiences, :details}, parent_id) |> to_form()
+     end)}
+  end
+
+  @impl true
+  def handle_event("experience_details:delete", %{"id" => id}, socket) do
+    case Resume.delete_nested_entity(socket.assigns.cv, {:experiences, :details}, id) do
+      {:ok, cv} ->
+        {:noreply,
+         socket
+         |> assign(cv: cv)
+         |> assign(form: CV.changeset(cv, %{}) |> to_form())}
+
+      {:error, changeset} ->
+        {:noreply,
+         socket
+         |> assign(form: changeset |> to_form())}
+    end
   end
 
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
@@ -113,13 +133,6 @@ defmodule ModernResumeWeb.CVShowLive do
       {:error, _} ->
         socket |> put_flash(:error, "Unknown error")
     end
-  end
-
-  defp add_nested_entity_to(socket, key, id) do
-    socket
-    |> update(:form, fn %{source: changeset} ->
-      changeset |> Resume.add_nested_entity(key, id) |> to_form()
-    end)
   end
 
   @impl true

@@ -78,7 +78,7 @@ defmodule ModernResumeWeb.CV.Form do
             type="button"
             data-confirm="Delete this experience?"
             tabindex="-1"
-            class="flex items-center"
+            class="flex items-center cursor-pointer"
             phx-click={JS.push(@on_delete, value: %{id: @id})}
           >
             <.icon name="hero-trash" class="size-4 text-rose-600" />
