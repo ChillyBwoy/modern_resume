@@ -62,7 +62,6 @@ defmodule ModernResumeWeb.CV.Form do
     <div data-index={@index} data-id={@id} data-sortable>
       <div class="group relative px-2 transition-[scale] pr-10">
         <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 relative p-3 border border-gray-300 focus-within:bg-zinc-100">
-          <h3>{@id}</h3>
           {render_slot(@inner_block)}
         </div>
 
@@ -257,13 +256,12 @@ defmodule ModernResumeWeb.CV.Form do
 
       <:extra>
         <.fieldset
-          :if={assigns.form.data.id != nil}
-          id={"experiences:#{assigns.form.data.id}:experience_details"}
+          id={"experiences:#{@form.data.id}:experience_details"}
           title="Details"
           variant={:tiny}
           on_add="experience_details:add"
           on_sort="experience_details:sort"
-          parent_id={assigns.form.data.id}
+          parent_id={@form.data.id}
         >
           <.inputs_for :let={details} field={@form[:details]}>
             <.experience_detail_form

@@ -44,6 +44,7 @@ defmodule ModernResume.Resume.Experience do
       :employment_type,
       :organization
     ])
+    |> cast_embed(:details)
     |> validate_required([:title, :date_start_month, :date_start_year])
     |> Validation.validate_latex_chars([
       :title,

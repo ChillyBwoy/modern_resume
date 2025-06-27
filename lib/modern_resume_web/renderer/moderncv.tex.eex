@@ -16,6 +16,8 @@
 \\usepackage{enumerate}
 \\usepackage{fontawesome5}
 
+\\renewcommand{\\listitemsymbol}{–~}
+
 \\title{<%= str(@cv.position) %>}
 \\name{<%= str(@cv.name) %>}{}
 
