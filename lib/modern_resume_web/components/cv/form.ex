@@ -47,36 +47,41 @@ defmodule ModernResumeWeb.CV.Form do
   attr :index, :integer, default: nil
 
   slot :inner_block, required: true
+  slot :extra, required: false
 
   defp entity(assigns) do
     ~H"""
-    <div
-      class="group relative px-2 pr-10 focus-within:scale-100 scale-98 transition-[scale]"
-      data-index={@index}
-    >
-      <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 focus-within:ring-1 focus-within:ring-gray-100 relative p-3 ring-1 ring-gray-200 focus-within:bg-zinc-100">
-        {render_slot(@inner_block)}
-      </div>
+    <div data-index={@index}>
+      <div class="group relative px-2 pr-10  transition-[scale]">
+        <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 relative p-3 border border-gray-300 focus-within:bg-zinc-100">
+          {render_slot(@inner_block)}
+        </div>
 
-      <div
-        :if={@on_delete != nil or @sortable}
-        class="absolute opacity-0 group-hover:opacity-100 top-0 right-0 bg-white px-2 py-1 rounded-lg ring-1 ring-gray-200 flex flex-col items-center gap-4 pointer-events-auto focus:outline-none"
-        tabindex="0"
-      >
-        <span :if={@sortable} data-type="sort-handle" class="flex items-center">
-          <.icon name="hero-bars-3" class="size-4 text-gray-600 cursor-move" />
-        </span>
-        <button
-          :if={@on_delete != nil}
-          type="button"
-          data-confirm="Delete this experience?"
-          phx-value-index={@index}
-          phx-click={@on_delete}
-          tabindex="-1"
-          class="flex items-center"
+        <div
+          :if={@on_delete != nil or @sortable}
+          class="absolute opacity-0 group-hover:opacity-100 top-0 right-0 bg-white px-2 py-1 rounded-lg border border-gray-300 flex flex-col items-center gap-4 pointer-events-auto focus:outline-none"
+          tabindex="0"
         >
-          <.icon name="hero-trash" class="size-4 text-rose-600" />
-        </button>
+          <span :if={@sortable} data-type="sort-handle" class="flex items-center">
+            <.icon name="hero-bars-3" class="size-4 text-gray-600 cursor-move" />
+          </span>
+          <button
+            :if={@on_delete != nil}
+            type="button"
+            data-confirm="Delete this experience?"
+            phx-value-index={@index}
+            phx-click={@on_delete}
+            tabindex="-1"
+            class="flex items-center"
+          >
+            <.icon name="hero-trash" class="size-4 text-rose-600" />
+          </button>
+        </div>
+      </div>
+      <div :if={@extra != []} class="pl-20 pr-10">
+        <div class="border-l border-b border-r rounded-b-md border-gray-300 pb-4">
+          {render_slot(@extra)}
+        </div>
       </div>
     </div>
     """
@@ -97,7 +102,7 @@ defmodule ModernResumeWeb.CV.Form do
       </legend>
       <div
         id={"#{@id}:#{@parent_id}:list"}
-        class="flex flex-col gap-2"
+        class="flex flex-col gap-4"
         data-sort-action={@on_sort}
         phx-hook="Sortable"
       >
@@ -211,22 +216,24 @@ defmodule ModernResumeWeb.CV.Form do
       </div>
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
 
-      <.fieldset
-        :if={assigns.form.data.id != nil}
-        id="experience_details"
-        title="Details"
-        on_add="experience_details:add"
-        on_sort="experience_details:sort"
-        parent_id={assigns.form.data.id}
-      >
-        <.inputs_for :let={details} field={@form[:details]}>
-          <.experience_detail_form
-            form={details}
-            index={details.index}
-            sortable={is_sortable(@form, :details)}
-          />
-        </.inputs_for>
-      </.fieldset>
+      <:extra>
+        <.fieldset
+          :if={assigns.form.data.id != nil}
+          id="experience_details"
+          title="Details"
+          on_add="experience_details:add"
+          on_sort="experience_details:sort"
+          parent_id={assigns.form.data.id}
+        >
+          <.inputs_for :let={details} field={@form[:details]}>
+            <.experience_detail_form
+              form={details}
+              index={details.index}
+              sortable={is_sortable(@form, :details)}
+            />
+          </.inputs_for>
+        </.fieldset>
+      </:extra>
     </.entity>
     """
   end
