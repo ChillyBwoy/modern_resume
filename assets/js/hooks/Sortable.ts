@@ -22,18 +22,16 @@ export default (): Hook => ({
       dragClass: CLASSES.drag,
       handle: SELECTOR.handle,
       onEnd: () => {
-        const data = Array.from(this.el.children).reduce<number[]>(
-          (acc, el) => {
-            const index = (el as HTMLElement).dataset.index;
-            if (index == null) {
-              return acc;
-            }
-            acc.push(parseInt(index, 10));
-            return acc;
-          },
-          []
-        );
-        this.pushEvent(sortEvent, data);
+        const orderedIds: string[] = [];
+
+        for (const el of this.el.children) {
+          const dataset = (el as HTMLElement).dataset;
+          if (dataset.sortable != null && dataset.id != null) {
+            orderedIds.push(dataset.id);
+          }
+        }
+
+        this.pushEvent(sortEvent, orderedIds);
       },
     });
   },

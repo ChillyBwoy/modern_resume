@@ -3,6 +3,8 @@ defmodule ModernResumeWeb.CV.Form do
 
   import ModernResumeWeb.CoreComponents
 
+  alias Phoenix.LiveView.JS
+
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
 
@@ -42,37 +44,43 @@ defmodule ModernResumeWeb.CV.Form do
     """
   end
 
+  attr :id, :string, default: nil
   attr :on_delete, :string, default: nil
-  attr :sortable, :boolean, required: true
+  attr :sortable, :boolean, default: false
   attr :index, :integer, default: nil
 
   slot :inner_block, required: true
   slot :extra, required: false
 
   defp entity(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:is_delitable, fn -> assigns.on_delete != nil and assigns.id != nil end)
+      |> assign_new(:is_sortable, fn -> assigns.sortable and assigns.id != nil end)
+
     ~H"""
-    <div data-index={@index}>
-      <div class="group relative px-2 pr-10  transition-[scale]">
+    <div data-index={@index} data-id={@id} data-sortable>
+      <div class="group relative px-2 transition-[scale] pr-10">
         <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 relative p-3 border border-gray-300 focus-within:bg-zinc-100">
+          <h3>{@id}</h3>
           {render_slot(@inner_block)}
         </div>
 
         <div
-          :if={@on_delete != nil or @sortable}
+          :if={@is_delitable or @is_sortable}
           class="absolute opacity-0 group-hover:opacity-100 top-0 right-0 bg-white px-2 py-1 rounded-lg border border-gray-300 flex flex-col items-center gap-4 pointer-events-auto focus:outline-none"
           tabindex="0"
         >
-          <span :if={@sortable} data-type="sort-handle" class="flex items-center">
+          <span :if={@is_sortable} data-type="sort-handle" class="flex items-center">
             <.icon name="hero-bars-3" class="size-4 text-gray-600 cursor-move" />
           </span>
           <button
-            :if={@on_delete != nil}
+            :if={@is_delitable}
             type="button"
             data-confirm="Delete this experience?"
-            phx-value-index={@index}
-            phx-click={@on_delete}
             tabindex="-1"
             class="flex items-center"
+            phx-click={JS.push(@on_delete, value: %{id: @id})}
           >
             <.icon name="hero-trash" class="size-4 text-rose-600" />
           </button>
@@ -87,11 +95,44 @@ defmodule ModernResumeWeb.CV.Form do
     """
   end
 
+  attr :variant, :atom, values: [:full, :tiny], default: :full
+  attr :on_add, JS, required: true
+
+  defp fieldset_add(%{variant: :full} = assigns) do
+    ~H"""
+    <div class="px-2 relative flex items-center justify-center before:absolute before:h-px before:bg-gray-200 before:left-2 before:right-2">
+      <button
+        type="button"
+        phx-click={@on_add}
+        class="size-8 bg-black rounded-full flex items-center justify-center z-10 cursor-pointer"
+      >
+        <.icon name="hero-plus" class="size-6 text-white" />
+      </button>
+    </div>
+    """
+  end
+
+  defp fieldset_add(%{variant: :tiny} = assigns) do
+    ~H"""
+    <div class="px-2 relative flex items-center justify-start before:absolute before:h-px before:bg-gray-200 before:left-2 before:right-2">
+      <button
+        type="button"
+        phx-click={@on_add}
+        class="size-5 bg-black rounded-lg flex items-center justify-center z-10 cursor-pointer"
+      >
+        <.icon name="hero-plus" class="size-4 text-white" />
+      </button>
+    </div>
+    """
+  end
+
   attr :id, :string, required: true
-  attr :parent_id, :string, required: true
+  attr :parent_id, :string, default: nil
   attr :title, :string, required: true
   attr :on_add, :string, default: nil
   attr :on_sort, :string, default: nil
+  attr :variant, :atom, values: [:full, :tiny], default: :full
+
   slot :inner_block, required: true
 
   defp fieldset(assigns) do
@@ -100,27 +141,15 @@ defmodule ModernResumeWeb.CV.Form do
       <legend class="text-xl font-bold block px-2 mb-2">
         {@title}
       </legend>
-      <div
-        id={"#{@id}:#{@parent_id}:list"}
-        class="flex flex-col gap-4"
-        data-sort-action={@on_sort}
-        phx-hook="Sortable"
-      >
+      <div id={@id} class="flex flex-col gap-4" data-sort-action={@on_sort} phx-hook="Sortable">
         {render_slot(@inner_block)}
       </div>
-      <div
+
+      <.fieldset_add
         :if={@on_add != nil}
-        class="relative flex items-center justify-center before:absolute before:h-px before:bg-gray-200 before:left-0 before:right-0"
-      >
-        <button
-          type="button"
-          phx-value-parent_id={@parent_id}
-          phx-click={@on_add}
-          class="size-8 bg-black rounded-full flex items-center justify-center z-10 cursor-pointer"
-        >
-          <.icon name="hero-plus" class="size-6 text-white" />
-        </button>
-      </div>
+        variant={@variant}
+        on_add={JS.push(@on_add, value: %{parent_id: @parent_id})}
+      />
     </fieldset>
     """
   end
@@ -131,7 +160,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp language_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="languages:delete" index={@form.index}>
+    <.entity id={@form.data.id} sortable={@sortable} on_delete="languages:delete" index={@form.index}>
       <div class="grid grid-cols-2 gap-4">
         <.input field={@form[:name]} label="Name" phx-debounce="blur" />
         <.input
@@ -152,7 +181,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp education_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="educations:delete" index={@form.index}>
+    <.entity id={@form.data.id} sortable={@sortable} on_delete="educations:delete" index={@form.index}>
       <.input field={@form[:degree]} label="Degree" phx-debounce="blur" />
       <.input field={@form[:institution]} label="Institution" phx-debounce="blur" />
       <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" />
@@ -172,7 +201,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp skill_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="skills:delete" index={@form.index}>
+    <.entity id={@form.data.id} sortable={@sortable} on_delete="skills:delete" index={@form.index}>
       <.input field={@form[:title]} label="Title" phx-debounce="blur" />
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
     </.entity>
@@ -185,7 +214,12 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp experience_detail_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="experience_details:delete" index={@form.index}>
+    <.entity
+      id={@form.data.id}
+      sortable={@sortable}
+      on_delete="experience_details:delete"
+      index={@form.index}
+    >
       <.input field={@form[:content]} label="Content" phx-debounce="blur" />
     </.entity>
     """
@@ -197,7 +231,12 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp experience_form(assigns) do
     ~H"""
-    <.entity sortable={@sortable} on_delete="experiences:delete" index={@form.index}>
+    <.entity
+      id={@form.data.id}
+      sortable={@sortable}
+      on_delete="experiences:delete"
+      index={@form.index}
+    >
       <div class="grid grid-cols-[2fr_1fr] gap-4">
         <.input field={@form[:title]} label="Title" phx-debounce="blur" />
         <.input
@@ -219,8 +258,9 @@ defmodule ModernResumeWeb.CV.Form do
       <:extra>
         <.fieldset
           :if={assigns.form.data.id != nil}
-          id="experience_details"
+          id={"experiences:#{assigns.form.data.id}:experience_details"}
           title="Details"
+          variant={:tiny}
           on_add="experience_details:add"
           on_sort="experience_details:sort"
           parent_id={assigns.form.data.id}
@@ -242,7 +282,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   defp basic_info_form(assigns) do
     ~H"""
-    <.entity sortable={false}>
+    <.entity>
       <.input field={@form[:position]} label="Title" phx-debounce="blur" />
       <.input field={@form[:name]} label="Name" phx-debounce="blur" />
       <div class="grid grid-cols-2 gap-4">
@@ -260,17 +300,11 @@ defmodule ModernResumeWeb.CV.Form do
   defp content_form(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
-      <.fieldset id="basic_info" parent_id="content" title="Basic Information">
+      <.fieldset id="basic_info" title="Basic Information">
         <.basic_info_form form={@form} />
       </.fieldset>
 
-      <.fieldset
-        id="skills"
-        parent_id="content"
-        title="Skills"
-        on_add="skills:add"
-        on_sort="skills:sort"
-      >
+      <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
         <.inputs_for :let={skill} field={@form[:skills]}>
           <.skill_form form={skill} index={skill.index} sortable={is_sortable(@form, :skills)} />
         </.inputs_for>
@@ -278,7 +312,6 @@ defmodule ModernResumeWeb.CV.Form do
 
       <.fieldset
         id="experiences"
-        parent_id="content"
         title="Experience"
         on_add="experiences:add"
         on_sort="experiences:sort"
@@ -292,13 +325,7 @@ defmodule ModernResumeWeb.CV.Form do
         </.inputs_for>
       </.fieldset>
 
-      <.fieldset
-        id="educations"
-        parent_id="content"
-        title="Education"
-        on_add="educations:add"
-        on_sort="educations:sort"
-      >
+      <.fieldset id="educations" title="Education" on_add="educations:add" on_sort="educations:sort">
         <.inputs_for :let={education} field={@form[:educations]}>
           <.education_form
             form={education}
@@ -310,7 +337,6 @@ defmodule ModernResumeWeb.CV.Form do
 
       <.fieldset
         id="languages"
-        parent_id="content"
         title="Foreign Languages"
         on_add="languages:add"
         on_sort="languages:sort"
@@ -332,7 +358,7 @@ defmodule ModernResumeWeb.CV.Form do
   def cv_form(assigns) do
     ~H"""
     <.form for={@form} phx-change="cv:save" phx-submit="cv:save" class="flex flex-col gap-6">
-      <.entity sortable={false}>
+      <.entity>
         <.input field={@form[:title]} label="Title" phx-debounce="blur" />
       </.entity>
       <.inputs_for :let={content} field={@form[:content]}>

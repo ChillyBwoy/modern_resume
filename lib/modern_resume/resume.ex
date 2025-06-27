@@ -152,29 +152,34 @@ defmodule ModernResume.Resume do
   def add_entity(changeset, :experiences),
     do: add_entity(changeset, :experiences, Experience.changeset())
 
-  def sort_entities(%CV{} = cv, key, indexes) when is_atom(key) and is_list(indexes) do
-    {:ok, entries} = Map.fetch(cv.content, key)
+  def sort_entities(%CV{} = cv, key, ordered_ids) when is_atom(key) and is_list(ordered_ids) do
+    {:ok, entities} = Map.fetch(cv.content, key)
 
-    new_entries =
-      indexes
-      |> Enum.map(fn idx ->
-        Enum.at(entries, idx)
-      end)
+    if length(entities) != length(ordered_ids) do
+      {:error, :invalid_list}
+    else
+      entities_map = Enum.map(entities, &{&1.id, &1}) |> Map.new()
 
-    content =
-      cv.content
-      |> Content.changeset()
-      |> Ecto.Changeset.put_embed(key, new_entries)
+      new_entries =
+        Enum.map(ordered_ids, fn id ->
+          Map.fetch!(entities_map, id)
+        end)
 
-    cv
-    |> CV.changeset(%{})
-    |> Ecto.Changeset.put_embed(:content, content)
-    |> Repo.update()
+      content =
+        cv.content
+        |> Content.changeset()
+        |> Ecto.Changeset.put_embed(key, new_entries)
+
+      cv
+      |> CV.changeset(%{})
+      |> Ecto.Changeset.put_embed(:content, content)
+      |> Repo.update()
+    end
   end
 
-  def delete_entity(%CV{} = cv, key, index) when is_atom(key) and is_number(index) do
+  def delete_entity(%CV{} = cv, key, id) when is_atom(key) and is_uuid(id) do
     {:ok, entries} = Map.fetch(cv.content, key)
-    new_entries = entries |> List.delete_at(index)
+    new_entries = entries |> Enum.filter(&(&1.id != id))
 
     content =
       cv.content

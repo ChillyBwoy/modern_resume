@@ -54,96 +54,39 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("skills:add", _, socket) do
-    {:noreply, socket |> add_entity_to(:skills)}
+  def handle_event("skills:" <> action, params, socket) do
+    {:noreply, socket |> dispatch_entity(action, :skills, params)}
   end
 
   @impl true
-  def handle_event("skills:delete", params, socket) do
-    {:noreply, socket |> delete_entity(:skills, params)}
+  def handle_event("educations:" <> action, params, socket) do
+    {:noreply, socket |> dispatch_entity(action, :educations, params)}
   end
 
   @impl true
-  def handle_event("skills:sort", params, socket) do
-    {:noreply, socket |> sort_entities(:skills, params)}
+  def handle_event("languages:" <> action, params, socket) do
+    {:noreply, socket |> dispatch_entity(action, :languages, params)}
   end
 
   @impl true
-  def handle_event("experiences:add", _, socket) do
-    {:noreply, socket |> add_entity_to(:experiences)}
+  def handle_event("experiences:" <> action, params, socket) do
+    {:noreply, socket |> dispatch_entity(action, :experiences, params)}
   end
 
   @impl true
-  def handle_event("experiences:delete", params, socket) do
-    {:noreply, socket |> delete_entity(:experiences, params)}
-  end
-
-  @impl true
-  def handle_event("experiences:sort", params, socket) do
-    {:noreply, socket |> sort_entities(:experiences, params)}
-  end
-
   def handle_event("experience_details:add", %{"parent_id" => experience_id}, socket) do
     {:noreply, socket |> add_nested_entity_to(:experience_details, experience_id)}
   end
 
-  @impl true
-  def handle_event("educations:add", _, socket) do
-    {:noreply, socket |> add_entity_to(:educations)}
-  end
-
-  @impl true
-  def handle_event("educations:delete", params, socket) do
-    {:noreply, socket |> delete_entity(:educations, params)}
-  end
-
-  @impl true
-  def handle_event("educations:sort", params, socket) do
-    {:noreply, socket |> sort_entities(:educations, params)}
-  end
-
-  @impl true
-  def handle_event("languages:add", _, socket) do
-    {:noreply, socket |> add_entity_to(:languages)}
-  end
-
-  @impl true
-  def handle_event("languages:delete", params, socket) do
-    {:noreply, socket |> delete_entity(:languages, params)}
-  end
-
-  @impl true
-  def handle_event("languages:sort", params, socket) do
-    {:noreply, socket |> sort_entities(:languages, params)}
-  end
-
-  defp add_nested_entity_to(socket, key, id) do
-    socket
-    |> update(:form, fn %{source: changeset} ->
-      changeset |> Resume.add_nested_entity(key, id) |> to_form()
-    end)
-  end
-
-  defp add_entity_to(socket, key) when is_atom(key) do
+  defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
     socket
     |> update(:form, fn %{source: changeset} ->
       changeset |> Resume.add_entity(key) |> to_form()
     end)
   end
 
-  defp sort_entities(socket, key, params) when is_atom(key) and is_list(params) do
-    {:ok, cv} = Resume.sort_entities(socket.assigns.cv, key, params)
-    form = CV.changeset(cv, %{}) |> to_form()
-
-    socket
-    |> assign(cv: cv)
-    |> assign(form: form)
-  end
-
-  defp delete_entity(socket, key, %{"index" => index}) when is_atom(key) do
-    idx = String.to_integer(index)
-
-    case Resume.delete_entity(socket.assigns.cv, key, idx) do
+  defp dispatch_entity(socket, "delete", key, %{"id" => id}) when is_atom(key) do
+    case Resume.delete_entity(socket.assigns.cv, key, id) do
       {:ok, cv} ->
         socket
         |> assign(cv: cv)
@@ -153,6 +96,30 @@ defmodule ModernResumeWeb.CVShowLive do
         socket
         |> assign(form: changeset |> to_form())
     end
+  end
+
+  defp dispatch_entity(socket, "sort", key, params) when is_atom(key) do
+    case Resume.sort_entities(socket.assigns.cv, key, params) do
+      {:ok, cv} ->
+        form = CV.changeset(cv) |> to_form()
+
+        socket
+        |> assign(cv: cv)
+        |> assign(form: form)
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        socket |> assign(form: to_form(changeset))
+
+      {:error, _} ->
+        socket |> put_flash(:error, "Unknown error")
+    end
+  end
+
+  defp add_nested_entity_to(socket, key, id) do
+    socket
+    |> update(:form, fn %{source: changeset} ->
+      changeset |> Resume.add_nested_entity(key, id) |> to_form()
+    end)
   end
 
   @impl true
