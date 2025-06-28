@@ -10,10 +10,25 @@ const CLASSES = {
   drag: "sortable-drag",
 } as const;
 
+function extractSortAction(el: HTMLElement) {
+  if (el.dataset.sortAction == null) {
+    return null;
+  }
+
+  try {
+    const sortAction: JSAction<"sort">[] = JSON.parse(el.dataset.sortAction);
+    const [_, { target, event, value }] = sortAction[0];
+
+    return { target, event, value };
+  } catch {
+    return null;
+  }
+}
+
 export default (): Hook => ({
   mounted() {
-    const sortEvent = this.el.dataset.sortAction;
-    if (sortEvent == null) {
+    const sortAction = extractSortAction(this.el);
+    if (sortAction == null) {
       return;
     }
 
@@ -31,7 +46,10 @@ export default (): Hook => ({
           }
         }
 
-        this.pushEvent(sortEvent, orderedIds);
+        this.pushEvent(sortAction.event, {
+          ...(sortAction.value ?? {}),
+          ids: orderedIds,
+        });
       },
     });
   },

@@ -111,14 +111,14 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  def add_nested_entity(%Ecto.Changeset{} = changeset, {parent_key, child_key}, src_id) do
+  def add_nested_entity(%Ecto.Changeset{} = changeset, {parent_key, child_key}, parent_id) do
     content = Ecto.Changeset.get_embed(changeset, :content)
-    new_entity = get_nested_child_changeset({parent_key, child_key})
+    new_entity = get_child_changeset({parent_key, child_key})
 
     entities =
       Ecto.Changeset.get_embed(content, parent_key)
       |> Enum.map(fn entity ->
-        if entity.data.id == src_id do
+        if entity.data.id == parent_id do
           target_list = Ecto.Changeset.get_embed(entity, child_key)
           Ecto.Changeset.put_embed(entity, child_key, target_list ++ [new_entity])
         else
@@ -130,24 +130,25 @@ defmodule ModernResume.Resume do
     Ecto.Changeset.put_embed(changeset, :content, content)
   end
 
-  def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, id) when is_uuid(id) do
-    {:ok, entities} = Map.fetch(cv.content, parent_key)
+  def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, child_id)
+      when is_uuid(child_id) do
+    {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
-    new_entities =
-      entities
-      |> Enum.map(fn entity ->
-        {:ok, nested_entities} = Map.fetch(entity, child_key)
-        new_nested_entities = nested_entities |> Enum.filter(&(&1.id != id))
+    new_parent_entities =
+      parent_entities
+      |> Enum.map(fn parent ->
+        {:ok, children} = Map.fetch(parent, child_key)
+        new_children = children |> Enum.filter(&(&1.id != child_id))
 
-        entity
-        |> get_nested_parent_changeset(parent_key)
-        |> Ecto.Changeset.put_embed(child_key, new_nested_entities)
+        parent
+        |> get_parent_changeset(parent_key)
+        |> Ecto.Changeset.put_embed(child_key, new_children)
       end)
 
     content =
       cv.content
       |> Content.changeset()
-      |> Ecto.Changeset.put_embed(parent_key, new_entities)
+      |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
 
     cv
     |> CV.changeset(%{})
@@ -155,7 +156,42 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  defp get_nested_child_changeset({:experiences, :details}), do: ExperienceDetail.changeset()
+  def sort_nested_entities(%CV{} = cv, {parent_key, child_key}, parent_id, ordered_ids)
+      when is_uuid(parent_id) and is_list(ordered_ids) do
+    {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
-  defp get_nested_parent_changeset(exp, :experiences), do: Experience.changeset(exp)
+    new_parent_entities =
+      parent_entities
+      |> Enum.map(fn parent ->
+        if parent.id == parent_id do
+          {:ok, children} = Map.fetch(parent, child_key)
+          children_map = Enum.map(children, &{&1.id, &1}) |> Map.new()
+
+          sorted_children =
+            Enum.map(ordered_ids, fn id ->
+              Map.fetch!(children_map, id)
+            end)
+
+          parent
+          |> get_parent_changeset(parent_key)
+          |> Ecto.Changeset.put_embed(child_key, sorted_children)
+        else
+          parent
+        end
+      end)
+
+    content =
+      cv.content
+      |> Content.changeset()
+      |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
+
+    cv
+    |> CV.changeset(%{})
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
+  end
+
+  defp get_child_changeset({:experiences, :details}), do: ExperienceDetail.changeset()
+
+  defp get_parent_changeset(exp, :experiences), do: Experience.changeset(exp)
 end

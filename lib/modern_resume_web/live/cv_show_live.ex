@@ -98,6 +98,31 @@ defmodule ModernResumeWeb.CVShowLive do
     end
   end
 
+  @impl true
+  def handle_event(
+        "experience_details:sort",
+        %{"ids" => ordered_ids, "parent_id" => parent_id},
+        socket
+      ) do
+    case Resume.sort_nested_entities(
+           socket.assigns.cv,
+           {:experiences, :details},
+           parent_id,
+           ordered_ids
+         ) do
+      {:ok, cv} ->
+        form = CV.changeset(cv) |> to_form()
+
+        {:noreply,
+         socket
+         |> assign(cv: cv)
+         |> assign(form: form)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, socket |> assign(form: to_form(changeset))}
+    end
+  end
+
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
     socket
     |> update(:form, fn %{source: changeset} ->
@@ -118,8 +143,8 @@ defmodule ModernResumeWeb.CVShowLive do
     end
   end
 
-  defp dispatch_entity(socket, "sort", key, params) when is_atom(key) do
-    case Resume.sort_entities(socket.assigns.cv, key, params) do
+  defp dispatch_entity(socket, "sort", key, %{"ids" => ordered_ids}) when is_atom(key) do
+    case Resume.sort_entities(socket.assigns.cv, key, ordered_ids) do
       {:ok, cv} ->
         form = CV.changeset(cv) |> to_form()
 

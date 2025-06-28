@@ -140,7 +140,14 @@ defmodule ModernResumeWeb.CV.Form do
       <legend class="text-xl font-bold block px-2 mb-2">
         {@title}
       </legend>
-      <div id={@id} class="flex flex-col gap-4" data-sort-action={@on_sort} phx-hook="Sortable">
+      <div
+        id={@id}
+        class="flex flex-col gap-4"
+        data-sort-action={
+          if @on_sort != nil, do: JS.push(@on_sort, value: %{parent_id: @parent_id}), else: nil
+        }
+        phx-hook="Sortable"
+      >
         {render_slot(@inner_block)}
       </div>
 
