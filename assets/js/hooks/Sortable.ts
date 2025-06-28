@@ -1,6 +1,6 @@
 import { Hook } from "phoenix_live_view";
 import Sortable from "sortablejs";
-import { JSAction } from "../lib/types";
+import { extractHookAction } from "../lib/hook";
 
 const SELECTOR = {
   handle: "[data-type='sort-handle']",
@@ -10,24 +10,9 @@ const CLASSES = {
   drag: "sortable-drag",
 } as const;
 
-function extractSortAction(el: HTMLElement) {
-  if (el.dataset.sortAction == null) {
-    return null;
-  }
-
-  try {
-    const sortAction: JSAction<"sort">[] = JSON.parse(el.dataset.sortAction);
-    const [_, { target, event, value }] = sortAction[0];
-
-    return { target, event, value };
-  } catch {
-    return null;
-  }
-}
-
 export default (): Hook => ({
   mounted() {
-    const sortAction = extractSortAction(this.el);
+    const sortAction = extractHookAction<"sort">(this.el, "sortAction");
     if (sortAction == null) {
       return;
     }
