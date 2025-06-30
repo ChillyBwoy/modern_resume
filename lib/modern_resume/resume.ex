@@ -24,7 +24,7 @@ defmodule ModernResume.Resume do
   end
 
   def list_cvs_for(%User{} = user) do
-    query = from(cv in CV, where: cv.user_id == ^user.id)
+    query = from(cv in CV, where: cv.user_id == ^user.id, order_by: [desc: cv.updated_at])
     Repo.all(query)
   end
 

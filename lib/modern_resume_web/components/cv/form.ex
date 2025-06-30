@@ -60,14 +60,14 @@ defmodule ModernResumeWeb.CV.Form do
 
     ~H"""
     <div data-index={@index} data-id={@id} data-sortable>
-      <div class="group relative px-2 transition-[scale] pr-10">
-        <div class="flex flex-col gap-4 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 relative p-3 border border-gray-300 focus-within:bg-zinc-100">
+      <div class="relative px-2 transition-[scale] pr-10 group">
+        <div class="flex flex-col gap-2 rounded-lg focus-within:shadow-lg focus-within:shadow-black/40 relative p-3 border border-gray-200 bg-white">
           {render_slot(@inner_block)}
         </div>
 
         <div
           :if={@is_delitable or @is_sortable}
-          class="absolute opacity-0 group-hover:opacity-100 top-0 right-0 bg-white px-2 py-1 rounded-lg border border-gray-300 flex flex-col items-center gap-4 pointer-events-auto focus:outline-none"
+          class="absolute opacity-0 top-0 right-0 bg-white px-2 py-1 rounded-lg border border-gray-200 flex flex-col items-center gap-4 pointer-events-auto focus:outline-none group-hover:opacity-100"
           tabindex="0"
         >
           <span :if={@is_sortable} data-type="sort-handle" class="flex items-center">
@@ -85,8 +85,8 @@ defmodule ModernResumeWeb.CV.Form do
           </button>
         </div>
       </div>
-      <div :if={@extra != []} class="pl-20 pr-10">
-        <div class="border-l border-b border-r rounded-b-md border-gray-300 pb-4">
+      <div :if={@extra != []} class="pl-20 pr-10 pt-2">
+        <div class="pb-4">
           {render_slot(@extra)}
         </div>
       </div>
@@ -142,7 +142,7 @@ defmodule ModernResumeWeb.CV.Form do
       </legend>
       <div
         id={@id}
-        class="flex flex-col gap-4"
+        class="flex flex-col gap-2"
         data-sort-action={
           if @on_sort != nil, do: JS.push(@on_sort, value: %{parent_id: @parent_id}), else: nil
         }
@@ -369,7 +369,7 @@ defmodule ModernResumeWeb.CV.Form do
       <.inputs_for :let={content} field={@form[:content]}>
         <.content_form form={content} />
       </.inputs_for>
-      <div class="text-right">
+      <div class="text-right pr-10">
         <.button type="submit" class="w-full">Save</.button>
       </div>
     </.form>

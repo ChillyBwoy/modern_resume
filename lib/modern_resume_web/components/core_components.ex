@@ -231,8 +231,7 @@ defmodule ModernResumeWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
         @class
       ]}
       {@rest}
@@ -332,16 +331,22 @@ defmodule ModernResumeWeb.CoreComponents do
     ~H"""
     <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
-      <select
-        id={@id}
-        name={@name}
-        class="block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
-        multiple={@multiple}
-        {@rest}
-      >
-        <option :if={@prompt} value="">{@prompt}</option>
-        {Phoenix.HTML.Form.options_for_select(@options, @value)}
-      </select>
+      <div class="form-select relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4">
+        <select
+          id={@id}
+          name={@name}
+          class={[
+            "bg-form-background text-secondary-dark disabled:border-secondary-dark/20 disabled:text-secondary-light h-9 w-full appearance-none rounded-md border px-2 focus:ring-2 focus:outline-hidden",
+            @errors == [] && "border-secondary-light focus:ring-primary-light",
+            @errors != [] && "border-danger focus:ring-danger-light"
+          ]}
+          multiple={@multiple}
+          {@rest}
+        >
+          <option :if={@prompt} value="">{@prompt}</option>
+          {Phoenix.HTML.Form.options_for_select(@options, @value)}
+        </select>
+      </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -354,10 +359,11 @@ defmodule ModernResumeWeb.CoreComponents do
       <textarea
         id={@id}
         name={@name}
+        rows="5"
         class={[
-          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
+          @errors == [] && "border-secondary-light focus:ring-primary-light",
+          @errors != [] && "border-danger focus:ring-danger-light"
         ]}
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
@@ -377,9 +383,9 @@ defmodule ModernResumeWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block h-9 w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
+          @errors == [] && "border-secondary-light focus:ring-primary-light",
+          @errors != [] && "border-danger focus:ring-danger-light"
         ]}
         {@rest}
       />
@@ -409,8 +415,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+    <p class="fill-danger text-danger text-xs break-words">
       {render_slot(@inner_block)}
     </p>
     """

@@ -55,10 +55,10 @@ defmodule ModernResumeWeb.CVListLive do
             class="flex flex-col justify-between items-start mb-2 text-xl font-semibold text-gray-900 h-full"
           >
             {cv.title}
-            <span class="text-lg text-gray-600">TODO: position</span>
+            <span class="text-lg text-gray-600">{cv.content.position}</span>
             <span class="flex items-center text-sm text-gray-500 gap-2">
               <.icon name="hero-calendar" class="size-4" />
-              <span>Created {cv.inserted_at |> Date.to_string()}</span>
+              <span>{cv.inserted_at |> Timex.format!("%B %d, %Y %H:%M", :strftime)}</span>
             </span>
           </.link>
 

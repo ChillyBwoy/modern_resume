@@ -1,9 +1,27 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/forms";
 
-/* default is to use prefers-color-scheme */
-/* if you want dark mode via class: */
-@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --color-background: rgba(255, 255, 255);
+  --color-form-background: rgba(250, 250, 250);
+  --color-primary: rgba(29, 78, 216);
+  --color-primary-light: rgba(96, 165, 250);
+  --color-primary-dark: rgba(30, 58, 138);
+  --color-secondary: rgba(120, 113, 108);
+  --color-secondary-light: rgba(214, 211, 209);
+  --color-secondary-dark: rgba(51, 65, 85);
+  --color-success: rgba(132, 204, 22);
+  --color-success-light: rgba(217, 249, 157);
+  --color-success-dark: rgba(77, 124, 15);
+  --color-danger: rgba(239, 68, 68);
+  --color-danger-light: rgba(254, 202, 202);
+  --color-danger-dark: rgba(185, 28, 28);
+  --color-warning: rgba(245, 158, 11);
+  --color-warning-light: rgba(253, 230, 138);
+  --color-warning-dark: rgba(180, 83, 9);
+  --color-info: rgba(96, 165, 250);
+  --color-info-light: rgba(219, 234, 254);
+  --color-info-dark: rgba(59, 130, 246);
+}
 
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
 @custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
@@ -14,10 +32,6 @@
 @import "tailwindcss" source("../..");
 
 /* This file is for your main application CSS */
-
-:root {
-  --color-background: #fff;
-}
 
 [contenteditable="true"]:empty:before {
   content: attr(placeholder);
@@ -52,4 +66,8 @@
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
 
   background-attachment: local, local, scroll, scroll;
+}
+
+.form-select::after {
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 }

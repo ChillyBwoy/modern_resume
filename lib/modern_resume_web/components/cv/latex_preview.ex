@@ -61,12 +61,15 @@ defmodule ModernResumeWeb.CV.LatexPreview do
 
     ~H"""
     <div class="relative h-full w-full grid grid-rows-[auto_1fr] shadow-xl rounded-lg overflow-hidden">
-      <div class="bg-gray-200 p-2">
+      <div class="bg-gray-200 p-2 flex gap-4 items-center">
         <.button type="button" phx-target={@myself} phx-click="toggle" phx-disable-with="...">
           <.icon
             name={if @pdf != nil, do: "hero-code-bracket", else: "hero-document-check"}
             class="size-5"
           />
+        </.button>
+        <.button :if={@pdf == nil} type="button">
+          <.icon name="hero-clipboard-document" class="size-5" />
         </.button>
       </div>
       <%= if @pdf != nil do %>
@@ -79,7 +82,7 @@ defmodule ModernResumeWeb.CV.LatexPreview do
         />
       <% else %>
         <div class="relative">
-          <pre class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 text-xs p-4">{@tpl}</pre>
+          <pre class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 text-xs p-4 whitespace-pre-wrap bg-form-background">{@tpl}</pre>
         </div>
       <% end %>
     </div>
