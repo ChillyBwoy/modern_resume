@@ -52,24 +52,29 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
-  def add_entity(%Ecto.Changeset{} = changeset, key, new_entity) when is_atom(key) do
+  def add_entity(%CV{} = cv, key, new_entity) when is_atom(key) do
+    changeset = CV.changeset(cv)
+
     content = Ecto.Changeset.get_embed(changeset, :content)
     entities = Ecto.Changeset.get_embed(content, key)
     content = Ecto.Changeset.put_embed(content, key, entities ++ [new_entity])
-    Ecto.Changeset.put_embed(changeset, :content, content)
+
+    changeset
+    |> Ecto.Changeset.put_embed(:content, content)
+    |> Repo.update()
   end
 
-  def add_entity(changeset, :skills),
-    do: add_entity(changeset, :skills, Skill.changeset())
+  def add_entity(%CV{} = cv, :skills),
+    do: add_entity(cv, :skills, Skill.changeset())
 
-  def add_entity(changeset, :educations),
-    do: add_entity(changeset, :educations, Education.changeset())
+  def add_entity(%CV{} = cv, :educations),
+    do: add_entity(cv, :educations, Education.changeset())
 
-  def add_entity(changeset, :languages),
-    do: add_entity(changeset, :languages, Language.changeset())
+  def add_entity(%CV{} = cv, :languages),
+    do: add_entity(cv, :languages, Language.changeset())
 
-  def add_entity(changeset, :experiences),
-    do: add_entity(changeset, :experiences, Experience.changeset())
+  def add_entity(%CV{} = cv, :experiences),
+    do: add_entity(cv, :experiences, Experience.changeset())
 
   def sort_entities(%CV{} = cv, key, ordered_ids) when is_atom(key) and is_list(ordered_ids) do
     {:ok, entities} = Map.fetch(cv.content, key)

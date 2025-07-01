@@ -26,11 +26,6 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_info({:cv_changed, %CV{} = cv}, socket) do
-    {:noreply, socket |> assign(cv: cv)}
-  end
-
-  @impl true
   def handle_info({:preview, :error, reason}, socket) do
     {:noreply, socket |> put_flash(:error, "Error creating PDF: #{reason}")}
   end
@@ -124,10 +119,16 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
-    socket
-    |> update(:form, fn %{source: changeset} ->
-      changeset |> Resume.add_entity(key) |> to_form()
-    end)
+    case Resume.add_entity(socket.assigns.cv, key) do
+      {:ok, cv} ->
+        socket
+        |> assign(cv: cv)
+        |> assign(form: CV.changeset(cv) |> to_form())
+
+      {:error, changeset} ->
+        socket
+        |> assign(form: changeset |> to_form())
+    end
   end
 
   defp dispatch_entity(socket, "delete", key, %{"id" => id}) when is_atom(key) do
@@ -135,7 +136,7 @@ defmodule ModernResumeWeb.CVShowLive do
       {:ok, cv} ->
         socket
         |> assign(cv: cv)
-        |> assign(form: CV.changeset(cv, %{}) |> to_form())
+        |> assign(form: CV.changeset(cv) |> to_form())
 
       {:error, changeset} ->
         socket
