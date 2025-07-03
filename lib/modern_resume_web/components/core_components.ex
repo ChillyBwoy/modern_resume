@@ -231,7 +231,7 @@ defmodule ModernResumeWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
+        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark active:bg-primary focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
         @class
       ]}
       {@rest}
