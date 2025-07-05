@@ -28,7 +28,7 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
     Template.new("moderncv") |> Template.eval(assigns: [cv: cv.content])
   end
 
-  def render(%CV{} = cv, :string) do
+  def render(%CV{} = cv, :str) do
     content = render!(cv)
     {:ok, content}
   end

@@ -6,13 +6,13 @@ defmodule ModernResumeWeb.CVShowLive do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
-  alias ModernResumeWeb.Renderer.PdfWorker
-  alias ModernResumeWeb.Renderer.State
+  alias ModernResumeWeb.Renderer.RenderWorker
+  alias ModernResumeWeb.Renderer.RenderState
 
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
     if connected?(socket) do
-      PdfWorker.subscribe()
+      RenderWorker.subscribe()
     end
 
     case Resume.get_cv(id) do
@@ -20,6 +20,7 @@ defmodule ModernResumeWeb.CVShowLive do
         {:ok,
          socket
          |> assign(cv: cv)
+         |> assign(cv_state: RenderState.init())
          |> assign(form: CV.changeset(cv, %{}) |> to_form())
          |> assign(page_title: cv.title)
          |> render_cv(cv)}
@@ -34,15 +35,23 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_info({:renderer, data}, socket) do
+    cv_state = socket.assigns.cv_state
+
     case data do
       {:ok, :string, content} ->
-        {:noreply, socket |> assign(cv_state: State.source(content))}
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.success(cv_state, :str, content))}
 
       {:ok, :pdf, content} ->
-        {:noreply, socket |> assign(cv_state: State.pdf(content))}
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.success(cv_state, :pdf, content))}
 
       {:error, msg} ->
-        {:noreply, socket |> assign(cv_state: State.error(msg))}
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.error(cv_state, msg))}
     end
   end
 
@@ -182,9 +191,8 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   defp render_cv(socket, %CV{} = cv) do
-    Supervisor.start_link([{PdfWorker, {cv, :pdf}}], strategy: :one_for_one)
-
-    socket |> assign(cv_state: State.loading())
+    Supervisor.start_link([{RenderWorker, {cv, :pdf}}], strategy: :one_for_one)
+    socket |> assign(cv_state: RenderState.loading(socket.assigns.cv_state))
   end
 
   @impl true

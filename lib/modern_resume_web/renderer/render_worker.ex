@@ -1,4 +1,4 @@
-defmodule ModernResumeWeb.Renderer.PdfWorker do
+defmodule ModernResumeWeb.Renderer.RenderWorker do
   use Task
 
   alias ModernResume.PubSub
