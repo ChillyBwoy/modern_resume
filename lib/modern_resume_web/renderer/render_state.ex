@@ -16,7 +16,7 @@ defmodule ModernResumeWeb.Renderer.RenderState do
     %__MODULE__{state | status: :loading, error: nil}
   end
 
-  def error(%__MODULE__{} = state, msg) do
+  def error(%__MODULE__{} = state, msg) when is_binary(msg) do
     %__MODULE__{state | status: :error, error: msg}
   end
 
@@ -27,7 +27,6 @@ defmodule ModernResumeWeb.Renderer.RenderState do
           state
           | status: :success,
             content_pdf: content,
-            content_type: :pdf,
             error: nil
         }
 
@@ -36,7 +35,6 @@ defmodule ModernResumeWeb.Renderer.RenderState do
           state
           | status: :success,
             content_str: content,
-            content_type: :str,
             error: nil
         }
     end
@@ -45,4 +43,18 @@ defmodule ModernResumeWeb.Renderer.RenderState do
   def success(_, _, _) do
     raise "Invalid type"
   end
+
+  def content_type(%__MODULE__{} = state, :str), do: %__MODULE__{state | content_type: :str}
+  def content_type(%__MODULE__{} = state, :pdf), do: %__MODULE__{state | content_type: :pdf}
+  def content_type(_, _), do: raise("Invalid content type")
+
+  def toggle_content_type(%__MODULE__{content_type: :pdf} = state) do
+    %__MODULE__{state | content_type: :str}
+  end
+
+  def toggle_content_type(%__MODULE__{content_type: :str} = state) do
+    %__MODULE__{state | content_type: :pdf}
+  end
+
+  def toggle_content_type(_), do: raise("Toggle invalid content type")
 end

@@ -17,10 +17,12 @@ defmodule ModernResumeWeb.CVShowLive do
 
     case Resume.get_cv(id) do
       %CV{} = cv ->
+        initial_state = RenderState.init() |> RenderState.content_type(:pdf)
+
         {:ok,
          socket
          |> assign(cv: cv)
-         |> assign(cv_state: RenderState.init())
+         |> assign(state: initial_state)
          |> assign(form: CV.changeset(cv, %{}) |> to_form())
          |> assign(page_title: cv.title)
          |> render_cv(cv)}
@@ -35,23 +37,23 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_info({:renderer, data}, socket) do
-    cv_state = socket.assigns.cv_state
+    state = socket.assigns.state
 
     case data do
-      {:ok, :string, content} ->
+      {:ok, :str, content} ->
         {:noreply,
          socket
-         |> assign(cv_state: RenderState.success(cv_state, :str, content))}
+         |> assign(state: RenderState.success(state, :str, content))}
 
       {:ok, :pdf, content} ->
         {:noreply,
          socket
-         |> assign(cv_state: RenderState.success(cv_state, :pdf, content))}
+         |> assign(state: RenderState.success(state, :pdf, content))}
 
       {:error, msg} ->
         {:noreply,
          socket
-         |> assign(cv_state: RenderState.error(cv_state, msg))}
+         |> assign(state: RenderState.error(state, msg))}
     end
   end
 
@@ -144,6 +146,14 @@ defmodule ModernResumeWeb.CVShowLive do
     end
   end
 
+  @impl true
+  def handle_event("toggle", _, socket) do
+    {:noreply,
+     socket
+     |> assign(state: RenderState.toggle_content_type(socket.assigns.state))
+     |> render_cv(socket.assigns.cv)}
+  end
+
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
     case Resume.add_entity(socket.assigns.cv, key) do
       {:ok, cv} ->
@@ -191,14 +201,16 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   defp render_cv(socket, %CV{} = cv) do
+    content_type = Map.get(socket.assigns.state, :content_type, :pdf)
+
     Supervisor.start_link(
       [
-        {RenderWorker, {cv, :pdf}}
+        {RenderWorker, {cv, content_type}}
       ],
       strategy: :one_for_one
     )
 
-    socket |> assign(cv_state: RenderState.loading(socket.assigns.cv_state))
+    socket |> assign(state: RenderState.loading(socket.assigns.state))
   end
 
   @impl true
@@ -225,7 +237,7 @@ defmodule ModernResumeWeb.CVShowLive do
           </div>
         </div>
 
-        <.latex_preview id="cv_latex_preview" state={@cv_state} />
+        <.latex_preview id="cv_latex_preview" state={@state} toggle="toggle" />
       </div>
     </div>
     """
