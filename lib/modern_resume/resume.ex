@@ -32,6 +32,10 @@ defmodule ModernResume.Resume do
     Repo.get!(CV, id)
   end
 
+  def get_cv_for(%User{} = user, id) when is_uuid(id) do
+    from(cv in CV, where: cv.user_id == ^user.id) |> Repo.get!(id)
+  end
+
   def create_cv(attrs \\ %{}) do
     %CV{}
     |> CV.changeset(attrs)

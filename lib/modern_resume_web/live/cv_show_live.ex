@@ -15,7 +15,9 @@ defmodule ModernResumeWeb.CVShowLive do
       RenderWorker.subscribe()
     end
 
-    case Resume.get_cv(id) do
+    user = socket.assigns.current_user
+
+    case Resume.get_cv_for(user, id) do
       %CV{} = cv ->
         initial_state = RenderState.init() |> RenderState.content_type(:pdf)
 
