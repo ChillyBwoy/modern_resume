@@ -191,7 +191,13 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   defp render_cv(socket, %CV{} = cv) do
-    Supervisor.start_link([{RenderWorker, {cv, :pdf}}], strategy: :one_for_one)
+    Supervisor.start_link(
+      [
+        {RenderWorker, {cv, :pdf}}
+      ],
+      strategy: :one_for_one
+    )
+
     socket |> assign(cv_state: RenderState.loading(socket.assigns.cv_state))
   end
 
