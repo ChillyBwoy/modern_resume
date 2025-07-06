@@ -11,6 +11,8 @@ defmodule ModernResume.Resume.Content do
     field :birthdate, :date
     field :location, :string
 
+    embeds_one :settings, ModernResume.Resume.Settings, on_replace: :delete
+
     embeds_many :skills, ModernResume.Resume.Skill, on_replace: :delete
     embeds_many :experiences, ModernResume.Resume.Experience, on_replace: :delete
     embeds_many :educations, ModernResume.Resume.Education, on_replace: :delete
@@ -21,6 +23,7 @@ defmodule ModernResume.Resume.Content do
     content
     |> cast(attrs, [:name, :position, :email, :phone, :birthdate, :location])
     |> validate_required([:name, :position])
+    |> cast_embed(:settings)
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
     |> cast_embed(:educations)

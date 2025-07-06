@@ -7,6 +7,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
+  alias ModernResume.Resume.Settings
 
   defp get_date_options(:year) do
     year = Date.utc_today().year
@@ -302,11 +303,41 @@ defmodule ModernResumeWeb.CV.Form do
 
   attr :form, Phoenix.HTML.Form, required: true
 
+  def settings_form(assigns) do
+    ~H"""
+    <.entity>
+      <.input type="select" field={@form[:style]} label="Style" options={Settings.style_choices()} />
+      <.input type="select" field={@form[:color]} label="Color" options={Settings.color_choices()} />
+      <.input
+        type="select"
+        field={@form[:font_size]}
+        label="Font Size"
+        options={Settings.font_size_choices()}
+      />
+      <.input
+        type="select"
+        field={@form[:font_family]}
+        label="Font Family"
+        options={Settings.font_family_choices()}
+      />
+      <.input type="checkbox" field={@form[:use_icons]} label="Use Icons" />
+    </.entity>
+    """
+  end
+
+  attr :form, Phoenix.HTML.Form, required: true
+
   defp content_form(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
       <.fieldset id="basic_info" title="Basic Information">
         <.basic_info_form form={@form} />
+      </.fieldset>
+
+      <.fieldset id="settings" title="Settings (TODO: move to tabs)">
+        <.inputs_for :let={settings} field={@form[:settings]}>
+          <.settings_form form={settings} />
+        </.inputs_for>
       </.fieldset>
 
       <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
