@@ -6,16 +6,24 @@ defmodule ModernResumeWeb.CVShowLive do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
+  alias ModernResumeWeb.Renderer.RenderWorker
+  alias ModernResumeWeb.Renderer.RenderState
 
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
+    if connected?(socket) do
+      RenderWorker.subscribe()
+    end
+
     case Resume.get_cv(id) do
       %CV{} = cv ->
         {:ok,
          socket
          |> assign(cv: cv)
+         |> assign(cv_state: RenderState.init())
          |> assign(form: CV.changeset(cv, %{}) |> to_form())
-         |> assign(page_title: cv.title)}
+         |> assign(page_title: cv.title)
+         |> render_cv(cv)}
 
       _ ->
         {:error,
@@ -26,20 +34,36 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_info({:preview, :error, reason}, socket) do
-    {:noreply, socket |> put_flash(:error, "Error creating PDF: #{reason}")}
+  def handle_info({:renderer, data}, socket) do
+    cv_state = socket.assigns.cv_state
+
+    case data do
+      {:ok, :string, content} ->
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.success(cv_state, :str, content))}
+
+      {:ok, :pdf, content} ->
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.success(cv_state, :pdf, content))}
+
+      {:error, msg} ->
+        {:noreply,
+         socket
+         |> assign(cv_state: RenderState.error(cv_state, msg))}
+    end
   end
 
   @impl true
   def handle_event("cv:save", %{"cv" => attrs}, socket) do
     case Resume.update_cv(socket.assigns.cv, attrs) do
       {:ok, %CV{} = cv} ->
-        form = CV.changeset(cv, %{}) |> to_form()
-
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: form)}
+         |> assign(form: CV.changeset(cv) |> to_form())
+         |> render_cv(cv)}
 
       {:error, changeset} ->
         {:noreply,
@@ -84,7 +108,8 @@ defmodule ModernResumeWeb.CVShowLive do
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: CV.changeset(cv, %{}) |> to_form())}
+         |> assign(form: CV.changeset(cv, %{}) |> to_form())
+         |> render_cv(cv)}
 
       {:error, changeset} ->
         {:noreply,
@@ -111,7 +136,8 @@ defmodule ModernResumeWeb.CVShowLive do
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: form)}
+         |> assign(form: form)
+         |> render_cv(cv)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(form: to_form(changeset))}
@@ -124,6 +150,7 @@ defmodule ModernResumeWeb.CVShowLive do
         socket
         |> assign(cv: cv)
         |> assign(form: CV.changeset(cv) |> to_form())
+        |> render_cv(cv)
 
       {:error, changeset} ->
         socket
@@ -137,6 +164,7 @@ defmodule ModernResumeWeb.CVShowLive do
         socket
         |> assign(cv: cv)
         |> assign(form: CV.changeset(cv) |> to_form())
+        |> render_cv(cv)
 
       {:error, changeset} ->
         socket
@@ -152,6 +180,7 @@ defmodule ModernResumeWeb.CVShowLive do
         socket
         |> assign(cv: cv)
         |> assign(form: form)
+        |> render_cv(cv)
 
       {:error, %Ecto.Changeset{} = changeset} ->
         socket |> assign(form: to_form(changeset))
@@ -159,6 +188,17 @@ defmodule ModernResumeWeb.CVShowLive do
       {:error, _} ->
         socket |> put_flash(:error, "Unknown error")
     end
+  end
+
+  defp render_cv(socket, %CV{} = cv) do
+    Supervisor.start_link(
+      [
+        {RenderWorker, {cv, :pdf}}
+      ],
+      strategy: :one_for_one
+    )
+
+    socket |> assign(cv_state: RenderState.loading(socket.assigns.cv_state))
   end
 
   @impl true
@@ -185,7 +225,7 @@ defmodule ModernResumeWeb.CVShowLive do
           </div>
         </div>
 
-        <.latex_preview id="cv_latex_preview" cv={@cv} on_render={:preview} />
+        <.latex_preview id="cv_latex_preview" state={@cv_state} />
       </div>
     </div>
     """

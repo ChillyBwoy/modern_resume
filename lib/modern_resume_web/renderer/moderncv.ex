@@ -2,6 +2,7 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Language
+  alias ModernResume.Resume.Settings
 
   alias ModernResumeWeb.Renderer.Template
 
@@ -28,7 +29,7 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
     Template.new("moderncv") |> Template.eval(assigns: [cv: cv.content])
   end
 
-  def render(%CV{} = cv, :string) do
+  def render(%CV{} = cv, :str) do
     content = render!(cv)
     {:ok, content}
   end
@@ -87,11 +88,9 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
 
   def str(value), do: value
 
-  def lang_fluency(level) when is_atom(level) do
-    Language.display_fluency(level)
-  end
+  def lang_fluency(level) when is_atom(level), do: Language.display_fluency(level)
 
-  def employment_type(type) do
-    Experience.display_employment_type(type)
-  end
+  def employment_type(type), do: Experience.display_employment_type(type)
+
+  def font_size(size), do: Settings.display_font_size(size)
 end

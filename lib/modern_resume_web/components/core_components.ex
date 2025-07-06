@@ -231,7 +231,7 @@ defmodule ModernResumeWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
+        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark active:bg-primary focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
         @class
       ]}
       {@rest}
@@ -308,8 +308,8 @@ defmodule ModernResumeWeb.CoreComponents do
       end)
 
     ~H"""
-    <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+    <div class="flex flex-col gap-1">
+      <label class="flex items-center gap-2">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -317,7 +317,8 @@ defmodule ModernResumeWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          data-checked="&#x2713;"
+          class="bg-form-background relative appearance-none outline-hidden border-primary text-secondary-dark rounded-xs border focus:ring-primary-light focus:ring-2 focus:outline-hidden disabled:border-secondary-dark/20 disabled:text-secondary-light before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:flex before:items-center before:justify-center before:text-primary before:text-sm before:font-bold checked:before:content-[attr(data-checked)] disabled:before:text-secondary-light size-5"
           {@rest}
         />
         {@label}

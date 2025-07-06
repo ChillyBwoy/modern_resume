@@ -2,14 +2,16 @@ defmodule ModernResumeWeb.CVListLive do
   use ModernResumeWeb, :live_view
 
   alias ModernResume.Resume
-
-  import ModernResumeWeb.CV.CreateForm
+  alias ModernResume.Resume.CV
 
   @impl true
   def mount(_params, _session, socket) do
-    cvs = socket.assigns.current_user |> Resume.list_cvs_for()
+    user = socket.assigns.current_user
 
-    {:ok, socket |> assign(cvs: cvs)}
+    {:ok,
+     socket
+     |> assign(cvs: Resume.list_cvs_for(user))
+     |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())}
   end
 
   @impl true
@@ -18,6 +20,31 @@ defmodule ModernResumeWeb.CVListLive do
          {:ok, _} <- Resume.delete_cv(cv) do
       cvs = Resume.list_cvs_for(socket.assigns.current_user)
       {:noreply, socket |> assign(cvs: cvs)}
+    end
+  end
+
+  @impl true
+  def handle_event("validate", %{"cv" => params}, socket) do
+    changeset = CV.changeset(%CV{}, params) |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))}
+  end
+
+  @impl true
+  def handle_event("create", %{"cv" => params}, socket) do
+    user = socket.assigns.current_user
+    payload = Map.put(params, "user_id", user.id)
+
+    with {:ok, %CV{} = cv} <- Resume.create_cv(payload) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "CV created successfully.")
+       |> redirect(to: ~p"/cvs/#{cv.id}", replace: true)}
+    else
+      {:error, changeset} ->
+        {:noreply, socket |> assign(create_form: to_form(changeset))}
     end
   end
 
@@ -31,7 +58,18 @@ defmodule ModernResumeWeb.CVListLive do
         on_cancel={JS.navigate(~p"/cvs", replace: true)}
         show
       >
-        <.create_form id="create-cv" user={@current_user} />
+        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
+          <.input field={@create_form[:title]} label="Title" />
+
+          <.inputs_for :let={content} field={@create_form[:content]}>
+            <.input field={content[:name]} label="Name" />
+            <.input field={content[:position]} label="Position" />
+          </.inputs_for>
+
+          <:actions>
+            <.button type="submit">Save</.button>
+          </:actions>
+        </.simple_form>
       </.modal>
 
       <div class="flex justify-between items-center mb-8">
@@ -63,7 +101,7 @@ defmodule ModernResumeWeb.CVListLive do
           </.link>
 
           <button
-            phx-click={JS.push("delete", value: %{id: cv.id})}
+            phx-click="delete"
             phx-value-id={cv.id}
             data-confirm="Are you sure you want to delete this CV?"
             class="text-red-600 hover:text-red-800"
