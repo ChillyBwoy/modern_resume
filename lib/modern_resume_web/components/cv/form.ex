@@ -8,6 +8,7 @@ defmodule ModernResumeWeb.CV.Form do
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Settings
+  alias ModernResume.Resume.SocialNetwork
 
   defp get_date_options(:year) do
     year = Date.utc_today().year
@@ -326,6 +327,32 @@ defmodule ModernResumeWeb.CV.Form do
   end
 
   attr :form, Phoenix.HTML.Form, required: true
+  attr :sortable, :boolean, required: true
+  attr :index, :integer, required: true
+
+  def social_network_form(assigns) do
+    ~H"""
+    <.entity
+      id={@form.data.id}
+      sortable={@sortable}
+      on_delete="social_networks:delete"
+      index={@form.index}
+    >
+      <div class="grid grid-cols-3 gap-1">
+        <.input
+          type="select"
+          field={@form[:platform]}
+          label="Platform"
+          options={SocialNetwork.platform_choices()}
+        />
+        <.input field={@form[:content]} label="Username or Handle" phx-debounce="blur" />
+        <.input field={@form[:alias]} label="Alias" phx-debounce="blur" />
+      </div>
+    </.entity>
+    """
+  end
+
+  attr :form, Phoenix.HTML.Form, required: true
 
   defp content_form(assigns) do
     ~H"""
@@ -337,6 +364,21 @@ defmodule ModernResumeWeb.CV.Form do
       <.fieldset id="settings" title="Settings (TODO: move to tabs)">
         <.inputs_for :let={settings} field={@form[:settings]}>
           <.settings_form form={settings} />
+        </.inputs_for>
+      </.fieldset>
+
+      <.fieldset
+        id="social_networks"
+        title="Social Networks"
+        on_add="social_networks:add"
+        on_sort="social_networks:sort"
+      >
+        <.inputs_for :let={social_network} field={@form[:social_networks]}>
+          <.social_network_form
+            form={social_network}
+            index={social_network.index}
+            sortable={is_sortable(@form, :social_networks)}
+          />
         </.inputs_for>
       </.fieldset>
 

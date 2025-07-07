@@ -18,6 +18,7 @@ defmodule ModernResume.Resume do
   alias ModernResume.Resume.ExperienceDetail
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Skill
+  alias ModernResume.Resume.SocialNetwork
 
   def list_cvs do
     Repo.all(CV)
@@ -79,6 +80,11 @@ defmodule ModernResume.Resume do
 
   def add_entity(%CV{} = cv, :experiences),
     do: add_entity(cv, :experiences, Experience.changeset())
+
+  def add_entity(%CV{} = cv, :social_networks),
+    do: add_entity(cv, :social_networks, SocialNetwork.changeset())
+
+  def add_entity(_, _), do: raise("Can not add an invalid entity")
 
   def sort_entities(%CV{} = cv, key, ordered_ids) when is_atom(key) and is_list(ordered_ids) do
     {:ok, entities} = Map.fetch(cv.content, key)

@@ -35,6 +35,12 @@
 \\born{<%= str(@cv.birthdate) %>}
 <% end %>
 
+<%= if @cv.social_networks != [] do %>
+<%= for social_network <- @cv.social_networks do %>
+\\social[<%= social_network.platform %>]{<%= social_network.content %>}<%= if social_network.alias != nil do %><%= social_network.alias %><% end %>
+<% end %>
+<% end %>
+
 \\begin{document}
 \\makecvtitle
 

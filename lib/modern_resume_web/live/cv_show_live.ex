@@ -97,6 +97,11 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
+  def handle_event("social_networks:" <> action, params, socket) do
+    {:noreply, socket |> dispatch_entity(action, :social_networks, params)}
+  end
+
+  @impl true
   def handle_event("experience_details:add", %{"parent_id" => parent_id}, socket) do
     {:noreply,
      socket
