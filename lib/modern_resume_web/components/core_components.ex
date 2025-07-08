@@ -231,7 +231,7 @@ defmodule ModernResumeWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-md p-2 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark active:bg-primary focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
+        "phx-submit-loading:opacity-75 rounded-md py-2 px-3 cursor-pointer border-primary-dark bg-primary hover:bg-primary-dark active:bg-primary focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
         @class
       ]}
       {@rest}
@@ -332,7 +332,7 @@ defmodule ModernResumeWeb.CoreComponents do
     ~H"""
     <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
-      <div class="form-select relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4">
+      <div class="after:form-select-icon relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4">
         <select
           id={@id}
           name={@name}

@@ -74,13 +74,11 @@ defmodule ModernResumeWeb.CVListLive do
 
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">My CVs</h1>
-        <.link
-          navigate={~p"/cvs/new"}
-          class="inline-flex items-center px-4 py-2 bg-orange-400 text-white rounded-lg"
-        >
+
+        <.button type="button" phx-click={JS.navigate(~p"/cvs/new")}>
           <.icon name="hero-plus" class="size-5 mr-2" />
           <span>Create New CV</span>
-        </.link>
+        </.button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -100,14 +98,16 @@ defmodule ModernResumeWeb.CVListLive do
             </span>
           </.link>
 
-          <button
-            phx-click="delete"
-            phx-value-id={cv.id}
-            data-confirm="Are you sure you want to delete this CV?"
-            class="text-red-600 hover:text-red-800"
-          >
-            <.icon name="hero-trash" class="size-5" />
-          </button>
+          <div>
+            <button
+              phx-click="delete"
+              phx-value-id={cv.id}
+              data-confirm="Are you sure you want to delete this CV?"
+              class="text-red-600 hover:text-red-800 cursor-pointer"
+            >
+              <.icon name="hero-trash" class="size-5" />
+            </button>
+          </div>
         </div>
       </div>
 

@@ -2,26 +2,19 @@
 <div class="px-4 py-10">
   <div class="mx-auto max-w-3xl text-center">
     <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-      Welcome to Modern Resume
+      Modern Resume
     </h1>
     <p class="mt-6 text-lg leading-8 text-gray-600">
-      Create and manage your professional resumes with ease.
+      Create and manage your cvs.
     </p>
     <div class="mt-10 flex items-center justify-center gap-x-6">
-      <.link
-        :if={!@current_user}
-        navigate={~p"/users/register"}
-        class="rounded-md bg-orange-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-200"
-      >
-        Get started
-      </.link>
-      <.link
-        :if={@current_user}
-        navigate={~p"/cvs"}
-        class="rounded-md bg-orange-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-200"
-      >
+      <.button :if={!@current_user} type="button" phx-click={JS.navigate(~p"/users/log_in")}>
         View your resumes
-      </.link>
+      </.button>
+
+      <.button :if={@current_user} type="button" phx-click={JS.navigate(~p"/cvs")}>
+        View your resumes
+      </.button>
     </div>
   </div>
 </div>
