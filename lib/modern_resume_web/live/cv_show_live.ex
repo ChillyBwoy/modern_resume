@@ -3,6 +3,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
   import ModernResumeWeb.CV.LatexPreview
   import ModernResumeWeb.CV.Form
+  import ModernResumeWeb.CV.Tabs
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
@@ -240,6 +241,11 @@ defmodule ModernResumeWeb.CVShowLive do
       <div class="w-full grid grid-cols-2 gap-4">
         <div class="relative h-full">
           <div class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 pl-1 pr-5 pb-48 pt-4 flex flex-col gap-2 scroll-container-v">
+            <.tabs id="testtabs">
+              <:tab title="first tab">First tab content</:tab>
+              <:tab title="second tab">Second tab content</:tab>
+              <:tab title="third tab">Third tab content</:tab>
+            </.tabs>
             <.cv_form form={@form} />
           </div>
         </div>

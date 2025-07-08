@@ -129,7 +129,7 @@ defmodule ModernResumeWeb.CV.Form do
 
   attr :id, :string, required: true
   attr :parent_id, :string, default: nil
-  attr :title, :string, required: true
+  attr :title, :string, default: nil
   attr :on_add, :string, default: nil
   attr :on_sort, :string, default: nil
   attr :variant, :atom, values: [:full, :tiny], default: :full
@@ -139,7 +139,7 @@ defmodule ModernResumeWeb.CV.Form do
   defp fieldset(assigns) do
     ~H"""
     <fieldset class="flex flex-col gap-2">
-      <legend class="text-xl font-bold block px-2 mb-2">
+      <legend :if={@title != nil} class="text-xl font-bold block px-2 mb-2">
         {@title}
       </legend>
       <div
@@ -436,9 +436,9 @@ defmodule ModernResumeWeb.CV.Form do
   def cv_form(assigns) do
     ~H"""
     <.form for={@form} phx-change="cv:save" phx-submit="cv:save" class="flex flex-col gap-6">
-      <.entity>
-        <.input field={@form[:title]} label="Title" phx-debounce="blur" />
-      </.entity>
+      <%!-- <.entity> --%>
+      <.input field={@form[:title]} label="Title" phx-debounce="blur" />
+      <%!-- </.entity> --%>
       <.inputs_for :let={content} field={@form[:content]}>
         <.content_form form={content} />
       </.inputs_for>
