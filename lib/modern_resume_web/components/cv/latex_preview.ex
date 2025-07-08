@@ -62,7 +62,7 @@ defmodule ModernResumeWeb.CV.LatexPreview do
       <% end %>
 
       <%= if @state.status == :loading do %>
-        <div class="absolute top-0 right-0 bottom-0 left-0 bg-black/20 flex items-center justify-center">
+        <div class="absolute top-0 right-0 bottom-0 left-0 bg-black/5 flex items-center justify-center">
           <.icon name="hero-arrow-path" class="size-12 text-white animate-spin" />
         </div>
       <% end %>

@@ -2,7 +2,7 @@ defmodule ModernResumeWeb.CVShowLive do
   use ModernResumeWeb, :live_view
 
   import ModernResumeWeb.CV.LatexPreview
-  import ModernResumeWeb.CV.Form
+  import ModernResumeWeb.CV.ContentForm
   import ModernResumeWeb.CV.Tabs
 
   alias ModernResume.Resume
@@ -28,6 +28,7 @@ defmodule ModernResumeWeb.CVShowLive do
          |> assign(state: initial_state)
          |> assign(form: CV.changeset(cv, %{}) |> to_form())
          |> assign(page_title: cv.title)
+         |> assign(selected_tab: "personal")
          |> render_cv(cv)}
 
       _ ->
@@ -162,6 +163,10 @@ defmodule ModernResumeWeb.CVShowLive do
      |> render_cv(socket.assigns.cv)}
   end
 
+  def handle_event("tabs:select", %{"tab" => tab}, socket) do
+    {:noreply, socket |> assign(selected_tab: tab)}
+  end
+
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
     case Resume.add_entity(socket.assigns.cv, key) do
       {:ok, cv} ->
@@ -240,14 +245,141 @@ defmodule ModernResumeWeb.CVShowLive do
 
       <div class="w-full grid grid-cols-2 gap-4">
         <div class="relative h-full">
-          <div class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 pl-1 pr-5 pb-48 pt-4 flex flex-col gap-2 scroll-container-v">
-            <.tabs id="testtabs">
-              <:tab title="first tab">First tab content</:tab>
-              <:tab title="second tab">Second tab content</:tab>
-              <:tab title="third tab">Third tab content</:tab>
-            </.tabs>
-            <.cv_form form={@form} />
-          </div>
+          <.form
+            for={@form}
+            phx-change="cv:save"
+            phx-submit="cv:save"
+            class="grid grid-rows-[auto_1fr_auto] h-full"
+          >
+            <div class="relative mb-6">
+              <.input field={@form[:title]} label="Title" phx-debounce="blur" />
+            </div>
+
+            <.inputs_for :let={content} field={@form[:content]}>
+              <.tabs
+                selected={@selected_tab}
+                on_select={fn tab_name -> JS.push("tabs:select", value: %{tab: tab_name}) end}
+              >
+                <:tab name="personal" title="Personal Information">
+                  <.scroll_container>
+                    <.fieldset id="basic_info" title="Personal Information">
+                      <.personal_info_form form={content} />
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="skills" title="Skills">
+                  <.scroll_container>
+                    <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
+                      <.inputs_for :let={skill} field={content[:skills]}>
+                        <.skill_form
+                          form={skill}
+                          index={skill.index}
+                          sortable={is_sortable(content, :skills)}
+                          on_delete="skills:delete"
+                        />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="experience" title="Experience">
+                  <.scroll_container>
+                    <.fieldset
+                      id="experiences"
+                      title="Experience"
+                      on_add="experiences:add"
+                      on_sort="experiences:sort"
+                    >
+                      <.inputs_for :let={experience} field={content[:experiences]}>
+                        <.experience_form
+                          form={experience}
+                          index={experience.index}
+                          sortable={is_sortable(content, :experiences)}
+                          on_delete="experiences:delete"
+                          on_detail_delete="experience_details:delete"
+                        />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="education" title="Education">
+                  <.scroll_container>
+                    <.fieldset
+                      id="educations"
+                      title="Education"
+                      on_add="educations:add"
+                      on_sort="educations:sort"
+                    >
+                      <.inputs_for :let={education} field={content[:educations]}>
+                        <.education_form
+                          form={education}
+                          index={education.index}
+                          sortable={is_sortable(content, :educations)}
+                          on_delete="educations:delete"
+                        />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="social_networks" title="Social Networks">
+                  <.scroll_container>
+                    <.fieldset
+                      id="social_networks"
+                      title="Social Networks"
+                      on_add="social_networks:add"
+                      on_sort="social_networks:sort"
+                    >
+                      <.inputs_for :let={social_network} field={content[:social_networks]}>
+                        <.social_network_form
+                          form={social_network}
+                          index={social_network.index}
+                          sortable={is_sortable(content, :social_networks)}
+                          on_delete="social_networks:delete"
+                        />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="foreign_languages" title="Foreign Languages">
+                  <.scroll_container>
+                    <.fieldset
+                      id="languages"
+                      title="Foreign Languages"
+                      on_add="languages:add"
+                      on_sort="languages:sort"
+                    >
+                      <.inputs_for :let={language} field={content[:languages]}>
+                        <.language_form
+                          form={language}
+                          index={language.index}
+                          sortable={is_sortable(content, :languages)}
+                          on_delete="languages:delete"
+                        />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+
+                <:tab name="settings" title="Settings">
+                  <.scroll_container>
+                    <.fieldset id="settings" title="Settings">
+                      <.inputs_for :let={settings} field={content[:settings]}>
+                        <.settings_form form={settings} />
+                      </.inputs_for>
+                    </.fieldset>
+                  </.scroll_container>
+                </:tab>
+              </.tabs>
+            </.inputs_for>
+
+            <div class="p-4">
+              <.button type="submit">Save</.button>
+            </div>
+          </.form>
         </div>
 
         <.latex_preview id="cv_latex_preview" state={@state} toggle="toggle" />

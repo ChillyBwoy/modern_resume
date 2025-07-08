@@ -39,11 +39,19 @@
   display: block;
 }
 
-.sortable-drag {
-  @apply rounded-lg shadow-xl ring-1 ring-gray-100 bg-white;
+@utility form-select-icon {
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 }
 
-.scroll-container-v {
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@utility scroll-container-v {
   overflow: auto;
   background: linear-gradient(
       var(--color-background) 30%,
@@ -63,11 +71,41 @@
       0 100%;
 
   background-repeat: no-repeat;
+  background-color: var(--color-background);
   background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
 
   background-attachment: local, local, scroll, scroll;
 }
 
-.form-select::after {
-  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+@utility scroll-container-h {
+  overflow: auto;
+
+  background: linear-gradient(
+      to right,
+      var(--color-background) 30%,
+      rgba(255, 255, 255, 0)
+    ),
+    linear-gradient(
+        to left,
+        var(--color-background) 70%,
+        rgba(255, 255, 255, 0)
+      )
+      100% 0,
+    radial-gradient(
+      farthest-side at 0% 50%,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ),
+    radial-gradient(
+        farthest-side at 100% 50%,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0)
+      )
+      100%;
+
+  background-repeat: no-repeat;
+  background-color: var(--color-background);
+  background-size: 16px 100%, 16px 100%, 8px 100%, 8px 100%;
+
+  background-attachment: local, local, scroll, scroll;
 }

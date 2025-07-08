@@ -1,62 +1,38 @@
 defmodule ModernResumeWeb.CV.Tabs do
-  use ModernResumeWeb, :live_component
   use Phoenix.Component
 
-  attr :id, :string, required: true
+  attr :selected, :string, required: true
+  attr :on_select, :any, default: nil
 
   slot :tab, required: true do
+    attr :name, :string, required: true
     attr :title, :string, required: true
   end
 
   def tabs(assigns) do
     ~H"""
-    <.live_component module={__MODULE__} id={@id} tab={@tab} active={0} />
-    """
-  end
-
-  @impl true
-  def update(assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_content(assigns.active)}
-  end
-
-  @impl true
-  def handle_event("select", %{"index" => index}, socket) do
-    idx = String.to_integer(index)
-
-    {:noreply,
-     socket
-     |> assign(active: idx)
-     |> assign_content(idx)}
-  end
-
-  defp assign_content(socket, idx) when is_integer(idx) do
-    socket |> assign(content: Enum.at(socket.assigns.tab, idx, nil))
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div class="relative">
-      <ul class="flex items-center">
+    <div class="relative h-full grid grid-rows-[auto_1fr] w-full">
+      <ul class="no-scrollbar scroll-container-h flex w-full flex-nowrap">
         <li
-          :for={{tab, index} <- Enum.with_index(@tab)}
+          :for={tab <- @tab}
           class={[
-            "p-2",
-            index == @active && "bg-primary-light text-white",
-            index != @active && "bg-secondary-light cursor-pointer"
+            "px-4 py-2 grow h-full flex items-center whitespace-nowrap border-b-2",
+            tab.name == @selected && "border-primary text-primary",
+            tab.name != @selected && "cursor-pointer border-secondary-light text-secondary"
           ]}
-          phx-target={@myself}
-          phx-value-index={index}
-          phx-click="select"
+          phx-click={@on_select && @on_select.(tab.name)}
         >
           {tab.title}
         </li>
       </ul>
-      <div :if={@content != nil} class="relative">
-        {render_slot(@content)}
+      <div
+        :for={tab <- @tab}
+        class={[
+          "relative h-full",
+          tab.name != @selected && "hidden"
+        ]}
+      >
+        {render_slot(tab)}
       </div>
     </div>
     """
