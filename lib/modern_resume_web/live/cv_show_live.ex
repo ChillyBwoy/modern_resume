@@ -257,6 +257,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
             <.inputs_for :let={content} field={@form[:content]}>
               <.tabs
+                id="cv_tabs"
                 selected={@selected_tab}
                 on_select={fn tab_name -> JS.push("tabs:select", value: %{tab: tab_name}) end}
               >

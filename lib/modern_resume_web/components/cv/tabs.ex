@@ -1,6 +1,7 @@
 defmodule ModernResumeWeb.CV.Tabs do
   use Phoenix.Component
 
+  attr :id, :string, required: true
   attr :selected, :string, required: true
   attr :on_select, :any, default: nil
 
@@ -12,7 +13,11 @@ defmodule ModernResumeWeb.CV.Tabs do
   def tabs(assigns) do
     ~H"""
     <div class="relative h-full grid grid-rows-[auto_1fr] w-full">
-      <ul class="no-scrollbar scroll-container-h flex w-full flex-nowrap">
+      <ul
+        id={@id}
+        class="no-scrollbar scroll-container-h flex w-full flex-nowrap"
+        phx-hook="SmoothScroll"
+      >
         <li
           :for={tab <- @tab}
           class={[
@@ -20,6 +25,7 @@ defmodule ModernResumeWeb.CV.Tabs do
             tab.name == @selected && "border-primary text-primary",
             tab.name != @selected && "cursor-pointer border-secondary-light text-secondary"
           ]}
+          data-active={tab.name == @selected}
           phx-click={@on_select && @on_select.(tab.name)}
         >
           {tab.title}

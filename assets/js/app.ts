@@ -33,6 +33,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: {
     Sortable: hooks.Sortable(),
+    SmoothScroll: hooks.SmoothScroll(),
   },
 });
 
