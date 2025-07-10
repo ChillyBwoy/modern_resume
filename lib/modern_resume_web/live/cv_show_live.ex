@@ -263,7 +263,7 @@ defmodule ModernResumeWeb.CVShowLive do
               >
                 <:tab name="personal" title="Personal Information">
                   <.scroll_container>
-                    <.fieldset id="basic_info" title="Personal Information">
+                    <.fieldset id="basic_info">
                       <.personal_info_form form={content} />
                     </.fieldset>
                   </.scroll_container>
@@ -271,7 +271,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
                 <:tab name="skills" title="Skills">
                   <.scroll_container>
-                    <.fieldset id="skills" title="Skills" on_add="skills:add" on_sort="skills:sort">
+                    <.fieldset id="skills" on_add="skills:add" on_sort="skills:sort">
                       <.inputs_for :let={skill} field={content[:skills]}>
                         <.skill_form
                           form={skill}
@@ -286,12 +286,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
                 <:tab name="experience" title="Experience">
                   <.scroll_container>
-                    <.fieldset
-                      id="experiences"
-                      title="Experience"
-                      on_add="experiences:add"
-                      on_sort="experiences:sort"
-                    >
+                    <.fieldset id="experiences" on_add="experiences:add" on_sort="experiences:sort">
                       <.inputs_for :let={experience} field={content[:experiences]}>
                         <.experience_form
                           form={experience}
@@ -307,12 +302,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
                 <:tab name="education" title="Education">
                   <.scroll_container>
-                    <.fieldset
-                      id="educations"
-                      title="Education"
-                      on_add="educations:add"
-                      on_sort="educations:sort"
-                    >
+                    <.fieldset id="educations" on_add="educations:add" on_sort="educations:sort">
                       <.inputs_for :let={education} field={content[:educations]}>
                         <.education_form
                           form={education}
@@ -329,7 +319,6 @@ defmodule ModernResumeWeb.CVShowLive do
                   <.scroll_container>
                     <.fieldset
                       id="social_networks"
-                      title="Social Networks"
                       on_add="social_networks:add"
                       on_sort="social_networks:sort"
                     >
@@ -347,12 +336,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
                 <:tab name="foreign_languages" title="Foreign Languages">
                   <.scroll_container>
-                    <.fieldset
-                      id="languages"
-                      title="Foreign Languages"
-                      on_add="languages:add"
-                      on_sort="languages:sort"
-                    >
+                    <.fieldset id="languages" on_add="languages:add" on_sort="languages:sort">
                       <.inputs_for :let={language} field={content[:languages]}>
                         <.language_form
                           form={language}
@@ -367,7 +351,7 @@ defmodule ModernResumeWeb.CVShowLive do
 
                 <:tab name="settings" title="Settings">
                   <.scroll_container>
-                    <.fieldset id="settings" title="Settings">
+                    <.fieldset id="settings">
                       <.inputs_for :let={settings} field={content[:settings]}>
                         <.settings_form form={settings} />
                       </.inputs_for>

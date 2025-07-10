@@ -52,7 +52,10 @@ defmodule ModernResumeWeb.CV.ContentForm do
   attr :index, :integer, default: nil
 
   slot :inner_block, required: true
-  slot :extra, required: false
+
+  slot :extra, required: false do
+    attr :title, :string, required: true
+  end
 
   defp entity(assigns) do
     assigns =
@@ -88,9 +91,12 @@ defmodule ModernResumeWeb.CV.ContentForm do
         </div>
       </div>
       <div :if={@extra != []} class="pl-10 pt-2">
-        <div class="pb-4">
-          {render_slot(@extra)}
-        </div>
+        <details :for={extra <- @extra} open>
+          <summary class="cursor-pointer py-2">{extra.title}</summary>
+          <div class="pb-4">
+            {render_slot(extra)}
+          </div>
+        </details>
       </div>
     </div>
     """
@@ -259,10 +265,9 @@ defmodule ModernResumeWeb.CV.ContentForm do
       </div>
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
 
-      <:extra>
+      <:extra title="Work Details">
         <.fieldset
           id={"experiences:#{@form.data.id}:experience_details"}
-          title="Details"
           variant={:tiny}
           on_add="experience_details:add"
           on_sort="experience_details:sort"
