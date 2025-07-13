@@ -27,6 +27,7 @@ defmodule ModernResumeWeb.CVShowLive do
          |> assign(cv: cv)
          |> assign(state: initial_state)
          |> assign(form: CV.changeset(cv, %{}) |> to_form())
+         |> assign(fullscreen: false)
          |> assign(page_title: cv.title)
          |> assign(selected_tab: "personal")
          |> render_cv(cv)}
@@ -156,13 +157,19 @@ defmodule ModernResumeWeb.CVShowLive do
   end
 
   @impl true
-  def handle_event("toggle", _, socket) do
+  def handle_event("toggle:content_type", _, socket) do
     {:noreply,
      socket
      |> assign(state: RenderState.toggle_content_type(socket.assigns.state))
      |> render_cv(socket.assigns.cv)}
   end
 
+  @impl true
+  def handle_event("toggle:fullscreen", _, socket) do
+    {:noreply, socket |> assign(fullscreen: not socket.assigns.fullscreen)}
+  end
+
+  @impl true
   def handle_event("tabs:select", %{"tab" => tab}, socket) do
     {:noreply, socket |> assign(selected_tab: tab)}
   end
@@ -243,8 +250,11 @@ defmodule ModernResumeWeb.CVShowLive do
         </div>
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-4">
-        <div class="relative h-full">
+      <div class={[
+        "w-full gap-4",
+        not @fullscreen && "grid grid-cols-2"
+      ]}>
+        <div :if={not @fullscreen} class="relative h-full">
           <.form
             for={@form}
             phx-change="cv:save"
@@ -367,7 +377,27 @@ defmodule ModernResumeWeb.CVShowLive do
           </.form>
         </div>
 
-        <.latex_preview id="cv_latex_preview" state={@state} toggle="toggle" />
+        <.latex_preview id="cv_latex_preview" state={@state}>
+          <:panel>
+            <.button type="button" phx-click="toggle:content_type">
+              <.icon
+                name={
+                  if @state.content_type == :pdf, do: "hero-code-bracket", else: "hero-document-check"
+                }
+                class="size-5"
+              />
+            </.button>
+            <.button :if={@state.content_type == :pdf} type="button" phx-click="toggle:fullscreen">
+              <.icon
+                name={if @fullscreen, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out"}
+                class="size-5"
+              />
+            </.button>
+            <.button :if={@state.content_type == :str} type="button">
+              <.icon name="hero-clipboard-document" class="size-5" />
+            </.button>
+          </:panel>
+        </.latex_preview>
       </div>
     </div>
     """

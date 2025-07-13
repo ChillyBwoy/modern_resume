@@ -199,8 +199,10 @@ defmodule ModernResumeWeb.CV.ContentForm do
     ~H"""
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.input field={@form[:degree]} label="Degree" phx-debounce="blur" />
-      <.input field={@form[:institution]} label="Institution" phx-debounce="blur" />
-      <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" />
+      <div class="grid grid-cols-[2fr_1fr] gap-4">
+        <.input field={@form[:institution]} label="Institution" phx-debounce="blur" />
+        <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" />
+      </div>
       <div class="grid grid-cols-2 gap-4">
         <.month_picker month={@form[:date_start_month]} year={@form[:date_start_year]} />
         <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
@@ -220,6 +222,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
     ~H"""
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.input field={@form[:title]} label="Title" phx-debounce="blur" />
+      <.input field={@form[:subtitle]} label="Subtitle" phx-debounce="blur" />
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
     </.entity>
     """
@@ -233,7 +236,8 @@ defmodule ModernResumeWeb.CV.ContentForm do
   def experience_detail_form(assigns) do
     ~H"""
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
-      <.input field={@form[:content]} label="Content" phx-debounce="blur" />
+      <.input field={@form[:title]} label="Title" phx-debounce="blur" />
+      <.input field={@form[:content]} type="textarea" label="Content" phx-debounce="blur" />
     </.entity>
     """
   end

@@ -13,23 +13,14 @@ defmodule ModernResumeWeb.CV.LatexPreview do
 
   attr :id, :string, required: true
   attr :state, ModernResumeWeb.Renderer.RenderState, required: true
-  attr :toggle, :string, default: nil
+
+  slot :panel, required: false
 
   def latex_preview(assigns) do
     ~H"""
     <div class="relative h-full w-full grid grid-rows-[auto_1fr] shadow-xl rounded-lg overflow-hidden">
       <div class="bg-gray-200 p-2 flex gap-4 items-center">
-        <.button type="button" phx-click={@toggle}>
-          <.icon
-            name={
-              if @state.content_type == :pdf, do: "hero-code-bracket", else: "hero-document-check"
-            }
-            class="size-5"
-          />
-        </.button>
-        <.button :if={@state.content_type == :str} type="button">
-          <.icon name="hero-clipboard-document" class="size-5" />
-        </.button>
+        {render_slot(@panel)}
       </div>
 
       <%= if @state.status == :error do %>
