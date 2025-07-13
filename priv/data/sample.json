@@ -4,55 +4,55 @@
     "phone": "+81 90-GOJO-SAMA",
     "skills": [
         {
-            "id": "433ab0ac-8787-4731-807a-ddcdece29bdf",
+            "id": "3c5408da-e615-43b9-bfdb-b870916e1a01",
             "title": "Jujutsu Techniques",
-            "subtitle": null,
+            "header": "Main",
             "description": "Limitless, Infinity, Blue, Red, Purple, Test"
         },
         {
-            "id": "411962dc-f3cb-42d0-bd44-5ee172c2d599",
+            "id": "a2ef2b09-76d6-44ca-8878-7a1ae962f146",
             "title": "Combat",
-            "subtitle": null,
+            "header": "Other",
             "description": "Hand-to-Hand, Cursed Energy Control, Tactical Analysis, Adaptability, Domain Expansion"
         },
         {
-            "id": "a00f9123-7921-47b2-880f-0c66964204db",
+            "id": "e8da930a-f0f2-4286-a510-cb6237f7359e",
             "title": "Leadership",
-            "subtitle": null,
+            "header": null,
             "description": "Mentorship, Strategy, Delegation, Crisis Management, Talent Development"
         }
     ],
     "location": "Tokyo, Japan",
     "position": "Special Grade Sorcerer",
     "settings": {
-        "id": "a99dcc57-c8b6-41a1-9689-06a6b84a4c80",
-        "color": "burgundy",
-        "style": "oldstyle",
-        "font_size": "font_size_10pt",
+        "id": "d4d3219f-876d-4895-99fb-c2d51db23356",
+        "color": "blue",
+        "style": "classic",
+        "font_size": "font_size_11pt",
         "use_icons": true,
-        "font_family": "sans"
+        "font_family": "roman"
     },
     "birthdate": "2000-06-13",
     "languages": [
         {
-            "id": "122789f4-dbc3-4ffa-8ffa-72e4c6d8c92f",
+            "id": "4b876c6f-8455-42c4-ac15-6e7842c2387f",
             "name": "Japanese",
             "fluency": "native"
         },
         {
-            "id": "dd0d88a5-115c-4307-92a3-ed3b19dc5ee4",
+            "id": "772e6338-12ba-4f01-9c2c-f827eada64f3",
             "name": "Sanskrit",
             "fluency": "full"
         },
         {
-            "id": "040628f0-c24a-4dfa-9ae6-9c6a90789257",
+            "id": "ce4b3251-77b6-4be5-9e71-2b7c3e9ffab7",
             "name": "English",
             "fluency": "limited"
         }
     ],
     "educations": [
         {
-            "id": "9744dda8-6c6f-4185-b794-f209381aaef2",
+            "id": "5113da9f-13b8-4623-b093-44c75c634e01",
             "degree": "Post-Graduate Research Fellowship",
             "location": "Kyoto, Japan",
             "description": "Conducted intensive research into the fundamental principles of cursed energy, contributing significantly to the theoretical understanding of domain expansion and complex cursed object properties.",
@@ -64,7 +64,7 @@
             "date_start_month": 4
         },
         {
-            "id": "6568cda3-76ca-4044-931e-03067bef7a11",
+            "id": "68b476bf-1d2c-481f-bed0-b9dcaf4dcba8",
             "degree": "Jujutsu Sorcery Mastery",
             "location": "Tokyo, Japan",
             "description": "Graduated as the undisputed strongest sorcerer of his generation, demonstrating unprecedented control over cursed energy and groundbreaking application of innate techniques.",
@@ -78,36 +78,36 @@
     ],
     "experiences": [
         {
-            "id": "1067b6c9-e962-49d6-b750-c3b991bf6c7c",
+            "id": "b71bd5e8-0504-43b4-b4e6-9a0454b88965",
             "title": "Special Grade Jujutsu Sorcerer",
             "details": [
                 {
-                    "id": "7a38e336-01cb-44ad-a6d0-5abf89a0eb43",
+                    "id": "24278642-8a73-44d8-a07e-cc49d10b1d26",
                     "title": "Star Plasma Vessel Protection",
                     "content": "Actively engaged in securing and protecting crucial targets from hostile factions."
                 },
                 {
-                    "id": "fea168bf-8f61-422a-967f-43e1b4bca03b",
+                    "id": "840ed6e1-d941-47f2-9f33-346c536e4b8c",
                     "title": "Shibuya Incident Containment",
                     "content": "Orchestrated and executed the initial response to the Shibuya Incident, containing unprecedented cursed spirit activity."
                 },
                 {
-                    "id": "d8b94115-0700-4737-aa03-83cb025ba8a7",
+                    "id": "7ba43e1b-2ca1-4f4a-8f40-8ed4689647ae",
                     "title": "Cursed Object Retrieval",
                     "content": "Spearheaded numerous retrieval operations for dangerous cursed objects to prevent their misuse."
                 },
                 {
-                    "id": "157be4c3-d6a9-434e-89e8-3e9998fd9406",
+                    "id": "ea5eb7fb-1684-4d4d-aa91-19795e070002",
                     "title": "Domain Expansion Mastery",
                     "content": "Consistently refined and perfected the \"Unlimited Void\" domain, deploying it in critical engagements."
                 },
                 {
-                    "id": "c9c5de0f-080b-44a1-aec3-990de1069614",
+                    "id": "fae152b8-6a07-46d2-b171-aa105bb7e841",
                     "title": "International Cursed Energy Research",
                     "content": "Collaborated on a multi-national initiative to understand and mitigate global cursed energy surges."
                 },
                 {
-                    "id": "bebac2f4-c201-44e5-b53e-8a083b32fab5",
+                    "id": "7f7081f7-b400-411b-96e8-906c8509fc90",
                     "title": "Barrier Technique Refinement",
                     "content": "Developed and implemented advanced barrier techniques for fortified strongholds."
                 }
@@ -122,36 +122,36 @@
             "date_start_month": 6
         },
         {
-            "id": "002992a2-ea48-4770-960e-4a1811f61927",
+            "id": "86c74da1-c1d7-45fa-a50e-a7ac5cabd9f2",
             "title": "Independent Exorcist",
             "details": [
                 {
-                    "id": "89864fc9-2208-4513-809f-a4faca4c28e6",
+                    "id": "7a527a3a-c4a1-427f-bd56-5662d2114021",
                     "title": null,
                     "content": "Remote Village Exorcism. Successfully cleansed multiple remote villages plagued by advanced cursed spirits."
                 },
                 {
-                    "id": "906ffeb7-365d-4a23-a1e8-72ec5739f3eb",
+                    "id": "019397e7-5ead-430b-a1ae-8f8b7480aa94",
                     "title": null,
                     "content": "Urban Anomaly Containment. Individually contained several unexpected cursed energy anomalies within major cities."
                 },
                 {
-                    "id": "739cf6cd-c71b-4ba3-9d38-3f8b607d0830",
+                    "id": "d1e78b47-fb2a-490d-b696-911c7fe932c2",
                     "title": null,
                     "content": "Deep Forest Cursed Spirit Hunt. Tracked and neutralized a unique and powerful cursed spirit deep within a dense forest."
                 },
                 {
-                    "id": "169d485c-7b14-497c-8b09-a93c5efb4bff",
+                    "id": "0fdc5197-7c7b-461f-9f49-c641d8fc2b2c",
                     "title": null,
                     "content": "Sea-Based Cursed Spirit Extermination. Eliminated a large-scale cursed spirit infestation originating from a coastal area."
                 },
                 {
-                    "id": "0f4be0de-9fd6-4e29-8247-69be6dbac2dc",
+                    "id": "dc6775d6-ba39-4ad9-bd5a-717925ddd7af",
                     "title": null,
                     "content": "Mountain Temple Cleansing. Performed a comprehensive exorcism of an ancient temple overwhelmed by cursed energy."
                 },
                 {
-                    "id": "39db24e3-c92c-4b6f-996b-701beba491f9",
+                    "id": "babab255-ebde-47ca-9598-8fe77a86163d",
                     "title": null,
                     "content": "Underground Labyrinth Exploration. Navigated and purged a complex underground labyrinth infested with a new breed of cursed spirits."
                 }
@@ -166,36 +166,36 @@
             "date_start_month": 1
         },
         {
-            "id": "4b06be60-38eb-4853-8606-a81cbf4d1c30",
+            "id": "85119420-b9e0-496a-9a81-a3f1e3e734d0",
             "title": "Head of Special Operations",
             "details": [
                 {
-                    "id": "534dc928-1bba-472f-bf9e-3bd8189c37aa",
+                    "id": "391dffc5-2d23-4be1-9f38-2931978ccf65",
                     "title": null,
                     "content": "Kyoto Treaty Negotiation. Played a crucial role in negotiating a multi-faction treaty for cursed object handling."
                 },
                 {
-                    "id": "c773f25e-0708-4feb-9dd1-11497bb4911b",
+                    "id": "7ab543a7-70bd-4a68-8a22-a45ea36ee558",
                     "title": null,
                     "content": "Anti-Curse User Task Force. Led a specialized task force targeting dangerous rogue curse users."
                 },
                 {
-                    "id": "1e5a7e4e-88b0-4383-af79-8c4e24efbfa5",
+                    "id": "69af0bd5-3206-43a5-9a33-09c1e72ab9e8",
                     "title": null,
                     "content": "Global Threat Assessment. Conducted ongoing assessments of emerging global cursed energy threats."
                 },
                 {
-                    "id": "7c67e100-a141-4c13-97ce-7ef9dabab78d",
+                    "id": "810e245c-80b5-489f-9dc5-f3e690a2070c",
                     "title": null,
                     "content": "Secure Facility Breach Recovery. Coordinated the recovery and containment efforts after a major breach of a secure facility."
                 },
                 {
-                    "id": "2ef7124f-4575-41c5-8210-469b8d868aa6",
+                    "id": "32465c78-5eea-43fd-81f3-e5461a4e8b53",
                     "title": null,
                     "content": "Ancient Cursed Artifact Safeguarding. Oversaw the secure transfer and preservation of numerous ancient cursed artifacts."
                 },
                 {
-                    "id": "1044b3c3-7f40-43d3-9030-7bf9dec01b80",
+                    "id": "375a0ff8-6ec5-4ab2-896a-cda780992048",
                     "title": null,
                     "content": "Emergency Response Protocol Development. Developed and standardized new emergency response protocols for critical incidents."
                 }
@@ -210,36 +210,36 @@
             "date_start_month": 1
         },
         {
-            "id": "b42f44ab-3859-407e-9343-594365b9c03a",
+            "id": "40144a56-3083-4eb0-b680-a74d633c5484",
             "title": "Teacher",
             "details": [
                 {
-                    "id": "9de369d6-f48d-4fd7-ac2c-458361a54380",
+                    "id": "12f6fe89-548b-4bfa-a5b4-f661362380db",
                     "title": null,
                     "content": "Curriculum Development. Revitalized the jujutsu training curriculum, integrating modern combat philosophy."
                 },
                 {
-                    "id": "8ee8cbd7-e75d-4311-9791-14c026954009",
+                    "id": "fc760105-7afb-4f37-9e51-1cab1aca89c6",
                     "title": null,
                     "content": "Student Mentorship Program. Established a personalized mentorship program for promising students like Yuji Itadori and Megumi Fushiguro."
                 },
                 {
-                    "id": "a3a0d0cf-e116-44d0-bce3-bfc8a6e43e92",
+                    "id": "5b8591c0-da73-4005-8cd9-c9350757f462",
                     "title": null,
                     "content": "Field Training Exercises. Designed and supervised realistic field exercises to prepare students for live combat situations."
                 },
                 {
-                    "id": "e9bd483d-5346-4024-9853-15adb59d7b04",
+                    "id": "146b4d54-8a4b-496d-8488-2c66471b2f04",
                     "title": null,
                     "content": "Cursed Technique Enhancement. Guided students in refining their innate cursed techniques through rigorous practice."
                 },
                 {
-                    "id": "0584e96d-fce8-4a8c-b1d3-56b2374e4018",
+                    "id": "a136a671-aeb5-435b-b4c9-3eeef75dcfd0",
                     "title": null,
                     "content": "Ethical Jujutsu Practices. Instructed students on the moral responsibilities and ethical considerations of sorcery."
                 },
                 {
-                    "id": "b92fbac1-887e-4ecc-8421-3e3667edaac6",
+                    "id": "f5ca49d9-10d8-48e9-9bc0-c0f235075659",
                     "title": null,
                     "content": "Inter-School Exchange Program. Initiated an exchange program with Kyoto Jujutsu High to foster cooperative learning."
                 }
@@ -256,13 +256,13 @@
     ],
     "social_networks": [
         {
-            "id": "a06efa2f-a910-4efa-9809-11f7873ac503",
+            "id": "34e1ea35-ba59-4352-a421-9fc9faed5b35",
             "alias": null,
             "content": "SatoruGojo",
             "platform": "github"
         },
         {
-            "id": "5269eac2-b12d-427f-9b2e-778fa8f01d83",
+            "id": "61cb4322-508a-42a2-b3ae-b42e3ab46898",
             "alias": null,
             "content": "SatoruGojo",
             "platform": "instagram"

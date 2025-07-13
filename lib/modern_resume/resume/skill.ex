@@ -5,16 +5,16 @@ defmodule ModernResume.Resume.Skill do
   alias ModernResume.Validation
 
   embedded_schema do
+    field :header, :string
     field :title, :string
-    field :subtitle, :string
     field :description, :string
   end
 
   @doc false
   def changeset(skill \\ %__MODULE__{}, attrs \\ %{}) do
     skill
-    |> cast(attrs, [:title, :subtitle, :description])
+    |> cast(attrs, [:header, :title, :description])
     |> validate_required([:title, :description])
-    |> Validation.validate_latex_chars([:title, :subtitle, :description])
+    |> Validation.validate_latex_chars([:header, :title, :description])
   end
 end

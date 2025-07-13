@@ -47,8 +47,10 @@
 <%= if @cv.skills != [] do %>
 \\section{<%= if @cv.settings.use_icons do %>\\faCode{} <%end %>Skills}
 <%= for skill <- @cv.skills do %>
-\\subsection{<%= str(skill.title) %>}
-\\cvline{<%= str(skill.subtitle) %>}{<%= str(skill.description) %>}
+<%= if skill.header != nil do %>
+\\subsection{<%= str(skill.header) %>}
+<% end %>
+\\cvline{<%= str(skill.title) %>}{<%= str(skill.description) %>}
 <% end %>
 <% end %>
 
@@ -65,7 +67,7 @@
 <%= if exp.details != [] do %>
 <%= for detail <- exp.details do %>
 \\cvlistitem
-  {<%= if detail.title != nil do %>\\textbf{<%= str(detail.title) %>}<% end %>. <%= str(detail.content) %>}
+  {<%= if detail.title != nil do %>\\textbf{<%= str(detail.title) %>}. <% end %><%= str(detail.content) %>}
 <% end %>
 <% end %>
 <% end %>

@@ -221,8 +221,8 @@ defmodule ModernResumeWeb.CV.ContentForm do
   def skill_form(assigns) do
     ~H"""
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
+      <.input field={@form[:header]} label="Header" phx-debounce="blur" />
       <.input field={@form[:title]} label="Title" phx-debounce="blur" />
-      <.input field={@form[:subtitle]} label="Subtitle" phx-debounce="blur" />
       <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" />
     </.entity>
     """
