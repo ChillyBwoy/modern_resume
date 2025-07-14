@@ -237,7 +237,7 @@ defmodule ModernResumeWeb.CVShowLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="grid grid-rows-[auto_1fr] h-full p-6 ">
+    <div class="grid grid-rows-[auto_1fr] h-full p-6">
       <div class="grid grid-cols-3 items-center py-2">
         <.link navigate={~p"/"} class="flex items-center gap-1">
           <.icon name="hero-chevron-left" class="size-4" />
@@ -384,7 +384,7 @@ defmodule ModernResumeWeb.CVShowLive do
                 class="size-5"
               />
             </.button>
-            <.button :if={@state.content_type == :pdf} type="button" phx-click="toggle:fullscreen">
+            <.button type="button" phx-click="toggle:fullscreen">
               <.icon
                 name={if @fullscreen, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out"}
                 class="size-5"
