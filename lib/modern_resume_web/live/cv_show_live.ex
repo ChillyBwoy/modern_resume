@@ -9,6 +9,7 @@ defmodule ModernResumeWeb.CVShowLive do
   alias ModernResume.Resume.CV
   alias ModernResumeWeb.Renderer.RenderWorker
   alias ModernResumeWeb.Renderer.RenderState
+  alias ModernResumeWeb.Formatters
 
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
@@ -246,7 +247,7 @@ defmodule ModernResumeWeb.CVShowLive do
           {@cv.title}
         </div>
         <div class="text-xs flex justify-end items-center">
-          Last update: {@cv.updated_at |> Timex.format!("%Y-%m-%d %H:%M", :strftime)}
+          Last update: {Formatters.format_datetime(@cv.updated_at)}
         </div>
       </div>
 
@@ -370,10 +371,6 @@ defmodule ModernResumeWeb.CVShowLive do
                 </:tab>
               </.tabs>
             </.inputs_for>
-
-            <div class="p-4">
-              <.button type="submit">Save</.button>
-            </div>
           </.form>
         </div>
 

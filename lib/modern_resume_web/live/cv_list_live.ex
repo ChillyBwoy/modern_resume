@@ -3,6 +3,7 @@ defmodule ModernResumeWeb.CVListLive do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
+  alias ModernResumeWeb.Formatters
 
   @impl true
   def mount(_params, _session, socket) do
@@ -95,7 +96,7 @@ defmodule ModernResumeWeb.CVListLive do
             <span class="text-lg text-gray-600">{cv.content.position}</span>
             <span class="flex items-center text-sm text-gray-500 gap-2">
               <.icon name="hero-calendar" class="size-4" />
-              <span>{cv.inserted_at |> Timex.format!("%B %d, %Y %H:%M", :strftime)}</span>
+              <span>{Formatters.format_datetime(cv.inserted_at)}</span>
             </span>
           </.link>
 
