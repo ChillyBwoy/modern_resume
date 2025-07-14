@@ -41,7 +41,7 @@ defmodule ModernResumeWeb.AuthController do
     end
   end
 
-  defp get_or_create_user(%{provider: :github, info: %{email: email}}) do
+  defp get_or_create_user(%{info: %{email: email}}) do
     Accounts.get_or_create(email)
   end
 end

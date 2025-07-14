@@ -61,7 +61,8 @@ defmodule ModernResume.MixProject do
       {:bandit, "~> 1.5"},
       {:timex, "~> 3.0"},
       {:iona, "~> 0.4"},
-      {:ueberauth_github, "~> 0.8"}
+      {:ueberauth_github, "~> 0.8"},
+      {:ueberauth_google, "~> 0.10"}
     ]
   end
 

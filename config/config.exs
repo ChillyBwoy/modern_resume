@@ -73,6 +73,10 @@ config :ueberauth, Ueberauth,
         default_scope: "user:email",
         allow_private_emails: true
       ]
+    },
+    google: {
+      Ueberauth.Strategy.Google,
+      []
     }
   ]
 
