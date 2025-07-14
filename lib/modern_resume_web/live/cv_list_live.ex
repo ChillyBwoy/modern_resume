@@ -55,9 +55,10 @@ defmodule ModernResumeWeb.CVListLive do
       <.modal
         :if={@live_action == :new}
         id="create-cv-modal"
-        on_cancel={JS.navigate(~p"/cvs", replace: true)}
+        on_cancel={JS.navigate(~p"/", replace: true)}
         show
       >
+        <.header>Create new CV</.header>
         <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
           <.input field={@create_form[:title]} label="Title" />
 

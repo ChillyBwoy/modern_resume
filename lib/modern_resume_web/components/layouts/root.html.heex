@@ -12,28 +12,6 @@
     </script>
   </head>
   <body class="h-full">
-    <header class="sticky top-0 bg-white z-50 shadow-md h-16">
-      <nav class="h-full flex items-center">
-        <ul class="relative flex items-center gap-4 p-4 w-full justify-end ">
-          <%= if @current_user do %>
-            <li>
-              <.link href={~p"/users/settings"}>Settings</.link>
-            </li>
-            <li>{@current_user.email}</li>
-            <li>
-              <.link href={~p"/users/log_out"} method="delete">Log out</.link>
-            </li>
-          <% else %>
-            <li>
-              <.link href={~p"/users/register"}>Register</.link>
-            </li>
-            <li>
-              <.link href={~p"/users/log_in"}>Log in</.link>
-            </li>
-          <% end %>
-        </ul>
-      </nav>
-    </header>
     {@inner_content}
   </body>
 </html>

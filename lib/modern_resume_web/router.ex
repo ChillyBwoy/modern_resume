@@ -17,10 +17,12 @@ defmodule ModernResumeWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ModernResumeWeb do
-    pipe_through :browser
+  scope "/auth" do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/", PageController, :home
+    get "/:provider", ModernResumeWeb.AuthController, :request
+    get "/:provider/callback", ModernResumeWeb.AuthController, :callback
+    delete "/logout", ModernResumeWeb.AuthController, :delete
   end
 
   # Other scopes may use custom stacks.
@@ -51,7 +53,8 @@ defmodule ModernResumeWeb.Router do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     live_session :redirect_if_user_is_authenticated,
-      on_mount: [{ModernResumeWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      on_mount: [{ModernResumeWeb.UserAuth, :redirect_if_user_is_authenticated}],
+      layout: {ModernResumeWeb.Layouts, :fullscreen} do
       live "/users/register", UserRegistrationLive, :new
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
@@ -66,7 +69,7 @@ defmodule ModernResumeWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{ModernResumeWeb.UserAuth, :ensure_authenticated}] do
-      live "/cvs", CVListLive, :list
+      live "/", CVListLive, :list
       live "/cvs/new", CVListLive, :new
       live "/cvs/:cv_id", CVShowLive, :show
 
@@ -81,7 +84,8 @@ defmodule ModernResumeWeb.Router do
     delete "/users/log_out", UserSessionController, :delete
 
     live_session :current_user,
-      on_mount: [{ModernResumeWeb.UserAuth, :mount_current_user}] do
+      on_mount: [{ModernResumeWeb.UserAuth, :mount_current_user}],
+      layout: {ModernResumeWeb.Layouts, :fullscreen} do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end

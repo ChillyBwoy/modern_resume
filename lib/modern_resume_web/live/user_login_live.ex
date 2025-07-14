@@ -3,12 +3,12 @@ defmodule ModernResumeWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm flex flex-col gap-4 w-md">
       <.header class="text-center">
         Log in to account
         <:subtitle>
           Don't have an account?
-          <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/register"} class="font-semibold hover:underline">
             Sign up
           </.link>
           for an account now.
@@ -18,9 +18,9 @@ defmodule ModernResumeWeb.UserLoginLive do
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
+        <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
           <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
             Forgot your password?
           </.link>
@@ -28,6 +28,22 @@ defmodule ModernResumeWeb.UserLoginLive do
         <:actions>
           <.button phx-disable-with="Logging in..." class="w-full">
             Log in <span aria-hidden="true">→</span>
+          </.button>
+          <.button
+            type="button"
+            class="w-full"
+            variant={:default}
+            phx-click={JS.navigate(~p"/auth/github")}
+          >
+            Log in with GitHub
+          </.button>
+          <.button
+            type="button"
+            class="w-full"
+            variant={:default}
+            phx-click={JS.navigate(~p"/auth/google")}
+          >
+            Log in with Google
           </.button>
         </:actions>
       </.simple_form>

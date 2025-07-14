@@ -6,7 +6,7 @@ defmodule ModernResumeWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm flex flex-col gap-4 w-md">
       <.header class="text-center">
         Register for an account
         <:subtitle>
@@ -33,9 +33,31 @@ defmodule ModernResumeWeb.UserRegistrationLive do
 
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
+        <.input
+          field={@form[:password_confirmation]}
+          type="password"
+          label="Confirm Password"
+          required
+        />
 
         <:actions>
           <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <.button
+            type="button"
+            class="w-full"
+            variant={:default}
+            phx-click={JS.navigate(~p"/auth/github")}
+          >
+            Sign in with GitHub
+          </.button>
+          <.button
+            type="button"
+            class="w-full"
+            variant={:default}
+            phx-click={JS.navigate(~p"/auth/google")}
+          >
+            Sign in with Google
+          </.button>
         </:actions>
       </.simple_form>
     </div>
