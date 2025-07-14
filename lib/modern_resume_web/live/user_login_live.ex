@@ -3,7 +3,7 @@ defmodule ModernResumeWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm flex flex-col gap-4 w-md">
+    <div class="mx-auto w-sm flex flex-col gap-4">
       <.header class="text-center">
         Log in to account
         <:subtitle>
