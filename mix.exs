@@ -60,7 +60,8 @@ defmodule ModernResume.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:timex, "~> 3.0"},
-      {:iona, "~> 0.4"}
+      {:iona, "~> 0.4"},
+      {:ueberauth_github, "~> 0.8"}
     ]
   end
 

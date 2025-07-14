@@ -350,4 +350,28 @@ defmodule ModernResume.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def get_or_create(email) when is_binary(email) do
+    case get_user_by_email(email) do
+      %User{} = user ->
+        {:ok, user}
+
+      nil ->
+        password = random_password()
+
+        case register_user(%{email: email, password: password}) do
+          {:ok, user} ->
+            {:ok, user}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, changeset}
+        end
+    end
+  end
+
+  defp random_password(size \\ 32) do
+    :crypto.strong_rand_bytes(size)
+    |> Base.encode64()
+    |> binary_part(0, size)
+  end
 end
