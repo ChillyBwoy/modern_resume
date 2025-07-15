@@ -15,6 +15,9 @@ defmodule ModernResume.Resume.Skill do
     skill
     |> cast(attrs, [:header, :title, :description])
     |> validate_required([:title, :description])
+    |> validate_length(:header, max: 100)
+    |> validate_length(:title, max: 100)
+    |> validate_length(:description, max: 500)
     |> Validation.validate_latex_chars([:header, :title, :description])
   end
 end

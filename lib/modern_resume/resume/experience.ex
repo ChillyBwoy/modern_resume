@@ -46,6 +46,10 @@ defmodule ModernResume.Resume.Experience do
     ])
     |> cast_embed(:details)
     |> validate_required([:title, :date_start_month, :date_start_year])
+    |> validate_length(:title, max: 100)
+    |> validate_length(:description, max: 500)
+    |> validate_length(:location, max: 100)
+    |> validate_length(:organization, max: 100)
     |> Validation.validate_latex_chars([
       :title,
       :description,

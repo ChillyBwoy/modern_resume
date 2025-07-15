@@ -14,6 +14,8 @@ defmodule ModernResume.Resume.ExperienceDetail do
     experience_detail
     |> cast(attrs, [:title, :content])
     |> validate_required([:content])
+    |> validate_length(:title, max: 50)
+    |> validate_length(:content, max: 500)
     |> Validation.validate_latex_chars([:title, :content])
   end
 end

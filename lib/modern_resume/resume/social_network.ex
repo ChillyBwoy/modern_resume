@@ -45,6 +45,8 @@ defmodule ModernResume.Resume.SocialNetwork do
     network
     |> cast(attrs, [:platform, :content, :alias])
     |> validate_required([:platform, :content])
+    |> validate_length(:content, max: 100)
+    |> validate_length(:alias, max: 100)
   end
 
   def platform_choices do

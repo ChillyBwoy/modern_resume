@@ -31,6 +31,11 @@ defmodule ModernResume.Resume.Education do
       :date_end_month
     ])
     |> validate_required([:institution, :date_start_year, :date_start_month])
+    |> validate_length(:degree, max: 100)
+    |> validate_length(:institution, max: 100)
+    |> validate_length(:location, max: 100)
+    |> validate_length(:field_of_study, max: 100)
+    |> validate_length(:description, max: 1000)
     |> Validation.validate_latex_chars([
       :institution,
       :location,

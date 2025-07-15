@@ -18,6 +18,7 @@ defmodule ModernResume.Resume.CV do
     cv
     |> cast(attrs, [:title, :user_id])
     |> validate_required([:title, :user_id])
+    |> validate_length(:title, max: 100)
     |> cast_embed(:content)
   end
 end

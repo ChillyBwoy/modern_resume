@@ -22,7 +22,7 @@ defmodule ModernResume.Resume.Language do
     language
     |> cast(attrs, [:name, :fluency])
     |> validate_required([:name, :fluency])
-    |> validate_length(:name, min: 1)
+    |> validate_length(:name, min: 1, max: 50)
     |> Validation.validate_latex_chars([:name])
   end
 

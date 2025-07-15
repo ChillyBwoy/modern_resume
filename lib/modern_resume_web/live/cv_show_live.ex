@@ -295,7 +295,7 @@ defmodule ModernResumeWeb.CVShowLive do
                   </.scroll_container>
                 </:tab>
 
-                <:tab name="experience" title="Experience">
+                <:tab name="experiences" title="Experience">
                   <.scroll_container>
                     <.fieldset id="experiences" on_add="experiences:add" on_sort="experiences:sort">
                       <.inputs_for :let={experience} field={content[:experiences]}>
@@ -311,7 +311,7 @@ defmodule ModernResumeWeb.CVShowLive do
                   </.scroll_container>
                 </:tab>
 
-                <:tab name="education" title="Education">
+                <:tab name="educations" title="Education">
                   <.scroll_container>
                     <.fieldset id="educations" on_add="educations:add" on_sort="educations:sort">
                       <.inputs_for :let={education} field={content[:educations]}>
@@ -345,7 +345,7 @@ defmodule ModernResumeWeb.CVShowLive do
                   </.scroll_container>
                 </:tab>
 
-                <:tab name="foreign_languages" title="Foreign Languages">
+                <:tab name="languages" title="Foreign Languages">
                   <.scroll_container>
                     <.fieldset id="languages" on_add="languages:add" on_sort="languages:sort">
                       <.inputs_for :let={language} field={content[:languages]}>
