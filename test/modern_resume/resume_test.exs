@@ -91,7 +91,7 @@ defmodule ModernResume.ResumeTest do
     test "delete_cv/1 deletes the cv" do
       cv = cv_fixture()
       assert {:ok, %CV{}} = Resume.delete_cv(cv)
-      assert_raise Ecto.NoResultsError, fn -> Resume.get_cv(cv.id) end
+      assert nil == Resume.get_cv(cv.id)
     end
   end
 end

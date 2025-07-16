@@ -34,7 +34,7 @@ defmodule ModernResumeWeb.CVShowLive do
          |> render_cv(cv)}
 
       _ ->
-        {:error,
+        {:ok,
          socket
          |> put_flash(:error, "CV not found")
          |> redirect(to: ~p"/")}
