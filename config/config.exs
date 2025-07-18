@@ -31,6 +31,8 @@ config :modern_resume, ModernResumeWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :modern_resume, ModernResume.Mailer, adapter: Swoosh.Adapters.Local
 
+config :modern_resume, ModernResumeWeb.Renderer.Moderncv, preprocessor: :tectonic
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
