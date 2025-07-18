@@ -12,7 +12,7 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         <:subtitle>
           Already registered?
           <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-            Log in
+            Sign in
           </.link>
           to your account now.
         </:subtitle>
@@ -42,22 +42,8 @@ defmodule ModernResumeWeb.UserRegistrationLive do
 
         <:actions>
           <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
-          <.button
-            type="button"
-            class="w-full"
-            variant={:default}
-            phx-click={JS.navigate(~p"/auth/github")}
-          >
-            Sign in with GitHub
-          </.button>
-          <.button
-            type="button"
-            class="w-full"
-            variant={:default}
-            phx-click={JS.navigate(~p"/auth/google")}
-          >
-            Sign in with Google
-          </.button>
+          <.social_button provider="github" url={~p"/auth/github"} label="Sign up with GitHub" />
+          <.social_button provider="google" url={~p"/auth/google"} label="Sign up with Google" />
         </:actions>
       </.simple_form>
     </div>

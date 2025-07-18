@@ -5,7 +5,7 @@ defmodule ModernResumeWeb.UserLoginLive do
     ~H"""
     <div class="mx-auto w-sm flex flex-col gap-4">
       <.header class="text-center">
-        Log in to account
+        Sign in to account
         <:subtitle>
           Don't have an account?
           <.link navigate={~p"/users/register"} class="font-semibold hover:underline">
@@ -26,25 +26,9 @@ defmodule ModernResumeWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">
-            Log in <span aria-hidden="true">→</span>
-          </.button>
-          <.button
-            type="button"
-            class="w-full"
-            variant={:default}
-            phx-click={JS.navigate(~p"/auth/github")}
-          >
-            Log in with GitHub
-          </.button>
-          <.button
-            type="button"
-            class="w-full"
-            variant={:default}
-            phx-click={JS.navigate(~p"/auth/google")}
-          >
-            Log in with Google
-          </.button>
+          <.button phx-disable-with="Logging in..." class="w-full">Sign in</.button>
+          <.social_button provider="github" url={~p"/auth/github"} label="Sign in with GitHub" />
+          <.social_button provider="google" url={~p"/auth/google"} label="Sign in with Google" />
         </:actions>
       </.simple_form>
     </div>

@@ -705,4 +705,17 @@ defmodule ModernResumeWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  attr :url, :string, required: true
+  attr :provider, :string, values: ["github", "google"], required: true
+  attr :label, :string, required: true
+
+  def social_button(assigns) do
+    ~H"""
+    <.button type="button" class="w-full flex gap-2" variant={:default} phx-click={JS.navigate(@url)}>
+      <span style={~c"background-image: url(/images/#{@provider}.svg)"} class="size-5 bg-cover" />
+      <span>{@label}</span>
+    </.button>
+    """
+  end
 end
