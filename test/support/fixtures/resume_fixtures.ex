@@ -18,7 +18,14 @@ defmodule ModernResume.ResumeFixtures do
           skills: [],
           experiences: [],
           educations: [],
-          languages: []
+          languages: [],
+          settings: %{
+            style: :banking,
+            color: :blue,
+            font_size: :font_size_11pt,
+            font_family: :sans,
+            use_icons: true
+          }
         },
         title: "some title"
       })
