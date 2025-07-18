@@ -61,9 +61,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :iona,
-  helpers: [Iona.Template.Helper],
-  preprocess: [],
-  processors: [pdf: "lualatex"]
+  helpers: [Iona.Template.Helper]
 
 config :ueberauth, Ueberauth,
   providers: [

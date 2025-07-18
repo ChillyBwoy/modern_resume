@@ -21,13 +21,13 @@ defmodule ModernResumeWeb.CVShowLive do
 
     case Resume.get_cv_for(user, id) do
       %CV{} = cv ->
-        initial_state = RenderState.init() |> RenderState.content_type(:pdf)
+        initial_state = RenderState.init() |> RenderState.content_type(:str)
 
         {:ok,
          socket
          |> assign(cv: cv)
          |> assign(state: initial_state)
-         |> assign(form: CV.changeset(cv, %{}) |> to_form())
+         |> assign(form: CV.changeset(cv) |> to_form())
          |> assign(fullscreen: false)
          |> assign(page_title: cv.title)
          |> assign(selected_tab: "personal")

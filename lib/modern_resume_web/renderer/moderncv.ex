@@ -35,12 +35,17 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
   end
 
   def render(%CV{} = cv, :pdf) do
-    case render!(cv)
-         |> Iona.source()
-         |> Iona.to(:pdf) do
-      {:ok, pdf} ->
-        {:ok, Base.encode64(pdf)}
+    try do
+      case render!(cv)
+           |> Iona.source()
+           |> Iona.to(:pdf, preprocess: [&tectonic/2]) do
+        {:ok, pdf} ->
+          {:ok, Base.encode64(pdf)}
 
+        _ ->
+          {:error, "Error creating PDF"}
+      end
+    rescue
       _ ->
         {:error, "Error creating PDF"}
     end
@@ -93,4 +98,6 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
   def employment_type(type), do: Experience.display_employment_type(type)
 
   def font_size(size), do: Settings.display_font_size(size)
+
+  defp tectonic(_directory, source), do: {:shell, "tectonic #{source}"}
 end

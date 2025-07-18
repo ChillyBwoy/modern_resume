@@ -3,10 +3,16 @@ defmodule ModernResumeWeb.CV.LatexPreview do
 
   import ModernResumeWeb.CoreComponents
 
-  defp empty_preview(assigns) do
+  attr :title, :string, required: true
+  attr :variant, :atom, values: [:default, :error], default: :default
+
+  defp message(assigns) do
     ~H"""
-    <div class="relative flex items-center justify-center">
-      No preview available
+    <div class={[
+      "relative flex items-center justify-center",
+      @variant == :error && "text-danger"
+    ]}>
+      {@title}
     </div>
     """
   end
@@ -24,7 +30,7 @@ defmodule ModernResumeWeb.CV.LatexPreview do
       </div>
 
       <%= if @state.status == :error do %>
-        TODO: ERROR
+        <.message title="Error rendering PDF" variant={:error} />
       <% else %>
         <%= case @state.content_type do %>
           <% :str -> %>
@@ -33,7 +39,7 @@ defmodule ModernResumeWeb.CV.LatexPreview do
                 <pre class="overflow-scroll absolute left-0 right-0 top-0 bottom-0 text-xs p-4 whitespace-pre-wrap bg-form-background">{@state.content_str}</pre>
               </div>
             <% else %>
-              <.empty_preview />
+              <.message title="Preparing LaTeX..." />
             <% end %>
           <% :pdf -> %>
             <%= if @state.content_pdf != nil do %>
@@ -45,10 +51,10 @@ defmodule ModernResumeWeb.CV.LatexPreview do
                 class="w-full h-full"
               />
             <% else %>
-              <.empty_preview />
+              <.message title="Building PDF..." />
             <% end %>
           <% _ -> %>
-            <.empty_preview />
+            <.message title="No preview available" />
         <% end %>
       <% end %>
 
