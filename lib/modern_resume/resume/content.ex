@@ -1,8 +1,10 @@
 defmodule ModernResume.Resume.Content do
   use Ecto.Schema
+
   import Ecto.Changeset
 
   alias ModernResume.Validation
+  alias ModernResume.Resume.Content
 
   @primary_key false
   embedded_schema do
@@ -13,7 +15,9 @@ defmodule ModernResume.Resume.Content do
     field :birthdate, :date
     field :location, :string
 
-    embeds_one :settings, ModernResume.Resume.Settings, on_replace: :delete
+    embeds_one :settings, ModernResume.Resume.Settings,
+      on_replace: :delete,
+      defaults_to_struct: true
 
     embeds_many :social_networks, ModernResume.Resume.SocialNetwork, on_replace: :delete
     embeds_many :skills, ModernResume.Resume.Skill, on_replace: :delete
@@ -22,7 +26,7 @@ defmodule ModernResume.Resume.Content do
     embeds_many :languages, ModernResume.Resume.Language, on_replace: :delete
   end
 
-  def changeset(content \\ %__MODULE__{}, attrs \\ %{}) do
+  def changeset(%Content{} = content, attrs \\ %{}) do
     content
     |> cast(attrs, [:name, :position, :email, :phone, :birthdate, :location])
     |> validate_required([:name, :position])

@@ -1,6 +1,9 @@
 defmodule ModernResume.Resume.CV do
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias ModernResume.Resume.CV
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -14,7 +17,7 @@ defmodule ModernResume.Resume.CV do
   end
 
   @doc false
-  def changeset(cv \\ %__MODULE__{}, attrs \\ %{}) do
+  def changeset(%CV{} = cv, attrs \\ %{}) do
     cv
     |> cast(attrs, [:title, :user_id])
     |> validate_required([:title, :user_id])

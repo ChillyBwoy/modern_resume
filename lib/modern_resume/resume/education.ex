@@ -1,5 +1,6 @@
 defmodule ModernResume.Resume.Education do
   use Ecto.Schema
+
   import Ecto.Changeset
 
   alias ModernResume.Validation
@@ -16,8 +17,10 @@ defmodule ModernResume.Resume.Education do
     field :date_end_month, :integer
   end
 
+  alias ModernResume.Resume.Education
+
   @doc false
-  def changeset(education \\ %__MODULE__{}, attrs \\ %{}) do
+  def changeset(%Education{} = education, attrs \\ %{}) do
     education
     |> cast(attrs, [
       :institution,

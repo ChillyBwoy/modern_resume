@@ -70,19 +70,19 @@ defmodule ModernResume.Resume do
   end
 
   def add_entity(%CV{} = cv, :skills),
-    do: add_entity(cv, :skills, Skill.changeset())
+    do: add_entity(cv, :skills, %Skill{} |> Skill.changeset())
 
   def add_entity(%CV{} = cv, :educations),
-    do: add_entity(cv, :educations, Education.changeset())
+    do: add_entity(cv, :educations, %Education{} |> Education.changeset())
 
   def add_entity(%CV{} = cv, :languages),
-    do: add_entity(cv, :languages, Language.changeset())
+    do: add_entity(cv, :languages, %Language{} |> Language.changeset())
 
   def add_entity(%CV{} = cv, :experiences),
-    do: add_entity(cv, :experiences, Experience.changeset())
+    do: add_entity(cv, :experiences, %Experience{} |> Experience.changeset())
 
   def add_entity(%CV{} = cv, :social_networks),
-    do: add_entity(cv, :social_networks, SocialNetwork.changeset())
+    do: add_entity(cv, :social_networks, %SocialNetwork{} |> SocialNetwork.changeset())
 
   def add_entity(_, _), do: raise("Can not add an invalid entity")
 
@@ -105,7 +105,7 @@ defmodule ModernResume.Resume do
         |> Ecto.Changeset.put_embed(key, new_entities)
 
       cv
-      |> CV.changeset(%{})
+      |> CV.changeset()
       |> Ecto.Changeset.put_embed(:content, content)
       |> Repo.update()
     end
@@ -121,7 +121,7 @@ defmodule ModernResume.Resume do
       |> Ecto.Changeset.put_embed(key, new_entities)
 
     cv
-    |> CV.changeset(%{})
+    |> CV.changeset()
     |> Ecto.Changeset.put_embed(:content, content)
     |> Repo.update()
   end
@@ -166,7 +166,7 @@ defmodule ModernResume.Resume do
       |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
 
     cv
-    |> CV.changeset(%{})
+    |> CV.changeset()
     |> Ecto.Changeset.put_embed(:content, content)
     |> Repo.update()
   end
@@ -201,12 +201,13 @@ defmodule ModernResume.Resume do
       |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
 
     cv
-    |> CV.changeset(%{})
+    |> CV.changeset()
     |> Ecto.Changeset.put_embed(:content, content)
     |> Repo.update()
   end
 
-  defp get_child_changeset({:experiences, :details}), do: ExperienceDetail.changeset()
+  defp get_child_changeset({:experiences, :details}),
+    do: %ExperienceDetail{} |> ExperienceDetail.changeset()
 
   defp get_parent_changeset(exp, :experiences), do: Experience.changeset(exp)
 end

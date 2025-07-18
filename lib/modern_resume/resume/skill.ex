@@ -3,6 +3,7 @@ defmodule ModernResume.Resume.Skill do
   import Ecto.Changeset
 
   alias ModernResume.Validation
+  alias ModernResume.Resume.Skill
 
   embedded_schema do
     field :header, :string
@@ -11,7 +12,7 @@ defmodule ModernResume.Resume.Skill do
   end
 
   @doc false
-  def changeset(skill \\ %__MODULE__{}, attrs \\ %{}) do
+  def changeset(%Skill{} = skill, attrs \\ %{}) do
     skill
     |> cast(attrs, [:header, :title, :description])
     |> validate_required([:title, :description])
