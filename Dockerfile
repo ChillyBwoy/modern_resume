@@ -11,13 +11,18 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.18.3-erlang-27.3-debian-bullseye-20250317-slim
 #
-ARG ELIXIR_VERSION=1.18.3
-ARG OTP_VERSION=27.3
-ARG DEBIAN_VERSION=bullseye-20250317-slim
+ARG ELIXIR_VERSION="1.18.3"
+ARG OTP_VERSION="27.3"
+ARG DEBIAN_VERSION="bullseye-20250317-slim"
+ARG NODEJS_VERSION="22.17-bullseye"
+ARG RUST_VERSION="1.88-bullseye"
 
-ARG BUILDER_IMAGE_NODEJS="node:22.17-bullseye"
+ARG BUILDER_IMAGE_NODEJS="node:${NODEJS_VERSION}"
+ARG BUILDER_IMAGE_TECTONIC="rust:${RUST_VERSION}"
 ARG BUILDER_IMAGE_ELIXIR="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
+
+ARG TECTONIC_VERSION="0.15.0"
 
 FROM ${BUILDER_IMAGE_NODEJS} as builder_js
 
@@ -28,6 +33,22 @@ COPY assets/package.json assets/package-lock.json ./assets/
 
 RUN cd assets && npm ci
 
+FROM ${BUILDER_IMAGE_TECTONIC} as builder_tectonic
+
+WORKDIR "/app"
+
+RUN apt-get update && apt-get install -y \
+  libfontconfig1-dev \
+  libgraphite2-dev \
+  libharfbuzz-dev \
+  libicu-dev \
+  zlib1g-dev
+
+RUN cargo install --git https://github.com/tectonic-typesetting/tectonic tectonic
+
+COPY priv/data/sample.tex sample.tex
+
+RUN tectonic --keep-intermediates --reruns 0 sample.tex
 
 FROM ${BUILDER_IMAGE_ELIXIR} as builder
 
@@ -80,9 +101,23 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+  libstdc++6 \
+  openssl \
+  libncurses5 \
+  locales \
+  ca-certificates \
+  libfontconfig1 \
+  libgraphite2-3 \
+  libharfbuzz0b \
+  libicu67 \
+  zlib1g \
+  libharfbuzz-icu0 \
+  libssl1.1 \
+  ca-certificates \
+  && apt-get clean && rm -rf /var/lib/apt/lists/* 
+
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -99,6 +134,10 @@ ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/modern_resume ./
+
+# copy tectonic binary to new image
+COPY --from=builder_tectonic --chown=nobody:root /usr/local/cargo/bin/tectonic /usr/bin/
+COPY --from=builder_tectonic --chown=nobody:root /root/.cache/Tectonic/ /root/.cache/Tectonic/
 
 USER nobody
 
