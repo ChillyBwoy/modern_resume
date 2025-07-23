@@ -25,7 +25,15 @@ schema:
 
 .PHONY: build-image
 build-image:
-	docker build -t modern_resume .
+	source .env.prod && \
+	docker build \
+		--build-arg DATABASE_URL=$$DATABASE_URL \
+		--build-arg SECRET_KEY_BASE=$$SECRET_KEY_BASE \
+		--build-arg AUTH_GITHUB_CLIENT_ID=$$AUTH_GITHUB_CLIENT_ID \
+		--build-arg AUTH_GITHUB_CLIENT_SECRET=$$AUTH_GITHUB_CLIENT_SECRET \
+		--build-arg AUTH_GOOGLE_CLIENT_ID=$$AUTH_GOOGLE_CLIENT_ID \
+		--build-arg AUTH_GOOGLE_CLIENT_SECRET=$$AUTH_GOOGLE_CLIENT_SECRET \
+		-t ghcr.io/chillybwoy/modern_resume:latest .
 
 .PHONY: run-image
 run-image:
