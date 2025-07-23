@@ -59,7 +59,7 @@ config :modern_resume, ModernResumeWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/modern_resume_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/modern_resume_web/(controllers|live|components|renderer)/.*(ex|heex)$"
     ]
   ]
 
@@ -84,3 +84,11 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+  client_id: System.get_env("AUTH_GITHUB_CLIENT_ID"),
+  client_secret: System.get_env("AUTH_GITHUB_CLIENT_SECRET")
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("AUTH_GOOGLE_CLIENT_ID"),
+  client_secret: System.get_env("AUTH_GOOGLE_CLIENT_SECRET")

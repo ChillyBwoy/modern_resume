@@ -20,17 +20,26 @@ if System.get_env("PHX_SERVER") do
   config :modern_resume, ModernResumeWeb.Endpoint, server: true
 end
 
-config :ueberauth, Ueberauth.Strategy.Github.OAuth,
-  client_id: System.get_env("GITHUB_CLIENT_ID"),
-  client_secret: System.get_env("GITHUB_CLIENT_SECRET")
-
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: System.get_env("GOOGLE_CLIENT_ID"),
-  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
-
 if config_env() == :prod do
+  secrets =
+    with {:ok, raw_secrets} <- System.fetch_env("MODERN_RESUME_SECRETS"),
+         {:ok, decoded_secrets} <- Jason.decode(raw_secrets) do
+      decoded_secrets
+    else
+      :error -> raise "Environment variable MODERN_RESUME_SECRETS is not set"
+      {:error, _} -> raise "Environment variable MODERN_RESUME_SECRETS contains invalid JSON"
+      _ -> raise "Unexpected error while fetching MODERN_RESUME_SECRETS"
+    end
+
+  get_secret = fn key ->
+    case Map.fetch(secrets, key) do
+      {:ok, value} -> value
+      :error -> raise "Environment variable #{key} is not set"
+    end
+  end
+
   database_url =
-    System.get_env("DATABASE_URL") ||
+    get_secret.("DATABASE_URL") ||
       raise """
       environment variable DATABASE_URL is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
@@ -50,14 +59,14 @@ if config_env() == :prod do
   # to check this value into version control, so we use an environment
   # variable instead.
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
+    get_secret.("SECRET_KEY_BASE") ||
       raise """
       environment variable SECRET_KEY_BASE is missing.
       You can generate one by calling: mix phx.gen.secret
       """
 
   host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("PHX_PORT") || "4000")
 
   config :modern_resume, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -122,4 +131,12 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+    client_id: get_secret.("AUTH_GITHUB_CLIENT_ID"),
+    client_secret: get_secret.("AUTH_GITHUB_CLIENT_SECRET")
+
+  config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+    client_id: get_secret.("AUTH_GOOGLE_CLIENT_ID"),
+    client_secret: get_secret.("AUTH_GOOGLE_CLIENT_SECRET")
 end
