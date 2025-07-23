@@ -2,7 +2,7 @@ name: Docker Image CI for ghcr.io
 
 on:
   release
-  
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-24.04
@@ -23,9 +23,7 @@ jobs:
           push: true
           tags: ghcr.io/chillybwoy/modern_resume:latest
           build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
-            AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }}
-            AUTH_GITHUB_CLIENT_SECRET=${{ secrets.AUTH_GITHUB_CLIENT_SECRET }}
-            AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
-            AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
+            TZ=${{ vars.TZ }}
+            PHX_PORT=${{ vars.PHX_PORT }}
+            PHX_HOST=${{ vars.PHX_HOST }}
+            MODERN_RESUME_SECRETS=${{ secrets.MODERN_RESUME_SECRETS }}
