@@ -1,7 +1,9 @@
 name: Docker Image CI for ghcr.io
 
 on:
-  release
+  release:
+    types:
+      - published
 
 jobs:
   build_and_publish:
@@ -26,4 +28,9 @@ jobs:
             TZ=${{ vars.TZ }}
             PHX_PORT=${{ vars.PHX_PORT }}
             PHX_HOST=${{ vars.PHX_HOST }}
-            MODERN_RESUME_SECRETS=${{ secrets.MODERN_RESUME_SECRETS }}
+            SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }}
+            AUTH_GITHUB_CLIENT_SECRET=${{ secrets.AUTH_GITHUB_CLIENT_SECRET }}
+            AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
+            AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
