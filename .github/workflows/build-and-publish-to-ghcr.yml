@@ -3,7 +3,7 @@ name: Docker Image CI for ghcr.io
 on:
   release:
     types:
-      - published
+      [published]
 
 jobs:
   build_and_publish:
@@ -25,9 +25,9 @@ jobs:
           push: true
           tags: ghcr.io/chillybwoy/modern_resume:latest
           build-args: |
-            TZ=${{ vars.TZ }}
-            PHX_PORT=${{ vars.PHX_PORT }}
-            PHX_HOST=${{ vars.PHX_HOST }}
+            TZ=${{ env.TZ }}
+            PHX_PORT=${{ env.PHX_PORT }}
+            PHX_HOST=${{ env.PHX_HOST }}
             SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }}
