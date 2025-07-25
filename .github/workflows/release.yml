@@ -22,13 +22,3 @@ jobs:
         with:
           push: true
           tags: ghcr.io/chillybwoy/modern_resume:latest
-          build-args: |
-            TZ=${{ vars.TZ }}
-            PHX_PORT=${{ vars.PHX_PORT }}
-            PHX_HOST=${{ vars.PHX_HOST }}
-            SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            AUTH_GITHUB_CLIENT_ID=${{ secrets.AUTH_GITHUB_CLIENT_ID }}
-            AUTH_GITHUB_CLIENT_SECRET=${{ secrets.AUTH_GITHUB_CLIENT_SECRET }}
-            AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
-            AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
