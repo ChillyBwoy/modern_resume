@@ -1,8 +1,8 @@
-defmodule ModernResumeWeb.Renderer.Template do
+defmodule ModernResumeWeb.Document.Template do
   @enforce_keys [:name, :content]
   defstruct [:name, :content]
 
-  alias ModernResumeWeb.Renderer.Template
+  alias ModernResumeWeb.Document.Template
 
   # Collection of templates: https://www.overleaf.com/latex/templates/tagged/cv/page/2
 

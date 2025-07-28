@@ -18,7 +18,7 @@ defmodule ModernResumeWeb.CV.LatexPreview do
   end
 
   attr :id, :string, required: true
-  attr :state, ModernResumeWeb.Renderer.RenderState, required: true
+  attr :state, ModernResumeWeb.Document.RenderState, required: true
 
   slot :panel, required: false
 

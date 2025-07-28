@@ -7,8 +7,8 @@ defmodule ModernResumeWeb.CVShowLive do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
-  alias ModernResumeWeb.Renderer.RenderWorker
-  alias ModernResumeWeb.Renderer.RenderState
+  alias ModernResumeWeb.Document.RenderWorker
+  alias ModernResumeWeb.Document.RenderState
   alias ModernResumeWeb.Formatters
 
   @impl true

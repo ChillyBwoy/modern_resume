@@ -1,4 +1,4 @@
-defmodule ModernResumeWeb.Renderer.RenderState do
+defmodule ModernResumeWeb.Document.RenderState do
   @enforce_keys [:status, :content_pdf, :content_str, :content_type, :error]
   defstruct [
     :status,
@@ -8,7 +8,7 @@ defmodule ModernResumeWeb.Renderer.RenderState do
     :error
   ]
 
-  alias ModernResumeWeb.Renderer.RenderState
+  alias ModernResumeWeb.Document.RenderState
 
   def init() do
     %RenderState{status: :idle, content_pdf: nil, content_str: nil, content_type: nil, error: nil}

@@ -1,10 +1,10 @@
-defmodule ModernResumeWeb.Renderer.Moderncv do
+defmodule ModernResumeWeb.Document.Renderer do
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Language
   alias ModernResume.Resume.Settings
 
-  alias ModernResumeWeb.Renderer.Template
+  alias ModernResumeWeb.Document.Template
 
   @date_format "%b %Y"
 
@@ -22,13 +22,11 @@ defmodule ModernResumeWeb.Renderer.Moderncv do
     {"~", "\\textasciitilde{}"}
   ]
 
-  @template Template.new(:moderncv)
-
   # Kanji Latex info
   # https://tex.stackexchange.com/questions/15516/how-to-write-japanese-with-latex
 
   defp get_template(%CV{} = cv) do
-    @template
+    Template.new(:moderncv)
     |> Template.eval(
       cv: cv.content,
       str: &str/1,

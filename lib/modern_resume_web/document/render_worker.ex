@@ -1,9 +1,9 @@
-defmodule ModernResumeWeb.Renderer.RenderWorker do
+defmodule ModernResumeWeb.Document.RenderWorker do
   use Task
 
   alias ModernResume.PubSub
   alias ModernResume.Resume.CV
-  alias ModernResumeWeb.Renderer.Moderncv
+  alias ModernResumeWeb.Document.Renderer
 
   @topic inspect(__MODULE__)
 
@@ -12,7 +12,7 @@ defmodule ModernResumeWeb.Renderer.RenderWorker do
   end
 
   def run({%CV{} = cv, type}) do
-    case Moderncv.render(cv, type) do
+    case Renderer.render(cv, type) do
       {:ok, content} ->
         Phoenix.PubSub.broadcast(PubSub, @topic, {:renderer, {:ok, type, content}})
 
