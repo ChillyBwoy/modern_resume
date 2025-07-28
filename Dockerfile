@@ -135,20 +135,22 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+RUN adduser --disabled-password --gecos "" simplecv
+
 WORKDIR "/app"
-RUN chown nobody /app
+RUN chown simplecv:simplecv /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/modern_resume ./
+COPY --from=builder --chown=simplecv:simplecv /app/_build/${MIX_ENV}/rel/modern_resume ./
 
 # copy tectonic binary to new image
-COPY --from=builder_tectonic --chown=nobody:root /usr/local/cargo/bin/tectonic /usr/bin/
-COPY --from=builder_tectonic --chown=nobody:root /root/.cache/Tectonic/ /root/.cache/Tectonic/
+COPY --from=builder_tectonic --chown=simplecv:simplecv /usr/local/cargo/bin/tectonic /usr/bin/
+COPY --from=builder_tectonic --chown=simplecv:simplecv /root/.cache/Tectonic/ /home/simplecv/.cache/Tectonic/
 
-USER nobody
+USER simplecv
 
 # If using an environment that doesn't automatically reap zombie processes, it is
 # advised to add an init process such as tini via `apt-get install`

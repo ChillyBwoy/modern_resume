@@ -8,10 +8,26 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_HOST: ${DB_HOST}
       POSTGRES_PORT: ${DB_PORT}
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  dev_simplecv_app:
+    build:
+      context: .
+    container_name: simplecv_app_dev
+    env_file:
+      - ".env.local"
+    environment:
+      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@dev_db/${DB_DATABASE}
+    ports:
+      - ${PHX_PORT}:${PHX_PORT}
+    volumes:
+      - ./priv/tmp:/app/data
+    depends_on:
+      - dev_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   db_data:
