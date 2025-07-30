@@ -46,7 +46,7 @@ defmodule ModernResumeWeb.Document.Renderer do
     try do
       case get_template(cv)
            |> Iona.source()
-           |> Iona.to(:pdf, preprocess: [&preprocessor/2]) do
+           |> Iona.to(:pdf) do
         {:ok, pdf} ->
           {:ok, Base.encode64(pdf)}
 
@@ -106,22 +106,4 @@ defmodule ModernResumeWeb.Document.Renderer do
   def employment_type(type), do: Experience.display_employment_type(type)
 
   def font_size(size), do: Settings.display_font_size(size)
-
-  defp preprocessor(_directory, source) do
-    preprocessor =
-      Application.fetch_env!(:modern_resume, __MODULE__)[
-        :preprocessor
-      ]
-
-    case preprocessor do
-      :tectonic ->
-        {:shell, "tectonic #{source}"}
-
-      :lualatex ->
-        {:shell, "lualatex #{source}"}
-
-      _ ->
-        {:error, "Unknown preprocessor: #{preprocessor}"}
-    end
-  end
 end

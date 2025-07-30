@@ -9,7 +9,7 @@ defmodule ModernResume.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(Mix.env())
     ]
   end
 
@@ -60,10 +60,27 @@ defmodule ModernResume.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:timex, "~> 3.0"},
-      {:iona, "~> 0.4"},
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.10"}
     ]
+  end
+
+  defp deps(:dev) do
+    deps() ++
+      [
+        {:iona, path: "../iona", only: :dev}
+      ]
+  end
+
+  defp deps(_) do
+    deps() ++
+      [
+        {:iona,
+         git: "https://github.com/ChillyBwoy/iona.git",
+         branch: "fix/refactor_processor_and_fix_ext",
+         depth: 1,
+         only: :prod}
+      ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
