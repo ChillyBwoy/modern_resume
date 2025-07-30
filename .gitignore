@@ -37,6 +37,8 @@ npm-debug.log
 
 /priv/tmp
 
+.vscode
+
 .DS_Store
 
 .env

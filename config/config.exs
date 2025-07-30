@@ -31,8 +31,6 @@ config :modern_resume, ModernResumeWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :modern_resume, ModernResume.Mailer, adapter: Swoosh.Adapters.Local
 
-config :modern_resume, ModernResumeWeb.Document.Renderer, preprocessor: :tectonic
-
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
@@ -63,6 +61,8 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :iona,
+  preprocess: [],
+  processors: [pdf: "tectonic"],
   helpers: [Iona.Template.Helper]
 
 config :ueberauth, Ueberauth,
