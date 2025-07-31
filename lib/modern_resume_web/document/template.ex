@@ -68,9 +68,9 @@ defmodule ModernResumeWeb.Document.Template do
     <%= for exp <- @cv.experiences do %>
     \\cventry
       {<%= @date_range.({exp.date_start_year, exp.date_start_month}, {exp.date_end_year, exp.date_end_month}) %>}
-      {<%= @str.(exp.location) %>}
       {<%= @str.(exp.title) %>}
       {<%= @str.(exp.organization) %>}
+      {<%= @str.(exp.location) %>}
       {<%= @employment_type.(exp.employment_type) %>}
       {<%= @str.(exp.description) %>}
     <%= if exp.details != [] do %>
@@ -87,10 +87,10 @@ defmodule ModernResumeWeb.Document.Template do
     <%= for education <- @cv.educations do %>
     \\cventry
       {<%= @date_range.({education.date_start_year, education.date_start_month}, {education.date_end_year, education.date_end_month}) %>}
-      {<%= @str.(education.location) %>}
       {<%= @str.(education.degree) %>}
       {<%= @str.(education.institution) %>}
-      {}
+      {<%= @str.(education.location) %>}
+      {<%= @str.(education.field_of_study) %>}
       {<%= @str.(education.description) %>}
     <% end %>
     <% end %>
