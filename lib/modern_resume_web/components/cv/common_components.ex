@@ -34,16 +34,15 @@ defmodule ModernResumeWeb.CV.CommonComponents do
       </button>
       <div
         id={"dropdown-#{@id}-body"}
-        class="hidden absolute left-0 top-8 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10"
+        class="hidden absolute left-0 top-8 w-48 bg-white shadow-lg border border-gray-200 z-10 rounded-md"
       >
         <div class="flex flex-col">
           <button
             :for={item <- @item}
             class={[
-              "flex w-full cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-left text-sm",
-              item[:variant] == :primary ||
-                (item[:variant] == nil &&
-                   "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"),
+              "flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md",
+              (item[:variant] == :primary || item[:variant] == nil) &&
+                "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white",
               item[:variant] == :secondary &&
                 "text-secondary fill-secondary hover:bg-secondary hover:fill-white hover:text-white",
               item[:variant] == :success &&

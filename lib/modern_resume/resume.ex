@@ -57,6 +57,16 @@ defmodule ModernResume.Resume do
     Repo.delete(cv)
   end
 
+  def duplicate_cv(%CV{} = cv) do
+    %CV{}
+    |> CV.changeset(%{
+      title: "#{cv.title} (copy)",
+      user_id: cv.user_id
+    })
+    |> Ecto.Changeset.put_change(:content, cv.content)
+    |> Repo.insert()
+  end
+
   def add_entity(%CV{} = cv, key, new_entity) when is_atom(key) do
     changeset = CV.changeset(cv)
 

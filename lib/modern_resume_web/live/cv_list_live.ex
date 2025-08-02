@@ -34,14 +34,32 @@ defmodule ModernResumeWeb.CVListLive do
        socket
        |> put_flash(:info, "CV deleted")
        |> assign_cv_operation()
-       |> push_navigate(to: ~p"/")}
+       |> redirect(to: ~p"/", replace: true)}
     else
       _ ->
         {:noreply,
          socket
          |> put_flash(:error, "Unable to delete CV")
          |> assign_cv_operation()
-         |> push_navigate(to: ~p"/")}
+         |> redirect(to: ~p"/", replace: true)}
+    end
+  end
+
+  @impl true
+  def handle_event("duplicate", %{"id" => id}, socket) do
+    with %CV{} = cv <- Resume.get_cv(id),
+         {:ok, %CV{} = new_cv} <- Resume.duplicate_cv(cv) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "CV duplicated successfully.")
+       |> redirect(to: ~p"/cvs/#{new_cv.id}", replace: true)}
+    else
+      _ ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Unable to copy CV")
+         |> assign_cv_operation()
+         |> redirect(to: ~p"/", replace: true)}
     end
   end
 
@@ -141,6 +159,13 @@ defmodule ModernResumeWeb.CVListLive do
           <.dropdown_menu id={"#{cv.id}-menu"}>
             <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete/")}>
               Delete
+            </:item>
+            <:item
+              variant={:primary}
+              icon="hero-document-duplicate"
+              action={JS.push("duplicate", value: %{id: cv.id})}
+            >
+              Duplicate
             </:item>
           </.dropdown_menu>
         </div>
