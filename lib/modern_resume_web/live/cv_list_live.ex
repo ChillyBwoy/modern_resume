@@ -157,7 +157,7 @@ defmodule ModernResumeWeb.CVListLive do
           </.link>
 
           <.dropdown_menu id={"#{cv.id}-menu"}>
-            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete/")}>
+            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete")}>
               Delete
             </:item>
             <:item
