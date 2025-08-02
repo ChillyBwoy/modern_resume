@@ -11,7 +11,7 @@ defmodule ModernResumeWeb.CV.CommonComponents do
     attr :icon, :string
 
     attr :variant, :atom,
-      values: [:default, :primary, :secondary, :success, :danger, :warning, :info]
+      values: [:none, :primary, :secondary, :success, :danger, :warning, :info]
 
     attr :action, JS
   end
@@ -56,8 +56,8 @@ defmodule ModernResumeWeb.CV.CommonComponents do
     """
   end
 
-  defp dropdown_menu_item_class(:default),
-    do: "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"
+  defp dropdown_menu_item_class(:none),
+    do: "text-secondary fill-secondary hover:bg-form-background"
 
   defp dropdown_menu_item_class(:primary),
     do: "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"
