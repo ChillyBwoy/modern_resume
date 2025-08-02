@@ -16,7 +16,7 @@ defmodule ModernResumeWeb.CVListLive do
      |> assign_cv_operation(params)}
   end
 
-  defp assign_cv_operation(socket, params \\ %{}) do
+  defp assign_cv_operation(socket, params) do
     case Map.fetch(params, "cv_id") do
       {:ok, cv_id} ->
         socket |> assign(cv_id: cv_id)
@@ -33,14 +33,12 @@ defmodule ModernResumeWeb.CVListLive do
       {:noreply,
        socket
        |> put_flash(:info, "CV deleted")
-       |> assign_cv_operation()
        |> redirect(to: ~p"/", replace: true)}
     else
       _ ->
         {:noreply,
          socket
          |> put_flash(:error, "Unable to delete CV")
-         |> assign_cv_operation()
          |> redirect(to: ~p"/", replace: true)}
     end
   end
@@ -58,7 +56,6 @@ defmodule ModernResumeWeb.CVListLive do
         {:noreply,
          socket
          |> put_flash(:error, "Unable to copy CV")
-         |> assign_cv_operation()
          |> redirect(to: ~p"/", replace: true)}
     end
   end
