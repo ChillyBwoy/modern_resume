@@ -53,18 +53,30 @@ defmodule ModernResume.Resume do
     changeset |> Repo.update()
   end
 
-  def delete_cv(%CV{} = cv) do
-    Repo.delete(cv)
+  def delete_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
+    case get_cv_for(user, cv_id) do
+      %CV{} = cv ->
+        Repo.delete(cv)
+
+      _ ->
+        {:error, :not_found}
+    end
   end
 
-  def duplicate_cv(%CV{} = cv) do
-    %CV{}
-    |> CV.changeset(%{
-      title: "#{cv.title} (copy)",
-      user_id: cv.user_id
-    })
-    |> Ecto.Changeset.put_change(:content, cv.content)
-    |> Repo.insert()
+  def duplicate_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
+    case get_cv_for(user, cv_id) do
+      %CV{} = cv ->
+        %CV{}
+        |> CV.changeset(%{
+          title: "#{cv.title} (copy)",
+          user_id: cv.user_id
+        })
+        |> Ecto.Changeset.put_change(:content, cv.content)
+        |> Repo.insert()
+
+      _ ->
+        {:error, :not_found}
+    end
   end
 
   def add_entity(%CV{} = cv, key, new_entity) when is_atom(key) do

@@ -27,15 +27,15 @@ defmodule ModernResumeWeb.CVListLive do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) when is_binary(id) do
-    with %CV{} = cv <- Resume.get_cv(id),
-         {:ok, _} <- Resume.delete_cv(cv) do
-      {:noreply,
-       socket
-       |> put_flash(:info, "CV deleted")
-       |> redirect(to: ~p"/", replace: true)}
-    else
-      _ ->
+  def handle_event("delete", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
+    case Resume.delete_cv(socket.assigns.current_user, cv_id) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "CV deleted")
+         |> redirect(to: ~p"/", replace: true)}
+
+      {:error, _} ->
         {:noreply,
          socket
          |> put_flash(:error, "Unable to delete CV")
@@ -44,15 +44,15 @@ defmodule ModernResumeWeb.CVListLive do
   end
 
   @impl true
-  def handle_event("duplicate", %{"id" => id}, socket) do
-    with %CV{} = cv <- Resume.get_cv(id),
-         {:ok, %CV{} = new_cv} <- Resume.duplicate_cv(cv) do
-      {:noreply,
-       socket
-       |> put_flash(:info, "CV duplicated successfully.")
-       |> redirect(to: ~p"/cvs/#{new_cv.id}", replace: true)}
-    else
-      _ ->
+  def handle_event("duplicate", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
+    case Resume.duplicate_cv(socket.assigns.current_user, cv_id) do
+      {:ok, %CV{} = new_cv} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "CV duplicated successfully.")
+         |> redirect(to: ~p"/cvs/#{new_cv.id}", replace: true)}
+
+      {:error, _} ->
         {:noreply,
          socket
          |> put_flash(:error, "Unable to copy CV")
@@ -122,7 +122,7 @@ defmodule ModernResumeWeb.CVListLive do
           <.header>Are you sure you want to delete this CV?</.header>
           <div class="flex items-center justify-end gap-4">
             <.button variant={:danger} phx-value-id={@cv_id} phx-click="delete">Yes</.button>
-            <.button variant={:default} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
+            <.button variant={:none} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
           </div>
         </div>
       </.modal>
@@ -158,7 +158,7 @@ defmodule ModernResumeWeb.CVListLive do
               Delete
             </:item>
             <:item
-              variant={:primary}
+              variant={:none}
               icon="hero-document-duplicate"
               action={JS.push("duplicate", value: %{id: cv.id})}
             >
