@@ -72,7 +72,7 @@ defmodule ModernResumeWeb.CoreComponents do
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
+                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40 cursor-pointer"
                   aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="h-5 w-5" />
@@ -228,7 +228,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   attr :variant, :atom,
     values: [:default, :primary, :secondary, :success, :danger, :warning, :info],
-    default: :primary
+    default: :default
 
   attr :rest, :global, include: ~w(disabled form name value)
 
@@ -647,6 +647,21 @@ defmodule ModernResumeWeb.CoreComponents do
       to: selector,
       time: 200,
       transition:
+        {"transition-all transform ease-in duration-200",
+         "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+  end
+
+  def toggle(js \\ %JS{}, selector) do
+    JS.toggle(js,
+      to: selector,
+      time: 200,
+      in:
+        {"transition-all transform ease-out duration-300",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"},
+      out:
         {"transition-all transform ease-in duration-200",
          "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
