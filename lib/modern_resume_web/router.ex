@@ -71,6 +71,8 @@ defmodule ModernResumeWeb.Router do
       on_mount: [{ModernResumeWeb.UserAuth, :ensure_authenticated}] do
       live "/", CVListLive, :list
       live "/cvs/new", CVListLive, :new
+      live "/cvs/:cv_id/delete", CVListLive, :delete
+
       live "/cvs/:cv_id", CVShowLive, :show
 
       live "/users/settings", UserSettingsLive, :edit

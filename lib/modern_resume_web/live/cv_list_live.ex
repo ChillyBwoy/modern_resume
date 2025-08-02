@@ -6,21 +6,42 @@ defmodule ModernResumeWeb.CVListLive do
   alias ModernResumeWeb.Formatters
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     user = socket.assigns.current_user
 
     {:ok,
      socket
      |> assign(cvs: Resume.list_cvs_for(user))
-     |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())}
+     |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())
+     |> assign_cv_operation(params)}
+  end
+
+  defp assign_cv_operation(socket, params \\ %{}) do
+    case Map.fetch(params, "cv_id") do
+      {:ok, cv_id} ->
+        socket |> assign(cv_id: cv_id)
+
+      _ ->
+        socket |> assign(cv_id: nil)
+    end
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    with cv <- Resume.get_cv(id),
+  def handle_event("delete", %{"id" => id}, socket) when is_binary(id) do
+    with %CV{} = cv <- Resume.get_cv(id),
          {:ok, _} <- Resume.delete_cv(cv) do
-      cvs = Resume.list_cvs_for(socket.assigns.current_user)
-      {:noreply, socket |> assign(cvs: cvs)}
+      {:noreply,
+       socket
+       |> put_flash(:info, "CV deleted")
+       |> assign_cv_operation()
+       |> push_navigate(to: ~p"/")}
+    else
+      _ ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Unable to delete CV")
+         |> assign_cv_operation()
+         |> push_navigate(to: ~p"/")}
     end
   end
 
@@ -59,25 +80,42 @@ defmodule ModernResumeWeb.CVListLive do
         on_cancel={JS.navigate(~p"/", replace: true)}
         show
       >
-        <.header>Create new CV</.header>
-        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
-          <.input field={@create_form[:title]} label="Title" />
+        <div class="flex flex-col gap-4">
+          <.header>Create new CV</.header>
+          <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
+            <.input field={@create_form[:title]} label="Title" />
 
-          <.inputs_for :let={content} field={@create_form[:content]}>
-            <.input field={content[:name]} label="Name" />
-            <.input field={content[:position]} label="Position" />
-          </.inputs_for>
+            <.inputs_for :let={content} field={@create_form[:content]}>
+              <.input field={content[:name]} label="Name" />
+              <.input field={content[:position]} label="Position" />
+            </.inputs_for>
 
-          <:actions>
-            <.button type="submit">Save</.button>
-          </:actions>
-        </.simple_form>
+            <:actions>
+              <.button variant={:primary} type="submit">Save</.button>
+            </:actions>
+          </.simple_form>
+        </div>
+      </.modal>
+
+      <.modal
+        :if={@live_action == :delete}
+        id="create-delete-modal"
+        on_cancel={JS.navigate(~p"/", replace: true)}
+        show
+      >
+        <div class="flex flex-col gap-4">
+          <.header>Are you sure you want to delete this CV?</.header>
+          <div class="flex items-center justify-end gap-4">
+            <.button variant={:danger} phx-value-id={@cv_id} phx-click="delete">Yes</.button>
+            <.button variant={:default} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
+          </div>
+        </div>
       </.modal>
 
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">My CVs</h1>
 
-        <.button type="button" phx-click={JS.navigate(~p"/cvs/new")}>
+        <.button type="button" variant={:primary} phx-click={JS.navigate(~p"/cvs/new")}>
           <.icon name="hero-plus" class="size-5 mr-2" />
           <span>Create New CV</span>
         </.button>
@@ -100,16 +138,11 @@ defmodule ModernResumeWeb.CVListLive do
             </span>
           </.link>
 
-          <div>
-            <button
-              phx-click="delete"
-              phx-value-id={cv.id}
-              data-confirm="Are you sure you want to delete this CV?"
-              class="text-red-600 hover:text-red-800 cursor-pointer"
-            >
-              <.icon name="hero-trash" class="size-5" />
-            </button>
-          </div>
+          <.dropdown_menu id={"#{cv.id}-menu"}>
+            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete/")}>
+              Delete
+            </:item>
+          </.dropdown_menu>
         </div>
       </div>
 
