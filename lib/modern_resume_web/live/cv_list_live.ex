@@ -117,7 +117,7 @@ defmodule ModernResumeWeb.CVListLive do
 
       <.modal
         :if={@live_action == :delete}
-        id="create-delete-modal"
+        id="delete-cv-modal"
         on_cancel={JS.navigate(~p"/", replace: true)}
         show
       >
