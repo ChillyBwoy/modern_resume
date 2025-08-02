@@ -41,18 +41,7 @@ defmodule ModernResumeWeb.CV.CommonComponents do
             :for={item <- @item}
             class={[
               "flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-left text-sm first:rounded-t-md last:rounded-b-md",
-              (item[:variant] == :primary || item[:variant] == nil) &&
-                "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white",
-              item[:variant] == :secondary &&
-                "text-secondary fill-secondary hover:bg-secondary hover:fill-white hover:text-white",
-              item[:variant] == :success &&
-                "text-success fill-success hover:bg-success hover:fill-white hover:text-white",
-              item[:variant] == :warning &&
-                "text-warning fill-warning hover:bg-warning hover:fill-white hover:text-white",
-              item[:variant] == :danger &&
-                "text-danger fill-danger hover:bg-danger hover:fill-white hover:text-white",
-              item[:variant] == :info &&
-                "text-info fill-info hover:bg-info hover:fill-white hover:text-white"
+              dropdown_menu_item_class(item[:variant])
             ]}
             phx-click={item[:action]}
           >
@@ -66,4 +55,25 @@ defmodule ModernResumeWeb.CV.CommonComponents do
     </div>
     """
   end
+
+  defp dropdown_menu_item_class(:default),
+    do: "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:primary),
+    do: "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:secondary),
+    do: "text-secondary fill-secondary hover:bg-secondary hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:success),
+    do: "text-success fill-success hover:bg-success hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:warning),
+    do: "text-warning fill-warning hover:bg-warning hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:danger),
+    do: "text-danger fill-danger hover:bg-danger hover:fill-white hover:text-white"
+
+  defp dropdown_menu_item_class(:info),
+    do: "text-info fill-info hover:bg-info hover:fill-white hover:text-white"
 end
