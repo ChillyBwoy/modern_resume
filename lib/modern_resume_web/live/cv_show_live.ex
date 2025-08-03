@@ -11,6 +11,9 @@ defmodule ModernResumeWeb.CVShowLive do
   alias ModernResumeWeb.Document.RenderState
   alias ModernResumeWeb.Formatters
 
+  @allowed_tabs ~w(personal skills experiences educations social_networks languages settings)
+  @default_tab "personal"
+
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
     if connected?(socket) do
@@ -30,7 +33,6 @@ defmodule ModernResumeWeb.CVShowLive do
          |> assign(form: CV.changeset(cv) |> to_form())
          |> assign(fullscreen: false)
          |> assign(page_title: cv.title)
-         |> assign(selected_tab: "personal")
          |> render_cv(cv)}
 
       _ ->
@@ -39,6 +41,14 @@ defmodule ModernResumeWeb.CVShowLive do
          |> put_flash(:error, "CV not found")
          |> redirect(to: ~p"/")}
     end
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    section = Map.get(params, "section", @default_tab)
+    selected_tab = if section in @allowed_tabs, do: section, else: @default_tab
+
+    {:noreply, socket |> assign(selected_tab: selected_tab)}
   end
 
   @impl true
@@ -172,7 +182,9 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("tabs:select", %{"tab" => tab}, socket) do
-    {:noreply, socket |> assign(selected_tab: tab)}
+    {:noreply,
+     socket
+     |> push_patch(to: ~p"/cvs/#{socket.assigns.cv.id}/#{tab}")}
   end
 
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
