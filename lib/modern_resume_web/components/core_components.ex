@@ -415,7 +415,7 @@ defmodule ModernResumeWeb.CoreComponents do
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
         <.input_char_counter
           :if={@has_counter}
-          value={String.length(@value)}
+          value={String.length(@value || "")}
           maxlength={@maxlength}
           type="textarea"
         />
