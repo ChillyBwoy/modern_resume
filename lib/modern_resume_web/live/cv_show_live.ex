@@ -275,7 +275,13 @@ defmodule ModernResumeWeb.CVShowLive do
             class="grid grid-rows-[auto_1fr_auto] h-full"
           >
             <div class="relative mb-6">
-              <.input field={@form[:title]} label="Title" phx-debounce="blur" maxlength="100" show_counter />
+              <.input
+                field={@form[:title]}
+                label="Title"
+                phx-debounce="blur"
+                maxlength="100"
+                show_counter
+              />
             </div>
 
             <.inputs_for :let={content} field={@form[:content]}>

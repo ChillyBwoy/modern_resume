@@ -200,15 +200,40 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.input field={@form[:degree]} label="Degree" phx-debounce="blur" maxlength="100" show_counter />
       <div class="grid grid-cols-[2fr_1fr] gap-4">
-        <.input field={@form[:institution]} label="Institution" phx-debounce="blur" maxlength="100" show_counter />
-        <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" maxlength="100" show_counter />
+        <.input
+          field={@form[:institution]}
+          label="Institution"
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
+        <.input
+          field={@form[:location]}
+          label="Country, City, etc."
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
       </div>
       <div class="grid grid-cols-2 gap-4">
         <.month_picker month={@form[:date_start_month]} year={@form[:date_start_year]} />
         <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
       </div>
-      <.input field={@form[:field_of_study]} label="Field of Study" phx-debounce="blur" maxlength="100" show_counter />
-      <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" maxlength="500" show_counter />
+      <.input
+        field={@form[:field_of_study]}
+        label="Field of Study"
+        phx-debounce="blur"
+        maxlength="100"
+        show_counter
+      />
+      <.input
+        field={@form[:description]}
+        type="textarea"
+        label="Description"
+        phx-debounce="blur"
+        maxlength="500"
+        show_counter
+      />
     </.entity>
     """
   end
@@ -223,7 +248,14 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.input field={@form[:header]} label="Header" phx-debounce="blur" maxlength="100" show_counter />
       <.input field={@form[:title]} label="Title" phx-debounce="blur" maxlength="100" show_counter />
-      <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" maxlength="500" show_counter />
+      <.input
+        field={@form[:description]}
+        type="textarea"
+        label="Description"
+        phx-debounce="blur"
+        maxlength="500"
+        show_counter
+      />
     </.entity>
     """
   end
@@ -237,7 +269,14 @@ defmodule ModernResumeWeb.CV.ContentForm do
     ~H"""
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.input field={@form[:title]} label="Title" phx-debounce="blur" maxlength="100" show_counter />
-      <.input field={@form[:content]} type="textarea" label="Content" phx-debounce="blur" maxlength="500" show_counter />
+      <.input
+        field={@form[:content]}
+        type="textarea"
+        label="Content"
+        phx-debounce="blur"
+        maxlength="500"
+        show_counter
+      />
     </.entity>
     """
   end
@@ -260,14 +299,33 @@ defmodule ModernResumeWeb.CV.ContentForm do
           prompt="--"
           options={Experience.employment_types()}
         />
-        <.input field={@form[:organization]} label="Company, Organization, etc." phx-debounce="blur" maxlength="100" show_counter />
-        <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" maxlength="100" show_counter />
+        <.input
+          field={@form[:organization]}
+          label="Company, Organization, etc."
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
+        <.input
+          field={@form[:location]}
+          label="Country, City, etc."
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
       </div>
       <div class="grid grid-cols-2 gap-4">
         <.month_picker month={@form[:date_start_month]} year={@form[:date_start_year]} />
         <.month_picker month={@form[:date_end_month]} year={@form[:date_end_year]} />
       </div>
-      <.input field={@form[:description]} type="textarea" label="Description" phx-debounce="blur" maxlength="500" show_counter />
+      <.input
+        field={@form[:description]}
+        type="textarea"
+        label="Description"
+        phx-debounce="blur"
+        maxlength="500"
+        show_counter
+      />
 
       <:extra title="Work Details">
         <.fieldset
@@ -299,10 +357,30 @@ defmodule ModernResumeWeb.CV.ContentForm do
       <.input field={@form[:position]} label="Title" phx-debounce="blur" maxlength="100" show_counter />
       <.input field={@form[:name]} label="Name" phx-debounce="blur" maxlength="50" show_counter />
       <div class="grid grid-cols-2 gap-4">
-        <.input field={@form[:email]} type="email" label="Email" phx-debounce="blur" maxlength="100" show_counter />
-        <.input field={@form[:phone]} type="tel" label="Phone" phx-debounce="blur" maxlength="15" show_counter />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label="Email"
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
+        <.input
+          field={@form[:phone]}
+          type="tel"
+          label="Phone"
+          phx-debounce="blur"
+          maxlength="15"
+          show_counter
+        />
       </div>
-      <.input field={@form[:location]} label="Country, City, etc." phx-debounce="blur" maxlength="50" show_counter />
+      <.input
+        field={@form[:location]}
+        label="Country, City, etc."
+        phx-debounce="blur"
+        maxlength="50"
+        show_counter
+      />
       <.input field={@form[:birthdate]} type="date" label="Birthdate" phx-debounce="blur" />
     </.entity>
     """
@@ -347,7 +425,13 @@ defmodule ModernResumeWeb.CV.ContentForm do
           label="Platform"
           options={SocialNetwork.platform_choices()}
         />
-        <.input field={@form[:content]} label="Username or Handle" phx-debounce="blur" maxlength="100" show_counter />
+        <.input
+          field={@form[:content]}
+          label="Username or Handle"
+          phx-debounce="blur"
+          maxlength="100"
+          show_counter
+        />
         <.input field={@form[:alias]} label="Alias" phx-debounce="blur" maxlength="100" show_counter />
       </div>
     </.entity>
