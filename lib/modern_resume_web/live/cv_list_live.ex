@@ -154,15 +154,15 @@ defmodule ModernResumeWeb.CVListLive do
           </.link>
 
           <.dropdown_menu id={"#{cv.id}-menu"}>
-            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete")}>
-              Delete
-            </:item>
             <:item
-              variant={:none}
+              variant={:secondary}
               icon="hero-document-duplicate"
               action={JS.push("duplicate", value: %{id: cv.id})}
             >
               Duplicate
+            </:item>
+            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete")}>
+              Delete
             </:item>
           </.dropdown_menu>
         </div>

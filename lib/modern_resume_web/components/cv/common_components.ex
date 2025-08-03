@@ -56,24 +56,24 @@ defmodule ModernResumeWeb.CV.CommonComponents do
     """
   end
 
-  defp dropdown_menu_item_class(:none),
-    do: "text-secondary fill-secondary hover:bg-form-background"
-
   defp dropdown_menu_item_class(:primary),
-    do: "text-primary fill-primary hover:bg-primary hover:fill-white hover:text-white"
+    do: "text-primary fill-primary hover:text-primary-dark fill:text-primary-dark"
 
   defp dropdown_menu_item_class(:secondary),
-    do: "text-secondary fill-secondary hover:bg-secondary hover:fill-white hover:text-white"
+    do: "text-secondary fill-secondary hover:text-secondary-dark fill:text-secondary-dark"
 
   defp dropdown_menu_item_class(:success),
-    do: "text-success fill-success hover:bg-success hover:fill-white hover:text-white"
+    do: "text-success fill-success hover:text-success-dark fill:text-success-dark"
 
   defp dropdown_menu_item_class(:warning),
-    do: "text-warning fill-warning hover:bg-warning hover:fill-white hover:text-white"
+    do: "text-warning fill-warning hover:text-warning-dark fill:text-warning-dark"
 
   defp dropdown_menu_item_class(:danger),
-    do: "text-danger fill-danger hover:bg-danger hover:fill-white hover:text-white"
+    do: "text-danger fill-danger hover:text-danger-dark fill:text-danger-dark"
 
   defp dropdown_menu_item_class(:info),
-    do: "text-info fill-info hover:bg-info hover:fill-white hover:text-white"
+    do: "text-info fill-info hover:text-info-dark fill:text-info-dark"
+
+  defp dropdown_menu_item_class(_),
+    do: ""
 end
