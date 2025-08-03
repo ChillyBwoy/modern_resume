@@ -67,8 +67,9 @@ defmodule ModernResume.ResumeTest do
     end
 
     test "delete_cv/1 deletes the cv" do
-      cv = cv_fixture()
-      assert {:ok, %CV{}} = Resume.delete_cv(cv)
+      cv = cv_fixture() |> Repo.preload(:user)
+
+      assert {:ok, %CV{}} = Resume.delete_cv(cv.user, cv.id)
       assert nil == Resume.get_cv(cv.id)
     end
   end
