@@ -11,6 +11,9 @@ defmodule ModernResumeWeb.CVShowLive do
   alias ModernResumeWeb.Document.RenderState
   alias ModernResumeWeb.Formatters
 
+  @allowed_tabs ~w(personal skills experiences educations social_networks languages settings)
+  @default_tab "personal"
+
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
     if connected?(socket) do
@@ -42,8 +45,10 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    section = Map.get(params, "section", "personal")
-    {:noreply, socket |> assign(selected_tab: section)}
+    section = Map.get(params, "section", @default_tab)
+    selected_tab = if section in @allowed_tabs, do: section, else: @default_tab
+
+    {:noreply, socket |> assign(selected_tab: selected_tab)}
   end
 
   @impl true

@@ -73,8 +73,8 @@ defmodule ModernResumeWeb.Router do
       live "/cvs/new", CVListLive, :new
       live "/cvs/:cv_id/delete", CVListLive, :delete
 
-      live "/cvs/:cv_id", CVShowLive, :show
       live "/cvs/:cv_id/:section", CVShowLive, :show
+      live "/cvs/:cv_id", CVShowLive, :show
 
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
