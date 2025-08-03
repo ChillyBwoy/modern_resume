@@ -301,7 +301,7 @@ defmodule ModernResumeWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               range search select tel text textarea time url week)
+               range search select tel text textarea time url week wysiwyg)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -408,6 +408,69 @@ defmodule ModernResumeWeb.CoreComponents do
           data-type={@has_counter && "CharacterCounter.input"}
           class={[
             "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
+            @errors == [] && "border-secondary-light focus:ring-primary-light",
+            @errors != [] && "border-danger focus:ring-danger-light"
+          ]}
+          {@rest}
+        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+        <.input_char_counter
+          :if={@has_counter}
+          value={String.length(@value || "")}
+          maxlength={@maxlength}
+          type="textarea"
+        />
+      </div>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "wysiwyg"} = assigns) do
+    maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
+
+    assigns =
+      assign(assigns,
+        maxlength: maxlength,
+        has_counter: assigns[:show_counter] && maxlength != nil
+      )
+
+    ~H"""
+    <div class="flex flex-col gap-1">
+      <.label for={@id}>{@label}</.label>
+      <div
+        id={"#{@id}-container"}
+        class="relative"
+        data-max-length={@maxlength}
+        phx-hook="WysiwygEditor"
+      >
+        <div
+          data-type="WysiwygEditor.toolbar"
+          class="flex gap-1 p-2 bg-gray-50 border border-b-0 rounded-t-md border-secondary-light"
+        >
+          <button
+            type="button"
+            data-type="WysiwygEditor.bold"
+            class="px-3 py-1 text-sm font-bold rounded bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-light"
+            title="Bold (Ctrl+B)"
+          >
+            B
+          </button>
+          <button
+            type="button"
+            data-type="WysiwygEditor.italic"
+            class="px-3 py-1 text-sm italic rounded bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-light"
+            title="Italic (Ctrl+I)"
+          >
+            I
+          </button>
+        </div>
+        <textarea
+          id={@id}
+          name={@name}
+          rows="5"
+          data-type="WysiwygEditor.textarea"
+          class={[
+            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-b-md border-t-0 border px-2 focus:ring-2 focus:outline-none",
             @errors == [] && "border-secondary-light focus:ring-primary-light",
             @errors != [] && "border-danger focus:ring-danger-light"
           ]}
