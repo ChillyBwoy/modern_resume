@@ -30,7 +30,6 @@ defmodule ModernResumeWeb.CVShowLive do
          |> assign(form: CV.changeset(cv) |> to_form())
          |> assign(fullscreen: false)
          |> assign(page_title: cv.title)
-         |> assign(selected_tab: "personal")
          |> render_cv(cv)}
 
       _ ->
@@ -39,6 +38,12 @@ defmodule ModernResumeWeb.CVShowLive do
          |> put_flash(:error, "CV not found")
          |> redirect(to: ~p"/")}
     end
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    section = Map.get(params, "section", "personal")
+    {:noreply, socket |> assign(selected_tab: section)}
   end
 
   @impl true
@@ -172,7 +177,9 @@ defmodule ModernResumeWeb.CVShowLive do
 
   @impl true
   def handle_event("tabs:select", %{"tab" => tab}, socket) do
-    {:noreply, socket |> assign(selected_tab: tab)}
+    {:noreply,
+     socket
+     |> push_patch(to: ~p"/cvs/#{socket.assigns.cv.id}/#{tab}")}
   end
 
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
