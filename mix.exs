@@ -65,7 +65,7 @@ defmodule ModernResume.MixProject do
     ]
   end
 
-  defp deps(:dev) do
+  defp deps(:local) do
     deps() ++
       [
         {:iona, path: "../iona", only: :dev}
@@ -78,8 +78,7 @@ defmodule ModernResume.MixProject do
         {:iona,
          git: "https://github.com/ChillyBwoy/iona.git",
          branch: "fix/refactor_processor_and_fix_ext",
-         depth: 1,
-         only: :prod}
+         depth: 1}
       ]
   end
 
