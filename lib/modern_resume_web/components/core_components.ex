@@ -403,7 +403,7 @@ defmodule ModernResumeWeb.CoreComponents do
         <div
           :if={@show_counter && @maxlength}
           id={"#{@id}-counter"}
-          class="absolute bottom-2 right-2 text-xs text-gray-500 bg-white px-1 rounded pointer-events-none"
+          class="absolute bottom-2 right-2 text-xs text-gray-500 bg-form-background px-1 rounded pointer-events-none"
         >
           <span id={"#{@id}-counter-current"}>0</span>/<span>{@maxlength}</span>
         </div>

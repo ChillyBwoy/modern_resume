@@ -10,10 +10,16 @@ export default () => ({
   },
 
   updated() {
-    this.updateCounter();
+    // Add a small delay to ensure DOM is fully updated after LiveView changes
+    setTimeout(() => this.updateCounter(), 0);
   },
 
   updateCounter() {
+    // Ensure element still exists and has a value property
+    if (!this.el || typeof this.el.value === 'undefined') {
+      return;
+    }
+    
     const currentLength = this.el.value.length;
     const maxLength = parseInt(this.el.getAttribute("maxlength") || "0");
     const counterId = `${this.el.id}-counter-current`;
