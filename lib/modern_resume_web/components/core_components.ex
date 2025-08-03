@@ -320,6 +320,28 @@ defmodule ModernResumeWeb.CoreComponents do
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
+  # Helper functions for textarea component
+  defp get_textarea_hooks(has_counter, maxlength, is_wysiwyg) do
+    hooks = []
+    hooks = if has_counter && maxlength, do: ["CharacterCounter" | hooks], else: hooks
+    hooks = if is_wysiwyg, do: ["WysiwygEditor" | hooks], else: hooks
+    
+    case hooks do
+      [] -> nil
+      [single] -> single
+      multiple -> Enum.join(multiple, " ")
+    end
+  end
+
+  defp get_textarea_data_type(has_counter, is_wysiwyg) do
+    cond do
+      has_counter && is_wysiwyg -> "CharacterCounter.input WysiwygEditor.textarea"
+      has_counter -> "CharacterCounter.input"
+      is_wysiwyg -> "WysiwygEditor.textarea"
+      true -> nil
+    end
+  end
+
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
 
@@ -385,11 +407,14 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
+    is_wysiwyg = assigns[:wysiwyg] == true
 
     assigns =
       assign(assigns,
         maxlength: maxlength,
-        has_counter: assigns[:show_counter] && maxlength != nil
+        has_counter: assigns[:show_counter] && maxlength != nil,
+        is_wysiwyg: is_wysiwyg,
+        hooks: get_textarea_hooks(assigns[:show_counter], maxlength, is_wysiwyg)
       )
 
     ~H"""
@@ -399,13 +424,13 @@ defmodule ModernResumeWeb.CoreComponents do
         id={"#{@id}-container"}
         class="relative"
         data-max-length={@maxlength}
-        phx-hook={@has_counter && "CharacterCounter"}
+        phx-hook={@hooks}
       >
         <textarea
           id={@id}
           name={@name}
           rows="5"
-          data-type={@has_counter && "CharacterCounter.input"}
+          data-type={get_textarea_data_type(@has_counter, @is_wysiwyg)}
           class={[
             "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
             @errors == [] && "border-secondary-light focus:ring-primary-light",
@@ -425,68 +450,7 @@ defmodule ModernResumeWeb.CoreComponents do
     """
   end
 
-  def input(%{type: "wysiwyg"} = assigns) do
-    maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
 
-    assigns =
-      assign(assigns,
-        maxlength: maxlength,
-        has_counter: assigns[:show_counter] && maxlength != nil
-      )
-
-    ~H"""
-    <div class="flex flex-col gap-1">
-      <.label for={@id}>{@label}</.label>
-      <div
-        id={"#{@id}-container"}
-        class="relative"
-        data-max-length={@maxlength}
-        phx-hook="WysiwygEditor"
-      >
-        <div
-          data-type="WysiwygEditor.toolbar"
-          class="flex gap-1 p-2 bg-gray-50 border border-b-0 rounded-t-md border-secondary-light"
-        >
-          <button
-            type="button"
-            data-type="WysiwygEditor.bold"
-            class="px-3 py-1 text-sm font-bold rounded bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-light"
-            title="Bold (Ctrl+B)"
-          >
-            B
-          </button>
-          <button
-            type="button"
-            data-type="WysiwygEditor.italic"
-            class="px-3 py-1 text-sm italic rounded bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-light"
-            title="Italic (Ctrl+I)"
-          >
-            I
-          </button>
-        </div>
-        <textarea
-          id={@id}
-          name={@name}
-          rows="5"
-          data-type="WysiwygEditor.textarea"
-          class={[
-            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-b-md border-t-0 border px-2 focus:ring-2 focus:outline-none",
-            @errors == [] && "border-secondary-light focus:ring-primary-light",
-            @errors != [] && "border-danger focus:ring-danger-light"
-          ]}
-          {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
-        <.input_char_counter
-          :if={@has_counter}
-          value={String.length(@value || "")}
-          maxlength={@maxlength}
-          type="textarea"
-        />
-      </div>
-      <.error :for={msg <- @errors}>{msg}</.error>
-    </div>
-    """
-  end
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do

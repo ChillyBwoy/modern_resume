@@ -1,28 +1,31 @@
 import { Hook } from "phoenix_live_view";
 
 const SELECTOR = {
-  textarea: "[data-type='WysiwygEditor.textarea']",
-  toolbar: "[data-type='WysiwygEditor.toolbar']",
-  boldBtn: "[data-type='WysiwygEditor.bold']",
-  italicBtn: "[data-type='WysiwygEditor.italic']",
+  textarea: "[data-type*='WysiwygEditor.textarea']",
 } as const;
 
 const CLASSES = {
-  active: "bg-primary text-white",
-  inactive: "bg-gray-200 text-gray-700",
+  toolbar: "absolute z-50 flex gap-1 p-2 bg-white border border-gray-300 rounded-lg shadow-lg",
+  button: "px-3 py-1 text-sm rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500",
+  buttonActive: "bg-blue-500 text-white hover:bg-blue-600",
+  buttonInactive: "bg-gray-50 text-gray-700 border border-gray-200",
 } as const;
 
 interface SelectionInfo {
   start: number;
   end: number;
   selectedText: string;
+  hasSelection: boolean;
 }
 
 const getSelection = (textarea: HTMLTextAreaElement): SelectionInfo => {
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
   return {
-    start: textarea.selectionStart,
-    end: textarea.selectionEnd,
-    selectedText: textarea.value.substring(textarea.selectionStart, textarea.selectionEnd),
+    start,
+    end,
+    selectedText: textarea.value.substring(start, end),
+    hasSelection: start !== end,
   };
 };
 
@@ -51,7 +54,7 @@ const toggleFormat = (textarea: HTMLTextAreaElement, startTag: string, endTag: s
   if (selectedText.length === 0) {
     // No selection, just insert the tags and position cursor between them
     const newText = startTag + endTag;
-    const insertedLength = insertText(textarea, newText, start, end);
+    insertText(textarea, newText, start, end);
     setSelection(textarea, start + startTag.length, start + startTag.length);
   } else {
     // Check if selection is already wrapped with the tags
@@ -72,7 +75,7 @@ const toggleFormat = (textarea: HTMLTextAreaElement, startTag: string, endTag: s
     } else {
       // Add formatting
       const newText = startTag + selectedText + endTag;
-      const insertedLength = insertText(textarea, newText, start, end);
+      insertText(textarea, newText, start, end);
       setSelection(textarea, start + startTag.length, start + startTag.length + selectedText.length);
     }
   }
@@ -88,52 +91,121 @@ const isFormatActive = (textarea: HTMLTextAreaElement, startTag: string, endTag:
   return beforeSelection === startTag && afterSelection === endTag;
 };
 
-const updateButtonStates = (el: HTMLElement) => {
-  const textarea = el.querySelector(SELECTOR.textarea) as HTMLTextAreaElement;
-  const boldBtn = el.querySelector(SELECTOR.boldBtn) as HTMLButtonElement;
-  const italicBtn = el.querySelector(SELECTOR.italicBtn) as HTMLButtonElement;
+const createFloatingToolbar = (): HTMLElement => {
+  const toolbar = document.createElement('div');
+  toolbar.className = CLASSES.toolbar;
+  toolbar.style.display = 'none';
   
-  if (!textarea || !boldBtn || !italicBtn) return;
+  // Bold button  
+  const boldBtn = document.createElement('button');
+  boldBtn.type = 'button';
+  boldBtn.innerHTML = '<strong>B</strong>';
+  boldBtn.title = 'Bold (Ctrl+B)';
+  boldBtn.className = `${CLASSES.button} ${CLASSES.buttonInactive}`;
+  boldBtn.setAttribute('data-format', 'bold');
+  
+  // Italic button
+  const italicBtn = document.createElement('button');
+  italicBtn.type = 'button';
+  italicBtn.innerHTML = '<em>I</em>';
+  italicBtn.title = 'Italic (Ctrl+I)';
+  italicBtn.className = `${CLASSES.button} ${CLASSES.buttonInactive}`;
+  italicBtn.setAttribute('data-format', 'italic');
+  
+  toolbar.appendChild(boldBtn);
+  toolbar.appendChild(italicBtn);
+  
+  document.body.appendChild(toolbar);
+  return toolbar;
+};
+
+const positionToolbar = (toolbar: HTMLElement, textarea: HTMLTextAreaElement) => {
+  const selection = getSelection(textarea);
+  if (!selection.hasSelection) {
+    toolbar.style.display = 'none';
+    return;
+  }
+  
+  // Get textarea bounds
+  const textareaRect = textarea.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+  
+  // Calculate approximate position of selection
+  // This is a simplified approach - for better positioning, we'd need more complex calculations
+  const x = textareaRect.left + scrollLeft + (textareaRect.width / 2);
+  const y = textareaRect.top + scrollTop - toolbar.offsetHeight - 10;
+  
+  toolbar.style.left = `${x - toolbar.offsetWidth / 2}px`;
+  toolbar.style.top = `${y}px`;
+  toolbar.style.display = 'flex';
+};
+
+const updateButtonStates = (toolbar: HTMLElement, textarea: HTMLTextAreaElement) => {
+  const boldBtn = toolbar.querySelector('[data-format="bold"]') as HTMLButtonElement;
+  const italicBtn = toolbar.querySelector('[data-format="italic"]') as HTMLButtonElement;
+  
+  if (!boldBtn || !italicBtn) return;
   
   // Update bold button
   if (isFormatActive(textarea, '\\textbf{', '}')) {
-    boldBtn.classList.remove(...CLASSES.inactive.split(' '));
-    boldBtn.classList.add(...CLASSES.active.split(' '));
+    boldBtn.className = `${CLASSES.button} ${CLASSES.buttonActive}`;
   } else {
-    boldBtn.classList.remove(...CLASSES.active.split(' '));
-    boldBtn.classList.add(...CLASSES.inactive.split(' '));
+    boldBtn.className = `${CLASSES.button} ${CLASSES.buttonInactive}`;
   }
   
   // Update italic button
   if (isFormatActive(textarea, '\\textit{', '}')) {
-    italicBtn.classList.remove(...CLASSES.inactive.split(' '));
-    italicBtn.classList.add(...CLASSES.active.split(' '));
+    italicBtn.className = `${CLASSES.button} ${CLASSES.buttonActive}`;
   } else {
-    italicBtn.classList.remove(...CLASSES.active.split(' '));
-    italicBtn.classList.add(...CLASSES.inactive.split(' '));
+    italicBtn.className = `${CLASSES.button} ${CLASSES.buttonInactive}`;
   }
+};
+
+const showToolbar = (toolbar: HTMLElement, textarea: HTMLTextAreaElement) => {
+  const selection = getSelection(textarea);
+  if (selection.hasSelection) {
+    positionToolbar(toolbar, textarea);
+    updateButtonStates(toolbar, textarea);
+  } else {
+    toolbar.style.display = 'none';
+  }
+};
+
+const hideToolbar = (toolbar: HTMLElement) => {
+  toolbar.style.display = 'none';
 };
 
 export default (): Hook => ({
   mounted() {
     const textarea = this.el.querySelector(SELECTOR.textarea) as HTMLTextAreaElement;
-    const boldBtn = this.el.querySelector(SELECTOR.boldBtn) as HTMLButtonElement;
-    const italicBtn = this.el.querySelector(SELECTOR.italicBtn) as HTMLButtonElement;
+    if (!textarea) return;
     
-    if (!textarea || !boldBtn || !italicBtn) return;
+    // Create floating toolbar
+    const toolbar = createFloatingToolbar();
     
-    // Bold button click handler
-    boldBtn.addEventListener('click', (e) => {
+    // Store reference for cleanup
+    (this as any).toolbar = toolbar;
+    
+    let hideTimeout: number;
+    
+    // Button click handlers
+    toolbar.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const button = target.closest('[data-format]') as HTMLButtonElement;
+      if (!button) return;
+      
       e.preventDefault();
-      toggleFormat(textarea, '\\textbf{', '}');
-      updateButtonStates(this.el);
-    });
-    
-    // Italic button click handler
-    italicBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      toggleFormat(textarea, '\\textit{', '}');
-      updateButtonStates(this.el);
+      e.stopPropagation();
+      
+      const format = button.getAttribute('data-format');
+      if (format === 'bold') {
+        toggleFormat(textarea, '\\textbf{', '}');
+      } else if (format === 'italic') {
+        toggleFormat(textarea, '\\textit{', '}');
+      }
+      
+      updateButtonStates(toolbar, textarea);
     });
     
     // Keyboard shortcuts
@@ -143,35 +215,61 @@ export default (): Hook => ({
           case 'b':
             e.preventDefault();
             toggleFormat(textarea, '\\textbf{', '}');
-            updateButtonStates(this.el);
+            updateButtonStates(toolbar, textarea);
             break;
           case 'i':
             e.preventDefault();
             toggleFormat(textarea, '\\textit{', '}');
-            updateButtonStates(this.el);
+            updateButtonStates(toolbar, textarea);
             break;
         }
       }
     });
     
-    // Update button states on selection change
-    textarea.addEventListener('selectionchange', () => {
-      updateButtonStates(this.el);
+    // Show toolbar on text selection
+    const handleSelectionChange = () => {
+      clearTimeout(hideTimeout);
+      setTimeout(() => {
+        if (document.activeElement === textarea) {
+          showToolbar(toolbar, textarea);
+        }
+      }, 10);
+    };
+    
+    textarea.addEventListener('mouseup', handleSelectionChange);
+    textarea.addEventListener('keyup', handleSelectionChange);
+    
+    // Hide toolbar when clicking outside or losing focus
+    document.addEventListener('click', (e) => {
+      if (!toolbar.contains(e.target as Node) && e.target !== textarea) {
+        hideTimeout = setTimeout(() => hideToolbar(toolbar), 100);
+      }
     });
     
-    textarea.addEventListener('keyup', () => {
-      updateButtonStates(this.el);
+    textarea.addEventListener('blur', () => {
+      hideTimeout = setTimeout(() => hideToolbar(toolbar), 200);
     });
     
-    textarea.addEventListener('click', () => {
-      updateButtonStates(this.el);
+    // Show toolbar when focusing if there's a selection
+    textarea.addEventListener('focus', () => {
+      clearTimeout(hideTimeout);
+      setTimeout(() => showToolbar(toolbar, textarea), 10);
     });
-    
-    // Initial button state update
-    updateButtonStates(this.el);
   },
   
   updated() {
-    updateButtonStates(this.el);
+    const textarea = this.el.querySelector(SELECTOR.textarea) as HTMLTextAreaElement;
+    const toolbar = (this as any).toolbar;
+    if (textarea && toolbar) {
+      updateButtonStates(toolbar, textarea);
+    }
+  },
+  
+  destroyed() {
+    // Clean up floating toolbar
+    const toolbar = (this as any).toolbar;
+    if (toolbar && toolbar.parentNode) {
+      toolbar.parentNode.removeChild(toolbar);
+    }
   },
 });
