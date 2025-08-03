@@ -311,7 +311,10 @@ defmodule ModernResumeWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-  attr :show_counter, :boolean, default: false, doc: "whether to show character counter for inputs with maxlength"
+
+  attr :show_counter, :boolean,
+    default: false,
+    doc: "whether to show character counter for inputs with maxlength"
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
@@ -382,31 +385,40 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def input(%{type: "textarea"} = assigns) do
     maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
-    assigns = assign(assigns, :maxlength, maxlength)
-    
+
+    assigns =
+      assign(assigns,
+        maxlength: maxlength,
+        has_counter: assigns[:show_counter] && maxlength != nil
+      )
+
     ~H"""
     <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
-      <div class="relative">
+      <div
+        id={"#{@id}-container"}
+        class="relative"
+        data-max-length={@maxlength}
+        phx-hook={@has_counter && "CharacterCounter"}
+      >
         <textarea
           id={@id}
           name={@name}
           rows="5"
+          data-type={@has_counter && "CharacterCounter.input"}
           class={[
             "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
             @errors == [] && "border-secondary-light focus:ring-primary-light",
             @errors != [] && "border-danger focus:ring-danger-light"
           ]}
-          phx-hook={@show_counter && @maxlength && "CharacterCounter"}
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
-        <div
-          :if={@show_counter && @maxlength}
-          id={"#{@id}-counter"}
-          class="absolute bottom-2 right-2 text-xs text-gray-500 bg-form-background px-1 rounded pointer-events-none"
-        >
-          <span id={"#{@id}-counter-current"}>0</span>/<span>{@maxlength}</span>
-        </div>
+        <.input_char_counter
+          :if={@has_counter}
+          value={String.length(@value)}
+          maxlength={@maxlength}
+          type="textarea"
+        />
       </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -416,34 +428,65 @@ defmodule ModernResumeWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
-    assigns = assign(assigns, :maxlength, maxlength)
-    
+
+    assigns =
+      assign(assigns,
+        maxlength: maxlength,
+        normalized_value: Phoenix.HTML.Form.normalize_value(assigns.type, assigns.value || ""),
+        has_counter: assigns[:show_counter] && maxlength != nil
+      )
+
     ~H"""
     <div class="flex flex-col gap-1">
       <.label for={@id}>{@label}</.label>
-      <div class="relative">
+      <div
+        class="relative"
+        id={"#{@id}-container"}
+        data-max-length={@maxlength}
+        phx-hook={@has_counter && "CharacterCounter"}
+      >
         <input
           type={@type}
           name={@name}
           id={@id}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          value={@normalized_value}
+          data-type={@has_counter && "CharacterCounter.input"}
           class={[
-            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block h-9 w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
+            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block h-9 w-full rounded-md border focus:ring-2 focus:outline-none",
             @errors == [] && "border-secondary-light focus:ring-primary-light",
-            @errors != [] && "border-danger focus:ring-danger-light"
+            @errors != [] && "border-danger focus:ring-danger-light",
+            @has_counter && "pl-2 pr-14",
+            !@has_counter && "px-2"
           ]}
-          phx-hook={@show_counter && @maxlength && "CharacterCounter"}
           {@rest}
         />
-        <div
-          :if={@show_counter && @maxlength}
-          id={"#{@id}-counter"}
-          class="absolute top-1/2 -translate-y-1/2 right-2 text-xs text-gray-500 bg-white px-1 rounded pointer-events-none"
-        >
-          <span id={"#{@id}-counter-current"}>0</span>/<span>{@maxlength}</span>
-        </div>
+        <.input_char_counter
+          :if={@has_counter}
+          value={String.length(@normalized_value)}
+          maxlength={@maxlength}
+          type="input"
+        />
       </div>
       <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  attr :value, :integer, required: true
+  attr :maxlength, :string, required: true
+  attr :type, :string, values: ["input", "textarea"], required: true
+
+  defp input_char_counter(assigns) do
+    ~H"""
+    <div class={[
+      "text-xs text-secondary pointer-events-none flex",
+      @type == "input" &&
+        "absolute top-px bottom-px right-px items-center justify-center rounded-r-md w-14",
+      @type == "textarea" && "justify-end py-1"
+    ]}>
+      <span data-type="CharacterCounter.counter">{@value}</span>
+      <span>/</span>
+      <span>{@maxlength}</span>
     </div>
     """
   end

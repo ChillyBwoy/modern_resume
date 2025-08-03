@@ -1,49 +1,74 @@
-export default () => ({
+import { Hook } from "phoenix_live_view";
+
+const SELECTOR = {
+  input: "[data-type='CharacterCounter.input']",
+  counter: "[data-type='CharacterCounter.counter']",
+} as const;
+
+const ATTRS = {
+  maxLengthVal: "data-max-length",
+} as const;
+
+const CLASSES = {
+  ok: "text-secondary",
+  warning: "text-warning",
+  danger: "text-danger",
+} as const;
+
+const THRESHOLD = [
+  [90, CLASSES.danger],
+  [75, CLASSES.warning],
+  [-1, CLASSES.ok],
+] as const;
+
+const toggleClasses = (el: HTMLElement, value: number) => {
+  for (const cl of Object.values(CLASSES)) {
+    el.classList.remove(cl);
+  }
+
+  for (const [threshold, className] of THRESHOLD) {
+    if (value >= threshold) {
+      el.classList.add(className);
+      break;
+    }
+  }
+};
+
+const updateCounter = (el: HTMLElement) => {
+  const $input = el.querySelector(SELECTOR.input) as HTMLInputElement;
+  const $counter = el.querySelector(SELECTOR.counter) as HTMLElement;
+  if ($input == null || $counter == null) {
+    return;
+  }
+
+  const maxLength = parseInt(el.getAttribute(ATTRS.maxLengthVal) || "0", 10);
+  if (maxLength <= 0) {
+    return;
+  }
+
+  const currentLength = $input.value.length;
+  $counter.textContent = currentLength.toString();
+
+  toggleClasses($counter, (currentLength / maxLength) * 100);
+};
+
+export default (): Hook => ({
   mounted() {
-    this.updateCounter();
-    this.el.addEventListener("input", () => this.updateCounter());
-    this.el.addEventListener("keyup", () => this.updateCounter());
+    updateCounter(this.el);
+
+    const update = () => {
+      updateCounter(this.el);
+    };
+
+    this.el.addEventListener("input", update);
+    this.el.addEventListener("keyup", update);
     this.el.addEventListener("paste", () => {
       // Delay to allow paste content to be processed
-      setTimeout(() => this.updateCounter(), 10);
+      setTimeout(update, 100);
     });
   },
 
   updated() {
-    // Add a small delay to ensure DOM is fully updated after LiveView changes
-    setTimeout(() => this.updateCounter(), 0);
+    updateCounter(this.el);
   },
-
-  updateCounter() {
-    // Ensure element still exists and has a value property
-    if (!this.el || typeof this.el.value === 'undefined') {
-      return;
-    }
-    
-    const currentLength = this.el.value.length;
-    const maxLength = parseInt(this.el.getAttribute("maxlength") || "0");
-    const counterId = `${this.el.id}-counter-current`;
-    const counterElement = document.getElementById(counterId);
-    
-    if (counterElement && maxLength > 0) {
-      counterElement.textContent = currentLength.toString();
-      
-      // Add visual feedback when approaching limit
-      const counterContainer = document.getElementById(`${this.el.id}-counter`);
-      if (counterContainer) {
-        const percentage = (currentLength / maxLength) * 100;
-        
-        if (percentage >= 90) {
-          counterContainer.classList.remove("text-gray-500", "text-amber-600");
-          counterContainer.classList.add("text-red-600");
-        } else if (percentage >= 75) {
-          counterContainer.classList.remove("text-gray-500", "text-red-600");
-          counterContainer.classList.add("text-amber-600");
-        } else {
-          counterContainer.classList.remove("text-red-600", "text-amber-600");
-          counterContainer.classList.add("text-gray-500");
-        }
-      }
-    }
-  }
 });
