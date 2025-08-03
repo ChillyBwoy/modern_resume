@@ -72,7 +72,7 @@ defmodule ModernResumeWeb.CoreComponents do
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
+                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40 cursor-pointer"
                   aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="h-5 w-5" />
@@ -227,7 +227,7 @@ defmodule ModernResumeWeb.CoreComponents do
   attr :size, :atom, values: [:small, :medium, :large], default: :medium
 
   attr :variant, :atom,
-    values: [:default, :primary, :secondary, :success, :danger, :warning, :info],
+    values: [:none, :primary, :secondary, :success, :danger, :warning, :info],
     default: :primary
 
   attr :rest, :global, include: ~w(disabled form name value)
@@ -245,7 +245,7 @@ defmodule ModernResumeWeb.CoreComponents do
         @size == :small && "px-2.5 py-1.5 text-xs",
         @size == :medium && "px-3 py-2 text-sm",
         @size == :large && "px-3.5 py-2.5 text-sm",
-        @variant == :default && "bg-form-background border",
+        @variant == :none && "bg-form-background border",
         @variant === :primary &&
           "border-primary-dark bg-primary hover:bg-primary-dark focus-visible:bg-primary disabled:border-primary-dark/20 disabled:bg-primary-light/70 border fill-white text-white",
         @variant === :secondary &&
@@ -653,6 +653,21 @@ defmodule ModernResumeWeb.CoreComponents do
     )
   end
 
+  def toggle(js \\ %JS{}, selector) do
+    JS.toggle(js,
+      to: selector,
+      time: 200,
+      in:
+        {"transition-all transform ease-out duration-300",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"},
+      out:
+        {"transition-all transform ease-in duration-200",
+         "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+  end
+
   def show_modal(js \\ %JS{}, id) when is_binary(id) do
     js
     |> JS.show(to: "##{id}")
@@ -712,7 +727,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def social_button(assigns) do
     ~H"""
-    <.button type="button" class="w-full flex gap-2" variant={:default} phx-click={JS.navigate(@url)}>
+    <.button type="button" class="w-full flex gap-2" variant={:none} phx-click={JS.navigate(@url)}>
       <span style={~c"background-image: url(/images/#{@provider}.svg)"} class="size-5 bg-cover" />
       <span>{@label}</span>
     </.button>
