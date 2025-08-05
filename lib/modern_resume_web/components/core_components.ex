@@ -512,7 +512,7 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="fill-danger text-danger text-xs break-words">
+    <p class="fill-danger text-danger text-xs break-words" data-testid="error_message">
       {render_slot(@inner_block)}
     </p>
     """
