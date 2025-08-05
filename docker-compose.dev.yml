@@ -1,7 +1,8 @@
 services:
-  dev_db:
+  db:
     image: postgres:16.1-alpine
-    container_name: modern_resume_db
+    container_name: modern_resume_dev_db
+    env_file: ".env"
     ports:
       - ${DB_PORT}:5432
     environment:
@@ -12,20 +13,19 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  dev_simplecv_app:
+  app:
     build:
       context: .
-    container_name: simplecv_app_dev
-    env_file:
-      - ".env.local"
+    container_name: modern_resume_dev_app
+    env_file: ".env"
     environment:
-      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@dev_db/${DB_DATABASE}
+      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_DATABASE}
     ports:
       - ${PHX_PORT}:${PHX_PORT}
     volumes:
       - ./priv/tmp:/app/data
     depends_on:
-      - dev_db
+      - db
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

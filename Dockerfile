@@ -101,10 +101,10 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-ENV TZ="Asia/Tokyo"
-ENV PHX_PORT="4000"
+ENV TZ=""
+ENV PHX_PORT=""
 ENV PHX_HOST="127.0.0.1"
-ENV SECRET_KEY_BASE="secret"
+ENV SECRET_KEY_BASE=""
 ENV DATABASE_URL="ecto://username:password@host:port/database"
 ENV AUTH_GITHUB_CLIENT_ID=""
 ENV AUTH_GITHUB_CLIENT_SECRET=""

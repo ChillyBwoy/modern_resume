@@ -6,14 +6,13 @@ Makefile for the API.
 Usage:
   make help			show this help
   make schema		create the database schema
-  make build-image	build the Docker image
-  make run-image	run the Docker image
-
+  make dev-up		run the app in development environment
+  make dev-down		stop the development environment
+  make qa-up		run the app in QA environment
+  make qa-down		stop the QA environment
 
 endef
 export header
-
-include .env
 
 .PHONY: help
 help:
@@ -21,18 +20,25 @@ help:
 
 .PHONY: schema
 schema:
-	./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
+	source .env && ./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
 
-.PHONY: build-image
-build-image:
-	docker build -t ghcr.io/chillybwoy/modern_resume:latest .
 
-.PHONY: run-image
-run-image:
-	docker run \
-		--rm \
-		-it \
-		--name modern_resume \
-		ghcr.io/chillybwoy/modern_resume:latest
+.PHONE: dev-up
+dev-up:
+	docker compose -f docker-compose.dev.yml up --build -d
+
+.PHONE: dev-down
+dev-down:
+	docker compose -f docker-compose.dev.yml down
+
+.PHONE: qa-up
+qa-up:
+	docker compose --env-file .env.qa -f docker-compose.qa.yml up --build -d
+	@sleep 3
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app /bin/bash /app/bin/migrate
+
+.PHONE: qa-down
+qa-down:
+	docker compose -f docker-compose.qa.yml down
 
 .DEFAULT_GOAL := help
