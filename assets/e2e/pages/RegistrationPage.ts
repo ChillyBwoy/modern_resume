@@ -5,6 +5,10 @@ export class RegistrationPage {
   readonly passwordInput: Locator;
   readonly passwordConfirmationInput: Locator;
   readonly submitButton: Locator;
+  readonly formError: Locator;
+  readonly formEmailError: Locator;
+  readonly formPasswordError: Locator;
+  readonly formPasswordConfirmationError: Locator;
 
   constructor(protected readonly page: Page) {
     this.emailInput = page.locator("#user_email");
@@ -13,6 +17,12 @@ export class RegistrationPage {
       "#user_password_confirmation"
     );
     this.submitButton = page.getByRole("button", { name: "Create an account" });
+    this.formError = page.getByTestId("registration-error");
+    this.formEmailError = page.getByTestId("user_email-error-0");
+    this.formPasswordError = page.getByTestId("user_password-error-0");
+    this.formPasswordConfirmationError = page.getByTestId(
+      "user_password_confirmation-error-0"
+    );
   }
 
   get url() {

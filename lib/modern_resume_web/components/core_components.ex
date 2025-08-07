@@ -353,7 +353,9 @@ defmodule ModernResumeWeb.CoreComponents do
         />
         {@label}
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
+        {msg}
+      </.error>
     </div>
     """
   end
@@ -378,7 +380,9 @@ defmodule ModernResumeWeb.CoreComponents do
           {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
       </div>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
+        {msg}
+      </.error>
     </div>
     """
   end
@@ -420,7 +424,9 @@ defmodule ModernResumeWeb.CoreComponents do
           type="textarea"
         />
       </div>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
+        {msg}
+      </.error>
     </div>
     """
   end
@@ -467,7 +473,9 @@ defmodule ModernResumeWeb.CoreComponents do
           type="input"
         />
       </div>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
+        {msg}
+      </.error>
     </div>
     """
   end
@@ -508,11 +516,13 @@ defmodule ModernResumeWeb.CoreComponents do
   @doc """
   Generates a generic error message.
   """
+  attr :testid, :string, default: nil
+
   slot :inner_block, required: true
 
   def error(assigns) do
     ~H"""
-    <p class="fill-danger text-danger text-xs break-words" data-testid="error_message">
+    <p class="fill-danger text-danger text-xs break-words" data-testid={@testid}>
       {render_slot(@inner_block)}
     </p>
     """
@@ -794,10 +804,17 @@ defmodule ModernResumeWeb.CoreComponents do
   attr :url, :string, required: true
   attr :provider, :string, values: ["github", "google"], required: true
   attr :label, :string, required: true
+  attr :rest, :global, include: ~w(disabled form name value)
 
   def social_button(assigns) do
     ~H"""
-    <.button type="button" class="w-full flex gap-2" variant={:none} phx-click={JS.navigate(@url)}>
+    <.button
+      type="button"
+      class="w-full flex gap-2"
+      variant={:none}
+      phx-click={JS.navigate(@url)}
+      {@rest}
+    >
       <span style={~c"background-image: url(/images/#{@provider}.svg)"} class="size-5 bg-cover" />
       <span>{@label}</span>
     </.button>

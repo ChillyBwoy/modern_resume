@@ -27,7 +27,7 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
-        <.error :if={@check_errors}>
+        <.error :if={@check_errors} testid="registration-error">
           Oops, something went wrong! Please check the errors below.
         </.error>
 

@@ -1,5 +1,5 @@
 services:
-  db:
+  db_qa:
     image: postgres:16.1-alpine
     container_name: modern_resume_qa_db
     env_file: ".env.qa"
@@ -11,18 +11,19 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_PORT: ${DB_PORT}
 
-  app:
+  app_qa:
     build:
+      dockerfile: ./docker/release/Dockerfile
       context: .
     container_name: modern_resume_qa_app
     env_file: ".env.qa"
     environment:
-      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_DATABASE}
+      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@db_qa/${DB_DATABASE}
     ports:
       - ${PHX_PORT}:${PHX_PORT}
     volumes:
       - ./priv/tmp:/app/data
     depends_on:
-      - db
+      - db_qa
     extra_hosts:
       - "host.docker.internal:host-gateway"

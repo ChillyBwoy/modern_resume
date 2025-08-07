@@ -1,2 +1,2 @@
-export const TEST_USER_EMAIL = "test@simplecv.app";
-export const TEST_USER_PASSWORD = "qwertyqwerty";
+export const E2E_USER_EMAIL = process.env.E2E_USER_EMAIL!;
+export const E2E_USER_PASSWORD = process.env.E2E_USER_PASSWORD!;

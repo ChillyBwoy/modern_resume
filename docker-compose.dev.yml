@@ -13,21 +13,5 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  app:
-    build:
-      context: .
-    container_name: modern_resume_dev_app
-    env_file: ".env"
-    environment:
-      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_DATABASE}
-    ports:
-      - ${PHX_PORT}:${PHX_PORT}
-    volumes:
-      - ./priv/tmp:/app/data
-    depends_on:
-      - db
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
 volumes:
   db_data:

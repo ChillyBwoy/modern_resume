@@ -6,13 +6,21 @@ Makefile for the API.
 Usage:
   make help			show this help
   make schema		create the database schema
-  make dev-up		run the app in development environment
-  make dev-down		stop the development environment
   make qa-up		run the app in QA environment
   make qa-down		stop the QA environment
 
 endef
 export header
+
+ENV ?= dev
+-include .env
+-include .env.$(ENV)
+export
+
+qa-only:
+ifneq ($(ENV),qa)
+	$(error ENV must be qa)
+endif
 
 .PHONY: help
 help:
@@ -22,20 +30,12 @@ help:
 schema:
 	source .env && ./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
 
-
-.PHONE: dev-up
-dev-up:
-	docker compose -f docker-compose.dev.yml up --build -d
-
-.PHONE: dev-down
-dev-down:
-	docker compose -f docker-compose.dev.yml down
-
 .PHONE: qa-up
-qa-up:
+qa-up: qa-only
 	docker compose --env-file .env.qa -f docker-compose.qa.yml up --build -d
 	@sleep 3
-	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app /bin/bash /app/bin/migrate
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash /app/bin/migrate
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(E2E_USER_EMAIL)\", \"$(E2E_USER_PASSWORD)\")"
 
 .PHONE: qa-down
 qa-down:
