@@ -13,7 +13,6 @@ services:
 
   app_qa:
     build:
-      dockerfile: ./docker/release/Dockerfile
       context: .
     container_name: modern_resume_qa_app
     env_file: ".env.qa"
