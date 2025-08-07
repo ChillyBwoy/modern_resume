@@ -1,7 +1,8 @@
 services:
-  dev_db:
+  db_qa:
     image: postgres:16.1-alpine
-    container_name: modern_resume_db
+    container_name: modern_resume_qa_db
+    env_file: ".env.qa"
     ports:
       - ${DB_PORT}:5432
     environment:
@@ -9,25 +10,20 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_PORT: ${DB_PORT}
-    volumes:
-      - db_data:/var/lib/postgresql/data
 
-  dev_simplecv_app:
+  app_qa:
     build:
+      dockerfile: ./docker/release/Dockerfile
       context: .
-    container_name: simplecv_app_dev
-    env_file:
-      - ".env.local"
+    container_name: modern_resume_qa_app
+    env_file: ".env.qa"
     environment:
-      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@dev_db/${DB_DATABASE}
+      DATABASE_URL: ecto://${DB_USERNAME}:${DB_PASSWORD}@db_qa/${DB_DATABASE}
     ports:
       - ${PHX_PORT}:${PHX_PORT}
     volumes:
       - ./priv/tmp:/app/data
     depends_on:
-      - dev_db
+      - db_qa
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-volumes:
-  db_data:

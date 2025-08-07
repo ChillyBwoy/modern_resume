@@ -6,14 +6,21 @@ Makefile for the API.
 Usage:
   make help			show this help
   make schema		create the database schema
-  make build-image	build the Docker image
-  make run-image	run the Docker image
-
+  make qa-up		run the app in QA environment
+  make qa-down		stop the QA environment
 
 endef
 export header
 
-include .env
+ENV ?= dev
+-include .env
+-include .env.$(ENV)
+export
+
+qa-only:
+ifneq ($(ENV),qa)
+	$(error ENV must be qa)
+endif
 
 .PHONY: help
 help:
@@ -21,18 +28,17 @@ help:
 
 .PHONY: schema
 schema:
-	./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
+	source .env && ./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
 
-.PHONY: build-image
-build-image:
-	docker build -t ghcr.io/chillybwoy/modern_resume:latest .
+.PHONE: qa-up
+qa-up: qa-only
+	docker compose --env-file .env.qa -f docker-compose.qa.yml up --build -d
+	@sleep 3
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash /app/bin/migrate
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(E2E_USER_EMAIL)\", \"$(E2E_USER_PASSWORD)\")"
 
-.PHONY: run-image
-run-image:
-	docker run \
-		--rm \
-		-it \
-		--name modern_resume \
-		ghcr.io/chillybwoy/modern_resume:latest
+.PHONE: qa-down
+qa-down:
+	docker compose -f docker-compose.qa.yml down
 
 .DEFAULT_GOAL := help

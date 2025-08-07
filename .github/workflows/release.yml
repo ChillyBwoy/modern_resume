@@ -20,5 +20,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
+          file: ./docker/release/Dockerfile
+          context: .
           push: true
           tags: ghcr.io/chillybwoy/modern_resume:latest

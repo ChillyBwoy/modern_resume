@@ -18,6 +18,17 @@ defmodule ModernResume.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
+  def create_user(email, password) when is_binary(email) and is_binary(password) do
+    load_app()
+
+    for repo <- repos() do
+      {:ok, _, _} =
+        Ecto.Migrator.with_repo(repo, fn _ ->
+          ModernResume.Accounts.register_user(%{email: email, password: password})
+        end)
+    end
+  end
+
   defp repos do
     Application.fetch_env!(@app, :ecto_repos)
   end

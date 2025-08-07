@@ -42,6 +42,6 @@ npm-debug.log
 .DS_Store
 
 .env
+.env.qa
 .env.prod
 .env.local
-

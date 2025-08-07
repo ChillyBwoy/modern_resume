@@ -26,9 +26,21 @@ defmodule ModernResumeWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">Sign in</.button>
-          <.social_button provider="github" url={~p"/auth/github"} label="Sign in with GitHub" />
-          <.social_button provider="google" url={~p"/auth/google"} label="Sign in with Google" />
+          <.button phx-disable-with="Logging in..." class="w-full" data-testid="signin_button">
+            Sign in
+          </.button>
+          <.social_button
+            provider="github"
+            url={~p"/auth/github"}
+            label="Sign in with GitHub"
+            data-testid="signin_github"
+          />
+          <.social_button
+            provider="google"
+            url={~p"/auth/google"}
+            label="Sign in with Google"
+            data-testid="signin_google"
+          />
         </:actions>
       </.simple_form>
     </div>
