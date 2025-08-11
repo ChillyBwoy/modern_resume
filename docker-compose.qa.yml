@@ -12,8 +12,7 @@ services:
       POSTGRES_PORT: ${DB_PORT}
 
   app_qa:
-    build:
-      context: .
+    image: ghcr.io/chillybwoy/modern_resume:latest
     container_name: modern_resume_qa_app
     env_file: ".env.qa"
     environment:
