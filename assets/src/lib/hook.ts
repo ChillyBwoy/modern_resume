@@ -1,7 +1,7 @@
 export interface HookActionData<T extends string, D = unknown> {
   event: T;
-  target?: number;
-  value?: D;
+  target: number | null;
+  value: D | null;
 }
 
 export type HookAction<T extends string, D = unknown> = [
@@ -20,7 +20,11 @@ export function extractHookAction<T extends string, D = unknown>(
 
   try {
     const sortAction: HookAction<T, D>[] = JSON.parse(data);
-    const [_, { target, event, value }] = sortAction[0];
+    const action = sortAction[0];
+    if (action == null) {
+      return null;
+    }
+    const [_, { event, target, value }] = action;
     return { event, target, value };
   } catch {
     return null;

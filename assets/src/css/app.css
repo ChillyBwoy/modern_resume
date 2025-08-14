@@ -1,4 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../../..");
+@source "../";
+
+@plugin "../vendor/materialicons";
 
 @theme {
   --color-background: rgba(255, 255, 255);
@@ -23,15 +26,19 @@
   --color-info-dark: rgba(59, 130, 246);
 }
 
+@theme {
+  --font-icon-outlined: "MaterialSymbolsOutlined", "sans-serif";
+}
+
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
 @custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
 @custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
-@plugin "../heroicons.tailwind.plugin.js";
-
-@import "tailwindcss" source("../..");
-
-/* This file is for your main application CSS */
+/* Make LiveView wrapper divs transparent for layout */
+[data-phx-session],
+[data-phx-teleported-src] {
+  display: contents;
+}
 
 [contenteditable="true"]:empty:before {
   content: attr(placeholder);

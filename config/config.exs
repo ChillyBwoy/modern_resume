@@ -36,20 +36,20 @@ config :esbuild,
   version: "0.17.11",
   modern_resume: [
     args:
-      ~w(js/app.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(src/app.ts --bundle --target=es2017 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --public-path=/assets/ --loader:.woff=copy --loader:.ttf=copy --loader:.eot=copy --loader:.woff2=copy),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.0.9",
+  version: "4.1.7",
   modern_resume: [
     args: ~w(
-      --input=assets/css/app.css
-      --output=priv/static/assets/app.css
+      --input=assets/src/css/app.css
+      --output=priv/static/assets/css/app.css
     ),
-    cd: Path.expand("../", __DIR__)
+    cd: Path.expand("..", __DIR__)
   ]
 
 # Configures Elixir's Logger
