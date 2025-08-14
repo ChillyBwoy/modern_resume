@@ -7,10 +7,7 @@ defmodule ModernResumeWeb.UserSettingsLive do
     ~H"""
     <div class="grid grid-rows-[auto_1fr] h-full p-6">
       <div class="grid grid-cols-3 items-center py-2">
-        <.link navigate={~p"/"} class="flex items-center gap-1">
-          <.icon name="hero-chevron-left" class="size-4" />
-          <span class="text-xs font-semibold">Back to cv list</span>
-        </.link>
+        <.back navigate={~p"/"}>Back to cv list</.back>
       </div>
       <div class="w-full container mx-auto max-w-xl ">
         <.header class="text-center">

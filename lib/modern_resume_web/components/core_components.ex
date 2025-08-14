@@ -11,8 +11,6 @@ defmodule ModernResumeWeb.CoreComponents do
   The default components use Tailwind CSS, a utility-first CSS framework.
   See the [Tailwind CSS documentation](https://tailwindcss.com) to learn
   how to customize them or feel free to swap in another framework altogether.
-
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
   use Gettext, backend: ModernResumeWeb.Gettext
@@ -68,14 +66,14 @@ defmodule ModernResumeWeb.CoreComponents do
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
               class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white p-14 shadow-lg ring-1 transition"
             >
-              <div class="absolute top-6 right-5">
+              <div class="absolute top-6 right-6">
                 <button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40 cursor-pointer"
+                  class="flex items-center opacity-20 hover:opacity-40 cursor-pointer"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon name="mdi-close" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -112,23 +110,33 @@ defmodule ModernResumeWeb.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        "fixed top-4 right-4 text-wrap w-80 sm:w-96 max-w-80 sm:max-w-96 z-50 rounded-lg p-3 ring-1 grid grid-cols-[1fr_auto] gap-1 group",
+        @kind == :info && "bg-info-light text-info-dark ring-info",
+        @kind == :error && "bg-danger-light text-danger-dark ring-danger"
       ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        {@title}
-      </p>
-      <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+      <div class="flex flex-col gap-2">
+        <p :if={@title} class="font-semibold">{@title}</p>
+        <p>{msg}</p>
+      </div>
+
+      <div class="flex items-center justify-center">
+        <.icon name="mdi-information" size="lg" />
+      </div>
+      <button
+        type="button"
+        class={[
+          "cursor-pointer absolute -top-2 -left-2 size-6 flex items-center justify-center rounded-full ring-1 shadow invisible group-hover:visible",
+          @kind == :info && "bg-info-light text-info-dark ring-info",
+          @kind == :error && "bg-danger-light text-danger-dark ring-danger"
+        ]}
+        phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+        aria-label={gettext("close")}
+      >
+        <.icon name="mdi-close" size="sm" />
       </button>
     </div>
     """
@@ -158,7 +166,7 @@ defmodule ModernResumeWeb.CoreComponents do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="mdi-autorenew" class="animate-spin" />
       </.flash>
 
       <.flash
@@ -170,7 +178,7 @@ defmodule ModernResumeWeb.CoreComponents do
         hidden
       >
         {gettext("Hang in there while we get back on track")}
-        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="mdi-autorenew" class="ml-1 animate-spin" />
       </.flash>
     </div>
     """
@@ -394,15 +402,10 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
-      <.link
-        navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-      >
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        {render_slot(@inner_block)}
-      </.link>
-    </div>
+    <.link navigate={@navigate} class="flex items-center gap-1">
+      <.icon name="mdi-chevron-left" />
+      <span class="text-xs font-semibold">{render_slot(@inner_block)}</span>
+    </.link>
     """
   end
 
@@ -411,7 +414,7 @@ defmodule ModernResumeWeb.CoreComponents do
   attr :class, :string, default: nil
   attr :rest, :global
 
-  def icon(assigns) do
+  def icon(%{name: "mdi-" <> _} = assigns) do
     ~H"""
     <span
       class={[

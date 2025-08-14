@@ -88,7 +88,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
           tabindex="0"
         >
           <span :if={@is_sortable} data-type="sort-handle" class="flex items-center">
-            <.icon name="hero-bars-3" class="size-4 text-gray-600 cursor-move" />
+            <.icon name="mdi-drag-vertical" class="text-gray-600 cursor-move" />
           </span>
           <button
             :if={@is_delitable}
@@ -98,7 +98,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
             class="flex items-center cursor-pointer"
             phx-click={JS.push(@on_delete, value: %{id: @id})}
           >
-            <.icon name="hero-trash" class="size-4 text-rose-600" />
+            <.icon name="mdi-trash-can-outline" class="text-rose-600" />
           </button>
         </div>
       </div>
@@ -125,7 +125,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
         phx-click={@on_add}
         class="size-8 bg-black rounded-full flex items-center justify-center z-10 cursor-pointer"
       >
-        <.icon name="hero-plus" class="size-6 text-white" />
+        <.icon name="mdi-plus" class="text-white" size="lg" />
       </button>
     </div>
     """
@@ -137,9 +137,9 @@ defmodule ModernResumeWeb.CV.ContentForm do
       <button
         type="button"
         phx-click={@on_add}
-        class="size-5 bg-black rounded-lg flex items-center justify-center z-10 cursor-pointer"
+        class="size-5 bg-black rounded-md flex items-center justify-center z-10 cursor-pointer"
       >
-        <.icon name="hero-plus" class="size-4 text-white" />
+        <.icon name="mdi-plus" class="text-white" />
       </button>
     </div>
     """

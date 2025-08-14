@@ -141,7 +141,7 @@ defmodule ModernResumeWeb.CVListLive do
         <h1 class="text-3xl font-bold text-gray-900">My CVs</h1>
 
         <.button type="button" variant={:primary} phx-click={JS.navigate(~p"/cvs/new")}>
-          <.icon name="hero-plus" class="size-5 mr-2" />
+          <.icon name="mdi-plus" class="mr-2" />
           <span>Create New CV</span>
         </.button>
       </div>
@@ -158,7 +158,7 @@ defmodule ModernResumeWeb.CVListLive do
             {cv.title}
             <span class="text-lg text-gray-600">{cv.content.position}</span>
             <span class="flex items-center text-sm text-gray-500 gap-2">
-              <.icon name="hero-calendar" class="size-4" />
+              <.icon name="mdi-calendar-month-outline" />
               <span>{Formatters.format_datetime(cv.inserted_at)}</span>
             </span>
           </.link>
@@ -166,12 +166,16 @@ defmodule ModernResumeWeb.CVListLive do
           <.dropdown_menu id={"#{cv.id}-menu"}>
             <:item
               variant={:secondary}
-              icon="hero-document-duplicate"
+              icon="mdi-file-document-multiple-outline"
               action={JS.push("duplicate", value: %{id: cv.id})}
             >
               Duplicate
             </:item>
-            <:item variant={:danger} icon="hero-trash" action={JS.navigate(~p"/cvs/#{cv.id}/delete")}>
+            <:item
+              variant={:danger}
+              icon="mdi-delete-outline"
+              action={JS.navigate(~p"/cvs/#{cv.id}/delete")}
+            >
               Delete
             </:item>
           </.dropdown_menu>
@@ -180,7 +184,10 @@ defmodule ModernResumeWeb.CVListLive do
 
       <div :if={Enum.empty?(@cvs)} class="text-center py-12">
         <div class="text-gray-500">
-          <.icon name="hero-document-text" class="size-16 mx-auto mb-4 flex flex-col gap-4" />
+          <.icon
+            name="mdi-file-document-outline"
+            class="size-16 mx-auto mb-4 flex flex-col gap-4"
+          />
           <p class="text-lg">No resumes yet</p>
           <p class="text-sm">Click the button above to create your first resume</p>
         </div>
