@@ -75,7 +75,7 @@ defmodule ModernResumeWeb.FormComponents.Input do
       end)
 
     ~H"""
-    <div>
+    <span class="flex items-center">
       <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
       <input
         type="checkbox"
@@ -87,13 +87,13 @@ defmodule ModernResumeWeb.FormComponents.Input do
         class="bg-form-background relative appearance-none outline-hidden border-primary text-secondary-dark rounded-xs border focus:ring-primary-light focus:ring-2 focus:outline-hidden disabled:border-secondary-dark/20 disabled:text-secondary-light before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:flex before:items-center before:justify-center before:text-primary before:text-sm before:font-bold checked:before:content-[attr(data-checked)] disabled:before:text-secondary-light size-5"
         {@rest}
       />
-    </div>
+    </span>
     """
   end
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="after:form-select-icon relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4">
+    <span class="after:form-select-icon relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4 after:pointer-events-none">
       <select
         id={@id}
         name={@name}
@@ -108,7 +108,7 @@ defmodule ModernResumeWeb.FormComponents.Input do
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-    </div>
+    </span>
     """
   end
 

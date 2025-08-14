@@ -6,6 +6,8 @@ defmodule ModernResumeWeb.FormComponents.FormField do
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
+  attr :position, :atom, values: [:top, :right, :left], default: :top
+
   slot :label, required: true
   slot :inner_block, required: true
 
@@ -19,12 +21,50 @@ defmodule ModernResumeWeb.FormComponents.FormField do
 
     ~H"""
     <div class="flex flex-col gap-1">
-      <label class="flex flex-col gap-1">
-        <span class="block text-sm font-semibold text-secondary">{render_slot(@label)}</span>
+      <.form_field_content position={@position}>
+        <:label>{render_slot(@label)}</:label>
         {render_slot(@inner_block)}
-      </label>
+      </.form_field_content>
       <.error :for={err <- @errors}>{err}</.error>
     </div>
+    """
+  end
+
+  attr :position, :atom, values: [:top, :right, :left], required: true
+
+  slot :label, required: true
+  slot :inner_block, required: true
+
+  defp form_field_content(%{position: :top} = assigns) do
+    ~H"""
+    <label class="flex flex-col gap-1">
+      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+        {render_slot(@label)}
+      </span>
+      {render_slot(@inner_block)}
+    </label>
+    """
+  end
+
+  defp form_field_content(%{position: :right} = assigns) do
+    ~H"""
+    <label class="flex items-center gap-1">
+      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+        {render_slot(@label)}
+      </span>
+      {render_slot(@inner_block)}
+    </label>
+    """
+  end
+
+  defp form_field_content(%{position: :left} = assigns) do
+    ~H"""
+    <label class="flex items-center gap-1">
+      {render_slot(@inner_block)}
+      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+        {render_slot(@label)}
+      </span>
+    </label>
     """
   end
 end

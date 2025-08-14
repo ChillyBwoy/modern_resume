@@ -506,7 +506,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
         />
       </.form_field>
 
-      <.form_field field={@form[:use_icons]}>
+      <.form_field field={@form[:use_icons]} position={:left}>
         <:label>Use Icons</:label>
         <.input type="checkbox" field={@form[:use_icons]} />
       </.form_field>
