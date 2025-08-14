@@ -1,6 +1,8 @@
 defmodule ModernResumeWeb.UserResetPasswordLive do
   use ModernResumeWeb, :live_view
 
+  import ModernResumeWeb.FormComponents.Error
+
   alias ModernResume.Accounts
 
   def render(assigns) do
@@ -18,13 +20,20 @@ defmodule ModernResumeWeb.UserResetPasswordLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.input field={@form[:password]} type="password" label="New password" required />
-        <.input
-          field={@form[:password_confirmation]}
-          type="password"
-          label="Confirm new password"
-          required
-        />
+        <.form_field field={@form[:password]}>
+          <:label>New password</:label>
+          <.input field={@form[:password]} type="password" required />
+        </.form_field>
+
+        <.form_field field={@form[:password_confirmation]}>
+          <:label>Confirm new password</:label>
+          <.input
+            field={@form[:password_confirmation]}
+            type="password"
+            required
+          />
+        </.form_field>
+
         <:actions>
           <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
         </:actions>

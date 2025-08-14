@@ -268,267 +268,6 @@ defmodule ModernResumeWeb.CoreComponents do
   end
 
   @doc """
-  Renders an input with label and error messages.
-
-  A `Phoenix.HTML.FormField` may be passed as argument,
-  which is used to retrieve the input name, id, and values.
-  Otherwise all attributes may be passed explicitly.
-
-  ## Types
-
-  This function accepts all HTML input types, considering that:
-
-    * You may also set `type="select"` to render a `<select>` tag
-
-    * `type="checkbox"` is used exclusively to render boolean values
-
-    * For live file uploads, see `Phoenix.Component.live_file_input/1`
-
-  See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-  for more information. Unsupported types, such as hidden and radio,
-  are best written directly in your templates.
-
-  ## Examples
-
-      <.input field={@form[:email]} type="email" />
-      <.input name="my-input" errors={["oh no!"]} />
-  """
-  attr :id, :any, default: nil
-  attr :name, :any
-  attr :label, :string, default: nil
-  attr :value, :any
-
-  attr :type, :string,
-    default: "text",
-    values: ~w(checkbox color date datetime-local email file month number password
-               range search select tel text textarea time url week)
-
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:email]"
-
-  attr :errors, :list, default: []
-  attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
-  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
-  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-
-  attr :show_counter, :boolean,
-    default: false,
-    doc: "whether to show character counter for inputs with maxlength"
-
-  attr :rest, :global,
-    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
-                multiple pattern placeholder readonly required rows size step)
-
-  def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
-    errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
-
-    assigns
-    |> assign(field: nil, id: assigns.id || field.id)
-    |> assign(:errors, Enum.map(errors, &translate_error(&1)))
-    |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
-    |> assign_new(:value, fn -> field.value end)
-    |> input()
-  end
-
-  def input(%{type: "checkbox"} = assigns) do
-    assigns =
-      assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
-      end)
-
-    ~H"""
-    <div class="flex flex-col gap-1">
-      <label class="flex items-center gap-2">
-        <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <input
-          type="checkbox"
-          id={@id}
-          name={@name}
-          value="true"
-          checked={@checked}
-          data-checked="&#x2713;"
-          class="bg-form-background relative appearance-none outline-hidden border-primary text-secondary-dark rounded-xs border focus:ring-primary-light focus:ring-2 focus:outline-hidden disabled:border-secondary-dark/20 disabled:text-secondary-light before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:flex before:items-center before:justify-center before:text-primary before:text-sm before:font-bold checked:before:content-[attr(data-checked)] disabled:before:text-secondary-light size-5"
-          {@rest}
-        />
-        {@label}
-      </label>
-      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
-        {msg}
-      </.error>
-    </div>
-    """
-  end
-
-  def input(%{type: "select"} = assigns) do
-    ~H"""
-    <div class="flex flex-col gap-1">
-      <.label for={@id}>{@label}</.label>
-      <div class="after:form-select-icon relative inline-block w-full after:content-[' '] after:absolute after:block after:h-2 after:w-3 after:bg-secondary after:top-4 after:right-4">
-        <select
-          id={@id}
-          name={@name}
-          class={[
-            "bg-form-background text-secondary-dark disabled:border-secondary-dark/20 disabled:text-secondary-light h-9 w-full appearance-none rounded-md border px-2 focus:ring-2 focus:outline-hidden",
-            @errors == [] && "border-secondary-light focus:ring-primary-light",
-            @errors != [] && "border-danger focus:ring-danger-light"
-          ]}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
-      </div>
-      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
-        {msg}
-      </.error>
-    </div>
-    """
-  end
-
-  def input(%{type: "textarea"} = assigns) do
-    maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
-
-    assigns =
-      assign(assigns,
-        maxlength: maxlength,
-        has_counter: assigns[:show_counter] && maxlength != nil
-      )
-
-    ~H"""
-    <div class="flex flex-col gap-1">
-      <.label for={@id}>{@label}</.label>
-      <div
-        id={"#{@id}-container"}
-        class="relative"
-        data-max-length={@maxlength}
-        phx-hook={@has_counter && "CharacterCounter"}
-      >
-        <textarea
-          id={@id}
-          name={@name}
-          rows="5"
-          data-type={@has_counter && "CharacterCounter.input"}
-          class={[
-            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block w-full rounded-md border px-2 focus:ring-2 focus:outline-none",
-            @errors == [] && "border-secondary-light focus:ring-primary-light",
-            @errors != [] && "border-danger focus:ring-danger-light"
-          ]}
-          {@rest}
-        >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
-        <.input_char_counter
-          :if={@has_counter}
-          value={String.length(@value || "")}
-          maxlength={@maxlength}
-          type="textarea"
-        />
-      </div>
-      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
-        {msg}
-      </.error>
-    </div>
-    """
-  end
-
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
-  def input(assigns) do
-    maxlength = assigns[:maxlength] || assigns[:rest][:maxlength]
-
-    assigns =
-      assign(assigns,
-        maxlength: maxlength,
-        normalized_value: Phoenix.HTML.Form.normalize_value(assigns.type, assigns.value || ""),
-        has_counter: assigns[:show_counter] && maxlength != nil
-      )
-
-    ~H"""
-    <div class="flex flex-col gap-1">
-      <.label for={@id}>{@label}</.label>
-      <div
-        class="relative"
-        id={"#{@id}-container"}
-        data-max-length={@maxlength}
-        phx-hook={@has_counter && "CharacterCounter"}
-      >
-        <input
-          type={@type}
-          name={@name}
-          id={@id}
-          value={@normalized_value}
-          data-type={@has_counter && "CharacterCounter.input"}
-          class={[
-            "bg-form-background text-secondary-dark placeholder:text-secondary-light disabled:border-secondary-dark/20 disabled:text-secondary-light block h-9 w-full rounded-md border focus:ring-2 focus:outline-none",
-            @errors == [] && "border-secondary-light focus:ring-primary-light",
-            @errors != [] && "border-danger focus:ring-danger-light",
-            @has_counter && "pl-2 pr-14",
-            !@has_counter && "px-2"
-          ]}
-          {@rest}
-        />
-        <.input_char_counter
-          :if={@has_counter}
-          value={String.length(@normalized_value)}
-          maxlength={@maxlength}
-          type="input"
-        />
-      </div>
-      <.error :for={{msg, idx} <- Enum.with_index(@errors)} testid={"#{@id}-error-#{idx}"}>
-        {msg}
-      </.error>
-    </div>
-    """
-  end
-
-  attr :value, :integer, required: true
-  attr :maxlength, :string, required: true
-  attr :type, :string, values: ["input", "textarea"], required: true
-
-  defp input_char_counter(assigns) do
-    ~H"""
-    <div class={[
-      "text-xs text-secondary pointer-events-none flex",
-      @type == "input" &&
-        "absolute top-px bottom-px right-px items-center justify-center rounded-r-md w-14",
-      @type == "textarea" && "justify-end py-1"
-    ]}>
-      <span data-type="CharacterCounter.counter">{@value}</span>
-      <span>/</span>
-      <span>{@maxlength}</span>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a label.
-  """
-  attr :for, :string, default: nil
-  slot :inner_block, required: true
-
-  def label(assigns) do
-    ~H"""
-    <label for={@for} class="block text-sm font-semibold text-gray-600">
-      {render_slot(@inner_block)}
-    </label>
-    """
-  end
-
-  @doc """
-  Generates a generic error message.
-  """
-  attr :testid, :string, default: nil
-
-  slot :inner_block, required: true
-
-  def error(assigns) do
-    ~H"""
-    <p class="fill-danger text-danger text-xs break-words" data-testid={@testid}>
-      {render_slot(@inner_block)}
-    </p>
-    """
-  end
-
-  @doc """
   Renders a header with title.
   """
   attr :class, :string, default: nil
@@ -553,7 +292,7 @@ defmodule ModernResumeWeb.CoreComponents do
     """
   end
 
-  @doc ~S"""
+  @doc """
   Renders a table with generic styling.
 
   ## Examples
@@ -585,49 +324,34 @@ defmodule ModernResumeWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
-          <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
-            <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only">{gettext("Actions")}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
-            <td
-              :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-            >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  {render_slot(col, @row_item.(row))}
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span
-                  :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-                >
-                  {render_slot(action, @row_item.(row))}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th :for={col <- @col}>{col[:label]}</th>
+          <th :if={@action != []}>
+            <span>{gettext("Actions")}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
+          <td
+            :for={col <- @col}
+            phx-click={@row_click && @row_click.(row)}
+            class={@row_click && "hover:cursor-pointer"}
+          >
+            {render_slot(col, @row_item.(row))}
+          </td>
+          <td :if={@action != []}>
+            <div class="flex gap-4">
+              <%= for action <- @action do %>
+                {render_slot(action, @row_item.(row))}
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     """
   end
 
@@ -647,14 +371,14 @@ defmodule ModernResumeWeb.CoreComponents do
 
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500">{item.title}</dt>
-          <dd class="text-zinc-700">{render_slot(item)}</dd>
+    <ul>
+      <li :for={item <- @item}>
+        <div class="flex">
+          <div class="font-bold">{item.title}</div>
+          <div>{render_slot(item)}</div>
         </div>
-      </dl>
-    </div>
+      </li>
+    </ul>
     """
   end
 
@@ -682,30 +406,25 @@ defmodule ModernResumeWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a [Heroicon](https://heroicons.com).
-
-  Heroicons come in three styles – outline, solid, and mini.
-  By default, the outline style is used, but solid and mini may
-  be applied by using the `-solid` and `-mini` suffix.
-
-  You can customize the size and colors of the icons by setting
-  width, height, and background color classes.
-
-  Icons are extracted from the `deps/heroicons` directory and bundled within
-  your compiled app.css by the plugin in your `assets/tailwind.config.js`.
-
-  ## Examples
-
-      <.icon name="hero-x-mark-solid" />
-      <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
-  """
   attr :name, :string, required: true
+  attr :size, :string, values: ~w(xs sm md lg), default: "md"
   attr :class, :string, default: nil
+  attr :rest, :global
 
-  def icon(%{name: "hero-" <> _} = assigns) do
+  def icon(assigns) do
     ~H"""
-    <span class={[@name, @class]} />
+    <span
+      class={[
+        "inline-flex items-center justify-center",
+        @name,
+        @size == "xs" && "text-[1rem] size-3",
+        @size == "sm" && "text-[1.25rem] size-4",
+        @size == "md" && "text-[1.5rem] size-5",
+        @size == "lg" && "text-[2rem] size-6",
+        @class
+      ]}
+      {@rest}
+    />
     """
   end
 
@@ -771,34 +490,6 @@ defmodule ModernResumeWeb.CoreComponents do
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
-  end
-
-  @doc """
-  Translates an error message using gettext.
-  """
-  def translate_error({msg, opts}) do
-    # When using gettext, we typically pass the strings we want
-    # to translate as a static argument:
-    #
-    #     # Translate the number of files with plural rules
-    #     dngettext("errors", "1 file", "%{count} files", count)
-    #
-    # However the error messages in our forms and APIs are generated
-    # dynamically, so we need to translate them by calling Gettext
-    # with our gettext backend as first argument. Translations are
-    # available in the errors.po file (as we use the "errors" domain).
-    if count = opts[:count] do
-      Gettext.dngettext(ModernResumeWeb.Gettext, "errors", msg, msg, count, opts)
-    else
-      Gettext.dgettext(ModernResumeWeb.Gettext, "errors", msg, opts)
-    end
-  end
-
-  @doc """
-  Translates the errors for a field from a keyword list of errors.
-  """
-  def translate_errors(errors, field) when is_list(errors) do
-    for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 
   attr :url, :string, required: true

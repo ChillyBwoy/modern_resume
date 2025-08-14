@@ -98,11 +98,21 @@ defmodule ModernResumeWeb.CVListLive do
         <div class="flex flex-col gap-4">
           <.header>Create new CV</.header>
           <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
-            <.input field={@create_form[:title]} label="Title" />
+            <.form_field field={@create_form[:title]}>
+              <:label>Title</:label>
+              <.input field={@create_form[:title]} />
+            </.form_field>
 
             <.inputs_for :let={content} field={@create_form[:content]}>
-              <.input field={content[:name]} label="Name" />
-              <.input field={content[:position]} label="Position" />
+              <.form_field field={content[:name]}>
+                <:label>Name</:label>
+                <.input field={content[:name]} />
+              </.form_field>
+
+              <.form_field field={content[:position]}>
+                <:label>Position</:label>
+                <.input field={content[:position]} />
+              </.form_field>
             </.inputs_for>
 
             <:actions>
