@@ -31,8 +31,11 @@ defmodule ModernResume.Resume.Content do
     |> cast(attrs, [:name, :position, :email, :phone, :birthdate, :location])
     |> validate_required([:name, :position])
     |> Validation.validate_latex_chars([:name, :position, :email, :location])
+    |> validate_format(:email, ~r/^[A-Za-z0-9\._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/,
+      message: "invalid email format"
+    )
+    |> validate_length(:email, min: 6, max: 320)
     |> validate_length(:name, max: 50)
-    |> validate_length(:email, max: 100)
     |> validate_length(:position, max: 100)
     |> validate_length(:phone, max: 15)
     |> validate_length(:location, max: 50)

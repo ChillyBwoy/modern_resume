@@ -439,7 +439,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
             field={@form[:email]}
             type="email"
             phx-debounce="blur"
-            maxlength="100"
+            maxlength="320"
             show_counter
           />
         </.form_field>
