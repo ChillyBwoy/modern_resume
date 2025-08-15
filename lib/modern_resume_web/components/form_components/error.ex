@@ -1,6 +1,6 @@
 defmodule ModernResumeWeb.FormComponents.Error do
   use Phoenix.Component
-  use Gettext, backend: SprintMateWeb.Gettext
+  use Gettext, backend: ModernResumeWeb.Gettext
 
   import ModernResumeWeb.CoreComponents
 

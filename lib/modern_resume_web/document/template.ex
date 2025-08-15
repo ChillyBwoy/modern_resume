@@ -46,7 +46,7 @@ defmodule ModernResumeWeb.Document.Template do
 
     <%= if @cv.social_networks != [] do %>
     <%= for social_network <- @cv.social_networks do %>
-    \\social[<%= social_network.platform %>][<%= social_network.content %>]{<%= if social_network.alias != nil do %><%= @str.(social_network.alias) %><% end %>}
+    \\social[<%= social_network.platform %>][<%= @str.(social_network.content) %>]{<%= if social_network.alias != nil do %><%= @str.(social_network.alias) %><% end %>}
     <% end %>
     <% end %>
 
