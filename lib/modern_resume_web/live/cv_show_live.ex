@@ -251,10 +251,8 @@ defmodule ModernResumeWeb.CVShowLive do
     ~H"""
     <div class="grid grid-rows-[auto_1fr] h-full p-6">
       <div class="grid grid-cols-3 items-center py-2">
-        <.link navigate={~p"/"} class="flex items-center gap-1">
-          <.icon name="hero-chevron-left" class="size-4" />
-          <span class="text-xs font-semibold">Back to list</span>
-        </.link>
+        <.back navigate={~p"/"}>Back to cv list</.back>
+
         <div class="flex items-center justify-center text-2xl font-bold whitespace-nowrap text-ellipsis">
           {@cv.title}
         </div>
@@ -275,13 +273,15 @@ defmodule ModernResumeWeb.CVShowLive do
             class="grid grid-rows-[auto_1fr_auto] h-full"
           >
             <div class="relative mb-6">
-              <.input
-                field={@form[:title]}
-                label="Title"
-                phx-debounce="blur"
-                maxlength="100"
-                show_counter
-              />
+              <.form_field field={@form[:title]}>
+                <:label>CV Title</:label>
+                <.input
+                  field={@form[:title]}
+                  phx-debounce="blur"
+                  maxlength="100"
+                  show_counter
+                />
+              </.form_field>
             </div>
 
             <.inputs_for :let={content} field={@form[:content]}>
@@ -395,21 +395,17 @@ defmodule ModernResumeWeb.CVShowLive do
         <.latex_preview id="cv_latex_preview" state={@state}>
           <:panel>
             <.button type="button" phx-click="toggle:content_type">
-              <.icon
-                name={
-                  if @state.content_type == :pdf, do: "hero-code-bracket", else: "hero-document-check"
-                }
-                class="size-5"
-              />
+              <.icon name={
+                if @state.content_type == :pdf,
+                  do: "mdi-code-brackets",
+                  else: "mdi-file-check-outline"
+              } />
             </.button>
             <.button type="button" phx-click="toggle:fullscreen">
-              <.icon
-                name={if @fullscreen, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out"}
-                class="size-5"
-              />
+              <.icon name={if @fullscreen, do: "mdi-fullscreen-exit", else: "mdi-fullscreen"} />
             </.button>
             <.button :if={@state.content_type == :str} type="button">
-              <.icon name="hero-clipboard-document" class="size-5" />
+              <.icon name="mdi-content-copy" />
             </.button>
           </:panel>
         </.latex_preview>

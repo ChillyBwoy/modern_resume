@@ -1,10 +1,4 @@
 {
-  "name": "modern_resume",
-  "version": "1.0.0",
-  "private": true,
-  "author": "Eugene Cheltsov",
-  "license": "",
-  "description": "",
   "devDependencies": {
     "@playwright/test": "^1.54.2",
     "@types/node": "^24.1.0",
@@ -19,6 +13,7 @@
   },
   "scripts": {
     "test:playwright": "npx playwright test",
-    "test:playwright:ui": "npx playwright test --ui"
+    "test:playwright:ui": "npx playwright test --ui",
+    "type-check": "tsc --noEmit"
   }
 }

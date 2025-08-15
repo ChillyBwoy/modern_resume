@@ -28,9 +28,9 @@ defmodule ModernResumeWeb.CV.CommonComponents do
       <button
         type="button"
         phx-click={toggle("#dropdown-#{@id}-body")}
-        class="hover:bg-secondary-light rounded-full text-secondary size-8 cursor-pointer"
+        class="hover:bg-secondary-light rounded-full text-secondary size-8 cursor-pointer flex items-center justify-center"
       >
-        <.icon name="hero-ellipsis-vertical" class="size-6" />
+        <.icon name="mdi-dots-vertical" size="lg" />
       </button>
       <div
         id={"dropdown-#{@id}-body"}
@@ -46,7 +46,7 @@ defmodule ModernResumeWeb.CV.CommonComponents do
             phx-click={item[:action]}
           >
             <span class="flex items-center gap-2">
-              <.icon name={item[:icon]} class="size-4" />
+              <.icon name={item[:icon]} size="lg" />
               {render_slot(item)}
             </span>
           </button>

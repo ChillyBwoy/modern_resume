@@ -52,13 +52,6 @@ defmodule ModernResume.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.2.0",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
       {:swoosh, "~> 1.16"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
@@ -69,7 +62,9 @@ defmodule ModernResume.MixProject do
       {:bandit, "~> 1.5"},
       {:timex, "~> 3.0"},
       {:ueberauth_github, "~> 0.8"},
-      {:ueberauth_google, "~> 0.10"}
+      {:ueberauth_google, "~> 0.10"},
+      {:materialdesignicons,
+       github: "Templarian/MaterialDesign", sparse: "svg", app: false, compile: false, depth: 1}
     ]
   end
 

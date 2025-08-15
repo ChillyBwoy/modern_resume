@@ -7,10 +7,7 @@ defmodule ModernResumeWeb.UserSettingsLive do
     ~H"""
     <div class="grid grid-rows-[auto_1fr] h-full p-6">
       <div class="grid grid-cols-3 items-center py-2">
-        <.link navigate={~p"/"} class="flex items-center gap-1">
-          <.icon name="hero-chevron-left" class="size-4" />
-          <span class="text-xs font-semibold">Back to cv list</span>
-        </.link>
+        <.back navigate={~p"/"}>Back to cv list</.back>
       </div>
       <div class="w-full container mx-auto max-w-xl ">
         <.header class="text-center">
@@ -26,16 +23,23 @@ defmodule ModernResumeWeb.UserSettingsLive do
               phx-submit="update_email"
               phx-change="validate_email"
             >
-              <.input field={@email_form[:email]} type="email" label="Email" required />
-              <.input
-                field={@email_form[:current_password]}
-                name="current_password"
-                id="current_password_for_email"
-                type="password"
-                label="Current password"
-                value={@email_form_current_password}
-                required
-              />
+              <.form_field field={@email_form[:email]}>
+                <:label>Email</:label>
+                <.input field={@email_form[:email]} type="email" required />
+              </.form_field>
+
+              <.form_field field={@email_form[:current_password]}>
+                <:label>Current password</:label>
+                <.input
+                  field={@email_form[:current_password]}
+                  name="current_password"
+                  id="current_password_for_email"
+                  type="password"
+                  value={@email_form_current_password}
+                  required
+                />
+              </.form_field>
+
               <:actions>
                 <.button phx-disable-with="Changing...">Change Email</.button>
               </:actions>
@@ -57,21 +61,34 @@ defmodule ModernResumeWeb.UserSettingsLive do
                 id="hidden_user_email"
                 value={@current_email}
               />
-              <.input field={@password_form[:password]} type="password" label="New password" required />
-              <.input
-                field={@password_form[:password_confirmation]}
-                type="password"
-                label="Confirm new password"
-              />
-              <.input
-                field={@password_form[:current_password]}
-                name="current_password"
-                type="password"
-                label="Current password"
-                id="current_password_for_password"
-                value={@current_password}
-                required
-              />
+              <.form_field field={@password_form[:password]}>
+                <:label>New password</:label>
+                <.input
+                  field={@password_form[:password]}
+                  type="password"
+                  required
+                />
+              </.form_field>
+
+              <.form_field field={@password_form[:password_confirmation]}>
+                <:label>Confirm new password</:label>
+                <.input
+                  field={@password_form[:password_confirmation]}
+                  type="password"
+                />
+              </.form_field>
+
+              <.form_field field={@password_form[:current_password]}>
+                <:label>Current password</:label>
+                <.input
+                  field={@password_form[:current_password]}
+                  name="current_password"
+                  type="password"
+                  id="current_password_for_password"
+                  value={@current_password}
+                  required
+                />
+              </.form_field>
               <:actions>
                 <.button phx-disable-with="Changing...">Change Password</.button>
               </:actions>

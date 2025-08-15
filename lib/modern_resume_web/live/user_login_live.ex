@@ -16,9 +16,20 @@ defmodule ModernResumeWeb.UserLoginLive do
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
-        <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
-        <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
+        <.form_field field={@form[:email]}>
+          <:label>Email</:label>
+          <.input field={@form[:email]} type="email" required />
+        </.form_field>
+
+        <.form_field field={@form[:password]}>
+          <:label>Password</:label>
+          <.input field={@form[:password]} type="password" required />
+        </.form_field>
+
+        <.form_field field={@form[:remember_me]}>
+          <:label>Keep me logged in</:label>
+          <.input field={@form[:remember_me]} type="checkbox" />
+        </.form_field>
 
         <:actions>
           <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
