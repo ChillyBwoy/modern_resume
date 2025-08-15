@@ -39,6 +39,6 @@ qa-up: qa-only
 
 .PHONE: qa-down
 qa-down:
-	docker compose -f docker-compose.qa.yml down
+	docker compose --env-file .env.qa -f docker-compose.qa.yml down
 
 .DEFAULT_GOAL := help
