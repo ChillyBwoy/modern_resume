@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install -y \
   libicu-dev \
   zlib1g-dev
 
-RUN cargo install --git https://github.com/tectonic-typesetting/tectonic tectonic
+RUN cargo install --git https://github.com/ChillyBwoy/tectonic --rev 6933a8ced7abcf55c5dc3fa86e51104471b82a52 tectonic
 
 COPY priv/data/sample.tex sample.tex
 
