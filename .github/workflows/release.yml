@@ -1,4 +1,4 @@
-name: Docker Image CI for ghcr.io
+name: Build image for production
 
 on:
   release:

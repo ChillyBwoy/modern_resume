@@ -1,0 +1,26 @@
+name: Build image for staging
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-24.04
+    environment: staging
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PAT }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v6
+        with:
+          file: ./docker/release/Dockerfile
+          context: .
+          push: true
+          tags: ghcr.io/chillybwoy/modern_resume:staging
