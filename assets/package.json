@@ -13,6 +13,7 @@
   },
   "scripts": {
     "test:playwright": "npx playwright test",
-    "test:playwright:ui": "npx playwright test --ui"
+    "test:playwright:ui": "npx playwright test --ui",
+    "type-check": "tsc --noEmit"
   }
 }
