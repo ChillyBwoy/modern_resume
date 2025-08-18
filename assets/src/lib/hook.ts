@@ -19,8 +19,8 @@ export function extractHookAction<T extends string, D = unknown>(
   }
 
   try {
-    const sortAction: HookAction<T, D>[] = JSON.parse(data);
-    const action = Array.isArray(sortAction) ? sortAction[0] : null;
+    const rawAction: HookAction<T, D>[] = JSON.parse(data);
+    const action = Array.isArray(rawAction) ? rawAction[0] : null;
     if (action == null) {
       return null;
     }

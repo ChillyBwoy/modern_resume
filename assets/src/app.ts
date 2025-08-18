@@ -35,6 +35,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
     Sortable: hooks.Sortable(),
     SmoothScroll: hooks.SmoothScroll(),
     CharacterCounter: hooks.CharacterCounter(),
+    Dialog: hooks.Dialog(),
   },
 });
 
