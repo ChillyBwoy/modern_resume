@@ -93,21 +93,22 @@ defmodule ModernResumeWeb.CVListLive do
         :if={@live_action == :new}
         id="create-cv-modal"
         on_cancel={JS.navigate(~p"/", replace: true)}
+        data-testid="create-new-cv-modal"
       >
         <:title>Create new CV</:title>
         <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
-          <.form_field field={@create_form[:title]}>
+          <.form_field field={@create_form[:title]} data-testid="title">
             <:label>Title</:label>
             <.input field={@create_form[:title]} />
           </.form_field>
 
           <.inputs_for :let={content} field={@create_form[:content]}>
-            <.form_field field={content[:name]}>
+            <.form_field field={content[:name]} data-testid="name">
               <:label>Name</:label>
               <.input field={content[:name]} />
             </.form_field>
 
-            <.form_field field={content[:position]}>
+            <.form_field field={content[:position]} data-testid="position">
               <:label>Position</:label>
               <.input field={content[:position]} />
             </.form_field>

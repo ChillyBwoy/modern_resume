@@ -33,6 +33,9 @@ test.describe("CV List Page", () => {
   }) => {
     await cvListPage.addNewCVButton.click();
     await ensurePageIsLoaded(page);
-    await expect(cvCreatePage.pageTitle).toHaveText("Create new CV");
+    await expect(cvCreatePage.modalTitle).toHaveText("Create new CV");
+    await expect(cvCreatePage.labelTitle).toHaveText("Title");
+    await expect(cvCreatePage.labelName).toHaveText("Name");
+    await expect(cvCreatePage.labelPosition).toHaveText("Position");
   });
 });

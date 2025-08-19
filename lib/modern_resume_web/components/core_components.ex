@@ -457,7 +457,7 @@ defmodule ModernResumeWeb.CoreComponents do
             <.icon name="mdi-close" />
           </button>
 
-          <h1 :if={@title != []} class="text-xl" data-testid="dialog-title">
+          <h1 :if={@title != []} class="text-xl" data-testid="modal-title">
             {render_slot(@title)}
           </h1>
 
