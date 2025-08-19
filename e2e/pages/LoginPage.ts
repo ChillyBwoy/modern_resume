@@ -1,18 +1,32 @@
 import { Locator, Page } from "@playwright/test";
 
 export class LoginPage {
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly signinButton: Locator;
-  readonly signinGithubButton: Locator;
-  readonly signinGoogleButton: Locator;
+  readonly fieldEmail: Locator;
+  readonly fieldPassword: Locator;
+
+  readonly labelEmail: Locator;
+  readonly labelPassword: Locator;
+
+  readonly inputEmail: Locator;
+  readonly inputPassword: Locator;
+
+  readonly buttonSignin: Locator;
+  readonly buttonSigninGithub: Locator;
+  readonly buttonSigninGoogle: Locator;
 
   constructor(protected readonly page: Page) {
-    this.emailInput = page.getByTestId("input-email");
-    this.passwordInput = page.getByTestId("input-password");
-    this.signinButton = page.getByTestId("button-signin");
-    this.signinGithubButton = page.getByTestId("button-signin-github");
-    this.signinGoogleButton = page.getByTestId("button-signin-google");
+    this.fieldEmail = page.getByTestId("email");
+    this.fieldPassword = page.getByTestId("password");
+
+    this.labelEmail = this.fieldEmail.getByTestId("form-field-label");
+    this.labelPassword = this.fieldPassword.getByTestId("form-field-label");
+
+    this.inputEmail = this.fieldEmail.locator("input");
+    this.inputPassword = this.fieldPassword.locator("input[type='password']");
+
+    this.buttonSignin = page.getByTestId("button-signin");
+    this.buttonSigninGithub = page.getByTestId("button-signin-github");
+    this.buttonSigninGoogle = page.getByTestId("button-signin-google");
   }
 
   get url() {
@@ -24,8 +38,8 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.signinButton.click();
+    await this.inputEmail.fill(email);
+    await this.inputPassword.fill(password);
+    await this.buttonSignin.click();
   }
 }

@@ -24,7 +24,13 @@ defmodule ModernResume.Release do
     for repo <- repos() do
       {:ok, _, _} =
         Ecto.Migrator.with_repo(repo, fn _ ->
-          ModernResume.Accounts.register_user(%{email: email, password: password})
+          case ModernResume.Accounts.register_user(%{email: email, password: password}) do
+            {:ok, _} ->
+              IO.puts("User created")
+
+            _ ->
+              raise "Failed to create a new user"
+          end
         end)
     end
   end

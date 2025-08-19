@@ -1,28 +1,53 @@
 import { Locator, Page } from "@playwright/test";
 
 export class RegistrationPage {
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly passwordConfirmationInput: Locator;
-  readonly submitButton: Locator;
-  readonly formError: Locator;
-  readonly formEmailError: Locator;
-  readonly formPasswordError: Locator;
-  readonly formPasswordConfirmationError: Locator;
+  readonly fieldEmail: Locator;
+  readonly fieldPassword: Locator;
+  readonly fieldPasswordConfirmation: Locator;
+
+  readonly labelEmail: Locator;
+  readonly labelPassword: Locator;
+  readonly labelPasswordConfirmation: Locator;
+
+  readonly inputEmail: Locator;
+  readonly inputPassword: Locator;
+  readonly inputPasswordConfirmation: Locator;
+
+  readonly buttonRegister: Locator;
+  readonly buttonRegisterGithub: Locator;
+  readonly buttonRegisterGoogle: Locator;
+
+  readonly errorForm: Locator;
+  readonly errorEmail: Locator;
+  readonly errorPassword: Locator;
+  readonly errorPasswordConfirmation: Locator;
 
   constructor(protected readonly page: Page) {
-    this.emailInput = page.locator("#user_email");
-    this.passwordInput = page.locator("#user_password");
-    this.passwordConfirmationInput = page.locator(
-      "#user_password_confirmation"
+    this.fieldEmail = page.getByTestId("email");
+    this.fieldPassword = page.getByTestId("password");
+    this.fieldPasswordConfirmation = page.getByTestId("password-confirmation");
+
+    this.labelEmail = this.fieldEmail.getByTestId("form-field-label");
+    this.labelPassword = this.fieldPassword.getByTestId("form-field-label");
+    this.labelPasswordConfirmation =
+      this.fieldPasswordConfirmation.getByTestId("form-field-label");
+
+    this.inputEmail = this.fieldEmail.locator("input");
+    this.inputPassword = this.fieldPassword.locator("input[type='password']");
+    this.inputPasswordConfirmation = this.fieldPasswordConfirmation.locator(
+      "input[type='password']"
     );
-    this.submitButton = page.getByRole("button", { name: "Create an account" });
-    this.formError = page.getByTestId("registration-error");
-    this.formEmailError = page.getByTestId("user_email-error-0");
-    this.formPasswordError = page.getByTestId("user_password-error-0");
-    this.formPasswordConfirmationError = page.getByTestId(
-      "user_password_confirmation-error-0"
-    );
+
+    this.buttonRegister = page.getByTestId("button-register");
+    this.buttonRegisterGithub = page.getByTestId("button-register-github");
+    this.buttonRegisterGoogle = page.getByTestId("button-register-google");
+
+    this.errorForm = page.getByTestId("error-form");
+
+    this.errorEmail = this.fieldEmail.getByTestId("form-field-error");
+    this.errorPassword = this.fieldPassword.getByTestId("form-field-error");
+    this.errorPasswordConfirmation =
+      this.fieldPasswordConfirmation.getByTestId("form-field-error");
   }
 
   get url() {
@@ -38,9 +63,9 @@ export class RegistrationPage {
     password: string,
     passwordConfirmation: string
   ) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.passwordConfirmationInput.fill(passwordConfirmation);
-    await this.submitButton.click();
+    await this.inputEmail.fill(email);
+    await this.inputPassword.fill(password);
+    await this.inputPasswordConfirmation.fill(passwordConfirmation);
+    await this.buttonRegister.click();
   }
 }

@@ -17,6 +17,10 @@ ENV ?= dev
 -include .env.$(ENV)
 export
 
+.PHONY: print-env
+print-env:
+	@echo "Current env: $(ENV)"
+
 qa-only:
 ifneq ($(ENV),qa)
 	$(error ENV must be qa)
@@ -27,17 +31,18 @@ help:
 	@echo "$$header"
 
 .PHONY: schema
-schema:
+schema: print-env
 	source .env && ./pg_dump.sh -U $$DB_USERNAME -h $$DB_HOST -d $$DB_DATABASE -s > priv/repo/schema.sql
 
 .PHONE: qa-up
-qa-up: qa-only
+qa-up: print-env qa-only
 	docker compose --env-file .env.qa -f docker-compose.qa.yml up --build -d
-	@sleep 3
+	@sleep 1
 	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash /app/bin/migrate
-	docker compose --env-file .env.qa --env-file e2e/.env -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(E2E_USER_EMAIL)\", \"$(E2E_USER_PASSWORD)\")"
+	@sleep 1
+	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(TEST_USER_EMAIL)\", \"$(TEST_USER_PASSWORD)\")"
 
-.PHONE: qa-down
+.PHONE: print-env qa-down
 qa-down:
 	docker compose --env-file .env.qa -f docker-compose.qa.yml down
 
