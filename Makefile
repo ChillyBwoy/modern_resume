@@ -35,7 +35,7 @@ qa-up: qa-only
 	docker compose --env-file .env.qa -f docker-compose.qa.yml up --build -d
 	@sleep 3
 	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash /app/bin/migrate
-	docker compose --env-file .env.qa -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(E2E_USER_EMAIL)\", \"$(E2E_USER_PASSWORD)\")"
+	docker compose --env-file .env.qa --env-file e2e/.env -f docker-compose.qa.yml exec app_qa /bin/bash bin/modern_resume eval "ModernResume.Release.create_user(\"$(E2E_USER_EMAIL)\", \"$(E2E_USER_PASSWORD)\")"
 
 .PHONE: qa-down
 qa-down:

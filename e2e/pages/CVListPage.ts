@@ -5,8 +5,8 @@ export class CVListPage {
   readonly addNewCVButton: Locator;
 
   constructor(protected readonly page: Page) {
-    this.pageTitle = page.getByRole("heading", { name: "My CVs" });
-    this.addNewCVButton = page.getByRole("button", { name: "Create New CV" });
+    this.pageTitle = page.getByTestId("cv-list-page-title");
+    this.addNewCVButton = page.getByTestId("button-create-new-cv");
   }
 
   get url() {

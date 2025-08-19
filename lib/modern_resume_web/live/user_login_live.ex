@@ -18,17 +18,17 @@ defmodule ModernResumeWeb.UserLoginLive do
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.form_field field={@form[:email]}>
           <:label>Email</:label>
-          <.input field={@form[:email]} type="email" required />
+          <.input field={@form[:email]} type="email" required data-testid="input-email" />
         </.form_field>
 
         <.form_field field={@form[:password]}>
           <:label>Password</:label>
-          <.input field={@form[:password]} type="password" required />
+          <.input field={@form[:password]} type="password" required data-testid="input-password" />
         </.form_field>
 
         <.form_field field={@form[:remember_me]}>
           <:label>Keep me logged in</:label>
-          <.input field={@form[:remember_me]} type="checkbox" />
+          <.input field={@form[:remember_me]} type="checkbox" data-testid="checkbox-keep-logged-in" />
         </.form_field>
 
         <:actions>
@@ -37,20 +37,20 @@ defmodule ModernResumeWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full" data-testid="signin_button">
+          <.button phx-disable-with="Logging in..." class="w-full" data-testid="button-signin">
             Sign in
           </.button>
           <.social_button
             provider="github"
             url={~p"/auth/github"}
             label="Sign in with GitHub"
-            data-testid="signin_github"
+            data-testid="button-signin-github"
           />
           <.social_button
             provider="google"
             url={~p"/auth/google"}
             label="Sign in with Google"
-            data-testid="signin_google"
+            data-testid="button-signin-google"
           />
         </:actions>
       </.simple_form>

@@ -8,11 +8,11 @@ export class LoginPage {
   readonly signinGoogleButton: Locator;
 
   constructor(protected readonly page: Page) {
-    this.emailInput = page.locator("input[name='user[email]']");
-    this.passwordInput = page.locator("input[name='user[password]']");
-    this.signinButton = page.getByTestId("signin_button");
-    this.signinGithubButton = page.getByTestId("signin_github");
-    this.signinGoogleButton = page.getByTestId("signin_google");
+    this.emailInput = page.getByTestId("input-email");
+    this.passwordInput = page.getByTestId("input-password");
+    this.signinButton = page.getByTestId("button-signin");
+    this.signinGithubButton = page.getByTestId("button-signin-github");
+    this.signinGoogleButton = page.getByTestId("button-signin-google");
   }
 
   get url() {
