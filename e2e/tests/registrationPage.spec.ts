@@ -1,15 +1,17 @@
 import { expect } from "@playwright/test";
 import { test } from "../pages";
 import { E2E_USER_EMAIL, E2E_USER_PASSWORD } from "../common/constants";
+import { ensurePageIsLoaded } from "../common/page";
 
-test.describe("User Registration Page", () => {
+test.describe("Registration Page", () => {
   test.describe.configure({ mode: "serial" });
 
-  test.beforeEach(async ({ registrationPage }) => {
+  test.beforeEach(async ({ page, registrationPage }) => {
     await registrationPage.goto();
+    await ensurePageIsLoaded(page);
   });
 
-  test("should show an error when trying to register with an existing user", async ({
+  test("1. Should show an error when trying to register with an existing user", async ({
     registrationPage,
   }) => {
     await registrationPage.register(
@@ -17,16 +19,15 @@ test.describe("User Registration Page", () => {
       E2E_USER_PASSWORD,
       E2E_USER_PASSWORD
     );
-
-    await expect(registrationPage.formError).toHaveText(
+    await expect(registrationPage.errorForm).toHaveText(
       "Oops, something went wrong! Please check the errors below."
     );
-    await expect(registrationPage.formEmailError).toHaveText(
+    await expect(registrationPage.errorEmail.first()).toHaveText(
       "has already been taken"
     );
   });
 
-  test("should show an error when trying to register with invalid email", async ({
+  test("2. Should show an error when trying to register with invalid email", async ({
     registrationPage,
   }) => {
     await registrationPage.register(
@@ -34,21 +35,21 @@ test.describe("User Registration Page", () => {
       E2E_USER_PASSWORD,
       E2E_USER_PASSWORD
     );
-    await expect(registrationPage.formEmailError).toHaveText(
+    await expect(registrationPage.errorEmail.first()).toHaveText(
       "must have the @ sign and no spaces"
     );
   });
 
-  test("should show an error when trying to register with too short password", async ({
+  test("3. Should show an error when trying to register with too short password", async ({
     registrationPage,
   }) => {
     await registrationPage.register(E2E_USER_EMAIL, "password", "password");
-    await expect(registrationPage.formPasswordError).toHaveText(
+    await expect(registrationPage.errorPassword).toHaveText(
       "should be at least 12 character(s)"
     );
   });
 
-  test("should show an error when trying to register with invalid password confirmation", async ({
+  test("4. Should show an error when trying to register with invalid password confirmation", async ({
     registrationPage,
   }) => {
     await registrationPage.register(
@@ -56,7 +57,7 @@ test.describe("User Registration Page", () => {
       "passwordpassword",
       "password"
     );
-    await expect(registrationPage.formPasswordConfirmationError).toHaveText(
+    await expect(registrationPage.errorPasswordConfirmation).toHaveText(
       "does not match password"
     );
   });

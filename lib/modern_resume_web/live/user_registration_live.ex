@@ -29,33 +29,45 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
-        <.error :if={@check_errors} testid="registration-error">
+        <.error :if={@check_errors} data-testid="error-form">
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.form_field field={@form[:email]}>
+        <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
-          <.input field={@form[:email]} type="email" required />
+          <.input field={@form[:email]} type="email" />
         </.form_field>
 
-        <.form_field field={@form[:password]}>
+        <.form_field field={@form[:password]} data-testid="password">
           <:label>Password</:label>
-          <.input field={@form[:password]} type="password" required />
+          <.input field={@form[:password]} type="password" />
         </.form_field>
 
-        <.form_field field={@form[:password_confirmation]}>
+        <.form_field field={@form[:password_confirmation]} data-testid="password-confirmation">
           <:label>Confirm Password</:label>
           <.input
             field={@form[:password_confirmation]}
             type="password"
-            required
+            data-testid="input-password-confirmation"
           />
         </.form_field>
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
-          <.social_button provider="github" url={~p"/auth/github"} label="Sign up with GitHub" />
-          <.social_button provider="google" url={~p"/auth/google"} label="Sign up with Google" />
+          <.button phx-disable-with="Creating account..." class="w-full" data-testid="button-register">
+            Create an account
+          </.button>
+          <.social_button
+            provider="github"
+            url={~p"/auth/github"}
+            label="Sign up with GitHub"
+            data-testid="button-register-github"
+          />
+          <.social_button
+            provider="google"
+            url={~p"/auth/google"}
+            label="Sign up with Google"
+            data-testid="button-register-google"
+          />
         </:actions>
       </.simple_form>
     </div>

@@ -93,54 +93,55 @@ defmodule ModernResumeWeb.CVListLive do
         :if={@live_action == :new}
         id="create-cv-modal"
         on_cancel={JS.navigate(~p"/", replace: true)}
-        show
+        data-testid="create-new-cv-modal"
       >
-        <div class="flex flex-col gap-4">
-          <.header>Create new CV</.header>
-          <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
-            <.form_field field={@create_form[:title]}>
-              <:label>Title</:label>
-              <.input field={@create_form[:title]} />
+        <:title>Create new CV</:title>
+        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
+          <.form_field field={@create_form[:title]} data-testid="title">
+            <:label>Title</:label>
+            <.input field={@create_form[:title]} />
+          </.form_field>
+
+          <.inputs_for :let={content} field={@create_form[:content]}>
+            <.form_field field={content[:name]} data-testid="name">
+              <:label>Name</:label>
+              <.input field={content[:name]} />
             </.form_field>
 
-            <.inputs_for :let={content} field={@create_form[:content]}>
-              <.form_field field={content[:name]}>
-                <:label>Name</:label>
-                <.input field={content[:name]} />
-              </.form_field>
+            <.form_field field={content[:position]} data-testid="position">
+              <:label>Position</:label>
+              <.input field={content[:position]} />
+            </.form_field>
+          </.inputs_for>
 
-              <.form_field field={content[:position]}>
-                <:label>Position</:label>
-                <.input field={content[:position]} />
-              </.form_field>
-            </.inputs_for>
-
-            <:actions>
-              <.button variant={:primary} type="submit">Save</.button>
-            </:actions>
-          </.simple_form>
-        </div>
+          <:actions>
+            <.button variant={:primary} type="submit">Save</.button>
+          </:actions>
+        </.simple_form>
       </.modal>
 
       <.modal
         :if={@live_action == :delete}
         id="delete-cv-modal"
+        size="auto"
         on_cancel={JS.navigate(~p"/", replace: true)}
-        show
       >
-        <div class="flex flex-col gap-4">
-          <.header>Are you sure you want to delete this CV?</.header>
-          <div class="flex items-center justify-end gap-4">
-            <.button variant={:danger} phx-value-id={@cv_id} phx-click="delete">Yes</.button>
-            <.button variant={:none} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
-          </div>
+        <:title>Are you sure you want to delete this CV?</:title>
+        <div class="flex items-center justify-center gap-4">
+          <.button variant={:danger} phx-value-id={@cv_id} phx-click="delete">Yes</.button>
+          <.button variant={:none} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
         </div>
       </.modal>
 
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">My CVs</h1>
+        <h1 class="text-3xl font-bold text-gray-900" data-testid="cv-list-page-title">My CVs</h1>
 
-        <.button type="button" variant={:primary} phx-click={JS.navigate(~p"/cvs/new")}>
+        <.button
+          type="button"
+          variant={:primary}
+          phx-click={JS.navigate(~p"/cvs/new")}
+          data-testid="button-create-new-cv"
+        >
           <.icon name="mdi-plus" class="mr-2" />
           <span>Create New CV</span>
         </.button>

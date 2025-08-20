@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "dotenv": "^17.2.1",
+    "typescript": "^5.9.2",
+    "@types/node": "^24.1.0"
+  },
+  "scripts": {
+    "playwright": "npx playwright test",
+    "playwright:ui": "npx playwright test --ui"
+  }
+}

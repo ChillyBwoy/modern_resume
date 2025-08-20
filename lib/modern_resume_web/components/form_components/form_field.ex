@@ -3,10 +3,13 @@ defmodule ModernResumeWeb.FormComponents.FormField do
 
   import ModernResumeWeb.FormComponents.Error
 
+  attr :id, :any, default: nil
+
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :position, :atom, values: [:top, :right, :left], default: :top
+  attr :rest, :global
 
   slot :label, required: true
   slot :inner_block, required: true
@@ -15,17 +18,21 @@ defmodule ModernResumeWeb.FormComponents.FormField do
     errors = if Phoenix.Component.used_input?(field), do: field.errors, else: []
 
     assigns =
-      assign_new(assigns, :errors, fn ->
+      assigns
+      |> assign(id: assigns.id || assigns.field.id)
+      |> assign_new(:errors, fn ->
         Enum.map(errors, &translate_error(&1))
       end)
 
     ~H"""
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1" {@rest}>
       <.form_field_content position={@position}>
         <:label>{render_slot(@label)}</:label>
         {render_slot(@inner_block)}
       </.form_field_content>
-      <.error :for={err <- @errors}>{err}</.error>
+      <div :if={@errors != []} class="flex flex-col gap-1">
+        <.error :for={err <- @errors} class="text-xs" data-testid="form-field-error">{err}</.error>
+      </div>
     </div>
     """
   end
@@ -38,7 +45,10 @@ defmodule ModernResumeWeb.FormComponents.FormField do
   defp form_field_content(%{position: :top} = assigns) do
     ~H"""
     <label class="flex flex-col gap-1">
-      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+      <span
+        class="block text-sm font-semibold text-secondary cursor-pointer"
+        data-testid="form-field-label"
+      >
         {render_slot(@label)}
       </span>
       {render_slot(@inner_block)}
@@ -49,7 +59,10 @@ defmodule ModernResumeWeb.FormComponents.FormField do
   defp form_field_content(%{position: :right} = assigns) do
     ~H"""
     <label class="flex items-center gap-1">
-      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+      <span
+        class="block text-sm font-semibold text-secondary cursor-pointer"
+        data-testid="form-field-label"
+      >
         {render_slot(@label)}
       </span>
       {render_slot(@inner_block)}
@@ -61,7 +74,10 @@ defmodule ModernResumeWeb.FormComponents.FormField do
     ~H"""
     <label class="flex items-center gap-1">
       {render_slot(@inner_block)}
-      <span class="block text-sm font-semibold text-secondary cursor-pointer">
+      <span
+        class="block text-sm font-semibold text-secondary cursor-pointer"
+        data-testid="form-field-label"
+      >
         {render_slot(@label)}
       </span>
     </label>
