@@ -103,7 +103,7 @@ defmodule ModernResumeWeb.CVLive.List do
         data-testid="create-new-cv-modal"
       >
         <:title>Create new CV</:title>
-        <.form for={@create_form} phx-change="validate" phx-submit="create">
+        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
           <.form_field field={@create_form[:title]} data-testid="title">
             <:label>Title</:label>
             <.input field={@create_form[:title]} />
@@ -121,8 +121,10 @@ defmodule ModernResumeWeb.CVLive.List do
             </.form_field>
           </.inputs_for>
 
-          <.button variant="primary" type="submit">Save</.button>
-        </.form>
+          <:actions>
+            <.button variant="primary" type="submit">Save</.button>
+          </:actions>
+        </.simple_form>
       </.modal>
 
       <.modal

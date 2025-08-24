@@ -1,6 +1,5 @@
 defmodule ModernResumeWeb.CoreComponents do
   use Phoenix.Component
-  use Gettext, backend: ModernResumeWeb.Gettext
 
   import ModernUI.Components.Icon
 
