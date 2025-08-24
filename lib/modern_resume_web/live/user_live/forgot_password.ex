@@ -15,17 +15,19 @@ defmodule ModernResumeWeb.UserLive.ForgotPassword do
         <:subtitle>We'll send a password reset link to your inbox</:subtitle>
       </.header>
 
-      <.form for={@form} id="reset_password_form" phx-submit="send_email">
+      <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
 
-        <.button phx-disable-with="Sending..." class="w-full">
-          Send password reset instructions
-        </.button>
-      </.form>
-      <p class="text-center text-sm">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
+        <:actions>
+          <.button phx-disable-with="Sending..." class="w-full">
+            Send password reset instructions
+          </.button>
+          <p class="text-center text-sm">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end

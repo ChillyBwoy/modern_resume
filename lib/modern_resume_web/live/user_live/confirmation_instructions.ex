@@ -15,18 +15,19 @@ defmodule ModernResumeWeb.UserLive.ConfirmationInstructions do
         <:subtitle>We'll send a new confirmation link to your inbox</:subtitle>
       </.header>
 
-      <.form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
+      <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
 
-        <.button phx-disable-with="Sending..." class="w-full">
-          Resend confirmation instructions
-        </.button>
-      </.form>
-
-      <p class="text-center">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
+        <:actions>
+          <.button phx-disable-with="Sending..." class="w-full">
+            Resend confirmation instructions
+          </.button>
+          <p class="text-center">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end

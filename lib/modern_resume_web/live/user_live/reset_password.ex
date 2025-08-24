@@ -14,7 +14,7 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
     <Layouts.auth flash={@flash}>
       <.header class="text-center">Reset Password</.header>
 
-      <.form
+      <.simple_form
         for={@form}
         id="reset_password_form"
         phx-submit="reset_password"
@@ -38,13 +38,14 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
           />
         </.form_field>
 
-        <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
-      </.form>
-
-      <p class="text-center text-sm">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
+        <:actions>
+          <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
+          <p class="text-center text-sm">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end

@@ -20,7 +20,7 @@ defmodule ModernResumeWeb.UserLive.Login do
         </:subtitle>
       </.header>
 
-      <.form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
+      <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
           <.input field={@form[:email]} type="email" required />
@@ -40,10 +40,12 @@ defmodule ModernResumeWeb.UserLive.Login do
           Forgot your password?
         </.link>
 
-        <div class="flex flex-col gap-2">
+        <:actions>
           <.button phx-disable-with="Logging in..." class="w-full" data-testid="button-signin">
             Sign in
           </.button>
+        </:actions>
+        <:actions>
           <.social_button
             provider="github"
             phx-click={JS.navigate(~p"/auth/github")}
@@ -58,8 +60,8 @@ defmodule ModernResumeWeb.UserLive.Login do
           >
             Sign in with Google
           </.social_button>
-        </div>
-      </.form>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end

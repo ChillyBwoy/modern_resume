@@ -23,7 +23,7 @@ defmodule ModernResumeWeb.UserLive.Settings do
 
           <div class="space-y-12">
             <div>
-              <.form
+              <.simple_form
                 for={@email_form}
                 id="email_form"
                 phx-submit="update_email"
@@ -46,11 +46,13 @@ defmodule ModernResumeWeb.UserLive.Settings do
                   />
                 </.form_field>
 
-                <.button phx-disable-with="Changing...">Change Email</.button>
-              </.form>
+                <:actions>
+                  <.button phx-disable-with="Changing...">Change Email</.button>
+                </:actions>
+              </.simple_form>
             </div>
             <div>
-              <.form
+              <.simple_form
                 for={@password_form}
                 id="password_form"
                 action={~p"/users/log_in?_action=password_updated"}
@@ -94,8 +96,10 @@ defmodule ModernResumeWeb.UserLive.Settings do
                   />
                 </.form_field>
 
-                <.button phx-disable-with="Changing...">Change Password</.button>
-              </.form>
+                <:actions>
+                  <.button phx-disable-with="Changing...">Change Password</.button>
+                </:actions>
+              </.simple_form>
             </div>
           </div>
         </div>

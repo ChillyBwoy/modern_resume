@@ -11,15 +11,16 @@ defmodule ModernResumeWeb.UserLive.Confirmation do
     <Layouts.auth flash={@flash}>
       <.header class="text-center">Confirm Account</.header>
 
-      <.form for={@form} id="confirmation_form" phx-submit="confirm_account">
+      <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
-        <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
-      </.form>
-
-      <p class="text-center">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
+        <:actions>
+          <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
+          <p class="text-center">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end

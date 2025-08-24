@@ -24,7 +24,7 @@ defmodule ModernResumeWeb.UserLive.Registration do
         </:subtitle>
       </.header>
 
-      <.form
+      <.simple_form
         for={@form}
         id="registration_form"
         phx-submit="save"
@@ -56,28 +56,32 @@ defmodule ModernResumeWeb.UserLive.Registration do
           />
         </.form_field>
 
-        <.button
-          phx-disable-with="Creating account..."
-          class="w-full"
-          data-testid="button-register"
-        >
-          Create an account
-        </.button>
-        <.social_button
-          provider="github"
-          phx-click={JS.navigate(~p"/auth/github")}
-          data-testid="button-register-github"
-        >
-          Sign up with GitHub
-        </.social_button>
-        <.social_button
-          provider="google"
-          phx-click={JS.navigate(~p"/auth/google")}
-          data-testid="button-register-google"
-        >
-          Sign up with Google
-        </.social_button>
-      </.form>
+        <:actions>
+          <.button
+            phx-disable-with="Creating account..."
+            class="w-full"
+            data-testid="button-register"
+          >
+            Create an account
+          </.button>
+        </:actions>
+        <:actions>
+          <.social_button
+            provider="github"
+            phx-click={JS.navigate(~p"/auth/github")}
+            data-testid="button-register-github"
+          >
+            Sign up with GitHub
+          </.social_button>
+          <.social_button
+            provider="google"
+            phx-click={JS.navigate(~p"/auth/google")}
+            data-testid="button-register-google"
+          >
+            Sign up with Google
+          </.social_button>
+        </:actions>
+      </.simple_form>
     </Layouts.auth>
     """
   end
