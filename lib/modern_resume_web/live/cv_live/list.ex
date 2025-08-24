@@ -1,6 +1,13 @@
 defmodule ModernResumeWeb.CVLive.List do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.DropdownMenu
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Icon
+  import ModernUI.Components.Input
+  import ModernUI.Components.Modal
+
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
   alias ModernResumeWeb.Formatters
@@ -89,7 +96,6 @@ defmodule ModernResumeWeb.CVLive.List do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_user={@current_user}>
-      <%!-- <div class="container mx-auto px-4 py-8"> --%>
       <.modal
         :if={@live_action == :new}
         id="create-cv-modal"
@@ -97,7 +103,7 @@ defmodule ModernResumeWeb.CVLive.List do
         data-testid="create-new-cv-modal"
       >
         <:title>Create new CV</:title>
-        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
+        <.form for={@create_form} phx-change="validate" phx-submit="create">
           <.form_field field={@create_form[:title]} data-testid="title">
             <:label>Title</:label>
             <.input field={@create_form[:title]} />
@@ -115,10 +121,8 @@ defmodule ModernResumeWeb.CVLive.List do
             </.form_field>
           </.inputs_for>
 
-          <:actions>
-            <.button variant={:primary} type="submit">Save</.button>
-          </:actions>
-        </.simple_form>
+          <.button variant="primary" type="submit">Save</.button>
+        </.form>
       </.modal>
 
       <.modal
@@ -129,8 +133,8 @@ defmodule ModernResumeWeb.CVLive.List do
       >
         <:title>Are you sure you want to delete this CV?</:title>
         <div class="flex items-center justify-center gap-4">
-          <.button variant={:danger} phx-value-id={@cv_id} phx-click="delete">Yes</.button>
-          <.button variant={:none} phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
+          <.button variant="danger" phx-value-id={@cv_id} phx-click="delete">Yes</.button>
+          <.button variant="none" phx-click={JS.navigate(~p"/", replace: true)}>Cancel</.button>
         </div>
       </.modal>
 
@@ -139,7 +143,7 @@ defmodule ModernResumeWeb.CVLive.List do
 
         <.button
           type="button"
-          variant={:primary}
+          variant="primary"
           phx-click={JS.navigate(~p"/cvs/new")}
           data-testid="button-create-new-cv"
         >
@@ -167,14 +171,14 @@ defmodule ModernResumeWeb.CVLive.List do
 
           <.dropdown_menu id={"#{cv.id}-menu"}>
             <:item
-              variant={:secondary}
+              variant="secondary"
               icon="mdi-file-document-multiple-outline"
               action={JS.push("duplicate", value: %{id: cv.id})}
             >
               Duplicate
             </:item>
             <:item
-              variant={:danger}
+              variant="danger"
               icon="mdi-delete-outline"
               action={JS.navigate(~p"/cvs/#{cv.id}/delete")}
             >

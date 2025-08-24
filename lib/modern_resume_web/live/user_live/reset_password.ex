@@ -1,7 +1,11 @@
 defmodule ModernResumeWeb.UserLive.ResetPassword do
   use ModernResumeWeb, :live_view
 
-  import ModernResumeWeb.FormComponents.Error
+  import ModernUI.Components.Button
+  import ModernUI.Components.Error
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
 
   alias ModernResume.Accounts
 
@@ -10,7 +14,7 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
     <Layouts.auth flash={@flash}>
       <.header class="text-center">Reset Password</.header>
 
-      <.simple_form
+      <.form
         for={@form}
         id="reset_password_form"
         phx-submit="reset_password"
@@ -34,10 +38,8 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
           />
         </.form_field>
 
-        <:actions>
-          <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
-        </:actions>
-      </.simple_form>
+        <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
+      </.form>
 
       <p class="text-center text-sm">
         <.link href={~p"/users/register"}>Register</.link>

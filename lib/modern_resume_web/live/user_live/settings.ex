@@ -1,6 +1,11 @@
 defmodule ModernResumeWeb.UserLive.Settings do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
+
   alias ModernResume.Accounts
 
   def render(assigns) do
@@ -18,7 +23,7 @@ defmodule ModernResumeWeb.UserLive.Settings do
 
           <div class="space-y-12">
             <div>
-              <.simple_form
+              <.form
                 for={@email_form}
                 id="email_form"
                 phx-submit="update_email"
@@ -41,13 +46,11 @@ defmodule ModernResumeWeb.UserLive.Settings do
                   />
                 </.form_field>
 
-                <:actions>
-                  <.button phx-disable-with="Changing...">Change Email</.button>
-                </:actions>
-              </.simple_form>
+                <.button phx-disable-with="Changing...">Change Email</.button>
+              </.form>
             </div>
             <div>
-              <.simple_form
+              <.form
                 for={@password_form}
                 id="password_form"
                 action={~p"/users/log_in?_action=password_updated"}
@@ -90,10 +93,9 @@ defmodule ModernResumeWeb.UserLive.Settings do
                     required
                   />
                 </.form_field>
-                <:actions>
-                  <.button phx-disable-with="Changing...">Change Password</.button>
-                </:actions>
-              </.simple_form>
+
+                <.button phx-disable-with="Changing...">Change Password</.button>
+              </.form>
             </div>
           </div>
         </div>

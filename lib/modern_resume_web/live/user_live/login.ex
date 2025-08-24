@@ -1,6 +1,11 @@
 defmodule ModernResumeWeb.UserLive.Login do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
+
   def render(assigns) do
     ~H"""
     <Layouts.auth flash={@flash}>
@@ -15,7 +20,7 @@ defmodule ModernResumeWeb.UserLive.Login do
         </:subtitle>
       </.header>
 
-      <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
+      <.form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
           <.input field={@form[:email]} type="email" required />
@@ -31,29 +36,30 @@ defmodule ModernResumeWeb.UserLive.Login do
           <.input field={@form[:remember_me]} type="checkbox" />
         </.form_field>
 
-        <:actions>
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
-            Forgot your password?
-          </.link>
-        </:actions>
-        <:actions>
+        <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
+          Forgot your password?
+        </.link>
+
+        <div class="flex flex-col gap-2">
           <.button phx-disable-with="Logging in..." class="w-full" data-testid="button-signin">
             Sign in
           </.button>
           <.social_button
             provider="github"
-            url={~p"/auth/github"}
-            label="Sign in with GitHub"
+            phx-click={JS.navigate(~p"/auth/github")}
             data-testid="button-signin-github"
-          />
+          >
+            Sign in with GitHub
+          </.social_button>
           <.social_button
             provider="google"
-            url={~p"/auth/google"}
-            label="Sign in with Google"
+            phx-click={JS.navigate(~p"/auth/google")}
             data-testid="button-signin-google"
-          />
-        </:actions>
-      </.simple_form>
+          >
+            Sign in with Google
+          </.social_button>
+        </div>
+      </.form>
     </Layouts.auth>
     """
   end

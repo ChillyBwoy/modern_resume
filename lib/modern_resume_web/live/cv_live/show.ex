@@ -1,9 +1,14 @@
 defmodule ModernResumeWeb.CVLive.Show do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Icon
+  import ModernUI.Components.Input
+  import ModernUI.Components.Tabs
+
   import ModernResumeWeb.CV.LatexPreview
   import ModernResumeWeb.CV.ContentForm
-  import ModernResumeWeb.CV.Tabs
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV

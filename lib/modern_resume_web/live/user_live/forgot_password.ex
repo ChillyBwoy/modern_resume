@@ -1,6 +1,10 @@
 defmodule ModernResumeWeb.UserLive.ForgotPassword do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
+
   alias ModernResume.Accounts
 
   def render(assigns) do
@@ -11,14 +15,13 @@ defmodule ModernResumeWeb.UserLive.ForgotPassword do
         <:subtitle>We'll send a password reset link to your inbox</:subtitle>
       </.header>
 
-      <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
+      <.form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
-        <:actions>
-          <.button phx-disable-with="Sending..." class="w-full">
-            Send password reset instructions
-          </.button>
-        </:actions>
-      </.simple_form>
+
+        <.button phx-disable-with="Sending..." class="w-full">
+          Send password reset instructions
+        </.button>
+      </.form>
       <p class="text-center text-sm">
         <.link href={~p"/users/register"}>Register</.link>
         | <.link href={~p"/users/log_in"}>Log in</.link>

@@ -88,9 +88,6 @@ defmodule ModernResumeWeb do
       import Phoenix.HTML
       # Core UI components
       import ModernResumeWeb.CoreComponents
-      import ModernResumeWeb.FormComponents.Input
-      import ModernResumeWeb.FormComponents.FormField
-      import ModernResumeWeb.CV.CommonComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

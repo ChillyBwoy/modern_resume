@@ -1,9 +1,9 @@
 defmodule ModernResumeWeb.CV.ContentForm do
   use Phoenix.Component
 
-  import ModernResumeWeb.CoreComponents
-  import ModernResumeWeb.FormComponents.Input
-  import ModernResumeWeb.FormComponents.FormField
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Icon
+  import ModernUI.Components.Input
 
   alias Phoenix.LiveView.JS
 

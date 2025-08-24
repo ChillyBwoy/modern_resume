@@ -1,6 +1,9 @@
 defmodule ModernResumeWeb.UserLive.Confirmation do
   use ModernResumeWeb, :live_view
 
+  import ModernUI.Components.Button
+  import ModernUI.Components.Header
+
   alias ModernResume.Accounts
 
   def render(%{live_action: :edit} = assigns) do
@@ -8,10 +11,10 @@ defmodule ModernResumeWeb.UserLive.Confirmation do
     <Layouts.auth flash={@flash}>
       <.header class="text-center">Confirm Account</.header>
 
-      <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
+      <.form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
         <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
-      </.simple_form>
+      </.form>
 
       <p class="text-center">
         <.link href={~p"/users/register"}>Register</.link>

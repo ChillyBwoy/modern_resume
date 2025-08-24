@@ -5,9 +5,9 @@ defmodule ModernResumeWeb.Layouts do
   """
   use ModernResumeWeb, :html
 
-  alias ModernResume.Accounts.User
+  import ModernUI.Components.Flash
 
-  # import ModernUI.Components.Flash
+  alias ModernResume.Accounts.User
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML

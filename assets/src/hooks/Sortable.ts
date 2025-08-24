@@ -1,5 +1,5 @@
 import { Hook } from "phoenix_live_view";
-import Sortable from "sortablejs";
+import SortableLib from "sortablejs";
 import { extractHookAction } from "../lib/hook";
 
 const SELECTOR = {
@@ -10,14 +10,14 @@ const CLASSES = {
   drag: "sortable-drag",
 } as const;
 
-export default (): Hook => ({
+const Sortable: Hook = {
   mounted() {
     const sortAction = extractHookAction<"sort">(this.el, "sortAction");
     if (sortAction == null) {
       return;
     }
 
-    new Sortable(this.el, {
+    new SortableLib(this.el, {
       animation: 150,
       dragClass: CLASSES.drag,
       handle: SELECTOR.handle,
@@ -38,4 +38,6 @@ export default (): Hook => ({
       },
     });
   },
-});
+};
+
+export default Sortable;

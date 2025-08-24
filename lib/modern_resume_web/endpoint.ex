@@ -25,6 +25,11 @@ defmodule ModernResumeWeb.Endpoint do
     gzip: false,
     only: ModernResumeWeb.static_paths()
 
+  plug Plug.Static,
+    at: "/modern_ui_static",
+    from: {:modern_ui, "priv/modern_ui_static"},
+    gzip: false
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
