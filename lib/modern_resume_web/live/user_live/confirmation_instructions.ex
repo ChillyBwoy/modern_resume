@@ -1,11 +1,11 @@
-defmodule ModernResumeWeb.UserConfirmationInstructionsLive do
+defmodule ModernResumeWeb.UserLive.ConfirmationInstructions do
   use ModernResumeWeb, :live_view
 
   alias ModernResume.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         No confirmation instructions received?
         <:subtitle>We'll send a new confirmation link to your inbox</:subtitle>
@@ -24,7 +24,7 @@ defmodule ModernResumeWeb.UserConfirmationInstructionsLive do
         <.link href={~p"/users/register"}>Register</.link>
         | <.link href={~p"/users/log_in"}>Log in</.link>
       </p>
-    </div>
+    </Layouts.auth>
     """
   end
 

@@ -1,11 +1,11 @@
-defmodule ModernResumeWeb.UserConfirmationLive do
+defmodule ModernResumeWeb.UserLive.Confirmation do
   use ModernResumeWeb, :live_view
 
   alias ModernResume.Accounts
 
   def render(%{live_action: :edit} = assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">Confirm Account</.header>
 
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
@@ -17,7 +17,7 @@ defmodule ModernResumeWeb.UserConfirmationLive do
         <.link href={~p"/users/register"}>Register</.link>
         | <.link href={~p"/users/log_in"}>Log in</.link>
       </p>
-    </div>
+    </Layouts.auth>
     """
   end
 

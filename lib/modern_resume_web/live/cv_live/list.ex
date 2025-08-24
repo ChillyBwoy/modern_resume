@@ -1,4 +1,4 @@
-defmodule ModernResumeWeb.CVListLive do
+defmodule ModernResumeWeb.CVLive.List do
   use ModernResumeWeb, :live_view
 
   alias ModernResume.Resume
@@ -88,7 +88,8 @@ defmodule ModernResumeWeb.CVListLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="container mx-auto px-4 py-8">
+    <Layouts.app flash={@flash} current_user={@current_user}>
+      <%!-- <div class="container mx-auto px-4 py-8"> --%>
       <.modal
         :if={@live_action == :new}
         id="create-cv-modal"
@@ -193,7 +194,8 @@ defmodule ModernResumeWeb.CVListLive do
           <p class="text-sm">Click the button above to create your first resume</p>
         </div>
       </div>
-    </div>
+      <%!-- </div> --%>
+    </Layouts.app>
     """
   end
 end

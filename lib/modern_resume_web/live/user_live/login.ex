@@ -1,9 +1,9 @@
-defmodule ModernResumeWeb.UserLoginLive do
+defmodule ModernResumeWeb.UserLive.Login do
   use ModernResumeWeb, :live_view
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         Sign in to account
         <:subtitle>
@@ -54,7 +54,7 @@ defmodule ModernResumeWeb.UserLoginLive do
           />
         </:actions>
       </.simple_form>
-    </div>
+    </Layouts.auth>
     """
   end
 

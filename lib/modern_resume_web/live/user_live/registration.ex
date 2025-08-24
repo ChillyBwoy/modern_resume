@@ -1,4 +1,4 @@
-defmodule ModernResumeWeb.UserRegistrationLive do
+defmodule ModernResumeWeb.UserLive.Registration do
   use ModernResumeWeb, :live_view
 
   alias ModernResume.Accounts
@@ -8,7 +8,7 @@ defmodule ModernResumeWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         Register for an account
         <:subtitle>
@@ -53,7 +53,11 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         </.form_field>
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full" data-testid="button-register">
+          <.button
+            phx-disable-with="Creating account..."
+            class="w-full"
+            data-testid="button-register"
+          >
             Create an account
           </.button>
           <.social_button
@@ -70,7 +74,7 @@ defmodule ModernResumeWeb.UserRegistrationLive do
           />
         </:actions>
       </.simple_form>
-    </div>
+    </Layouts.auth>
     """
   end
 

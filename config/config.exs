@@ -33,7 +33,7 @@ config :modern_resume, ModernResume.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.17.11",
+  version: "0.25.4",
   modern_resume: [
     args:
       ~w(src/app.ts --bundle --target=es2017 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --public-path=/assets/ --loader:.woff=copy --loader:.ttf=copy --loader:.eot=copy --loader:.woff2=copy),

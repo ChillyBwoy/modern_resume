@@ -40,7 +40,7 @@ defmodule ModernResume.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:argon2_elixir, "~> 3.0"},
+      {:argon2_elixir, "~> 4.0"},
       {:phoenix, "~> 1.8.0"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -63,8 +63,9 @@ defmodule ModernResume.MixProject do
       {:timex, "~> 3.0"},
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.10"},
-      {:materialdesignicons,
-       github: "Templarian/MaterialDesign", sparse: "svg", app: false, compile: false, depth: 1}
+      {:modern_ui, "~> 0.1",
+       git: "git@github.com:ChillyBwoy/modern_ui.git",
+       ref: "2d436549a289cb593a9ea077adba8cbc83cf99f5"}
     ]
   end
 

@@ -1,4 +1,4 @@
-defmodule ModernResumeWeb.UserResetPasswordLive do
+defmodule ModernResumeWeb.UserLive.ResetPassword do
   use ModernResumeWeb, :live_view
 
   import ModernResumeWeb.FormComponents.Error
@@ -7,7 +7,7 @@ defmodule ModernResumeWeb.UserResetPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">Reset Password</.header>
 
       <.simple_form
@@ -43,7 +43,7 @@ defmodule ModernResumeWeb.UserResetPasswordLive do
         <.link href={~p"/users/register"}>Register</.link>
         | <.link href={~p"/users/log_in"}>Log in</.link>
       </p>
-    </div>
+    </Layouts.auth>
     """
   end
 
