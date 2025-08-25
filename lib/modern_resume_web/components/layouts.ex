@@ -73,7 +73,6 @@ defmodule ModernResumeWeb.Layouts do
     <nav class="h-full flex items-center">
       <ul class="relative flex items-center gap-4 p-4 w-full justify-end ">
         <%= if @current_user do %>
-          <li>{@current_user.email}</li>
           <li>
             <.link href={~p"/users/settings"}>Settings</.link>
           </li>

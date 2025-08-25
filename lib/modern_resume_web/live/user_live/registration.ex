@@ -2,7 +2,7 @@ defmodule ModernResumeWeb.UserLive.Registration do
   use ModernResumeWeb, :live_view
 
   import ModernUI.Components.Button
-  import ModernUI.Components.Error
+  import ModernUI.Components.ErrorMessage
   import ModernUI.Components.FormField
   import ModernUI.Components.Header
   import ModernUI.Components.Input
@@ -33,9 +33,9 @@ defmodule ModernResumeWeb.UserLive.Registration do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
-        <.error :if={@check_errors} data-testid="error-form">
+        <.error_message :if={@check_errors} data-testid="error-form">
           Oops, something went wrong! Please check the errors below.
-        </.error>
+        </.error_message>
 
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>

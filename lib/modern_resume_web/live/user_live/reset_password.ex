@@ -2,7 +2,7 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
   use ModernResumeWeb, :live_view
 
   import ModernUI.Components.Button
-  import ModernUI.Components.Error
+  import ModernUI.Components.ErrorMessage
   import ModernUI.Components.FormField
   import ModernUI.Components.Header
   import ModernUI.Components.Input
@@ -20,9 +20,9 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
         phx-submit="reset_password"
         phx-change="validate"
       >
-        <.error :if={@form.errors != []}>
+        <.error_message :if={@form.errors != []}>
           Oops, something went wrong! Please check the errors below.
-        </.error>
+        </.error_message>
 
         <.form_field field={@form[:password]}>
           <:label>New password</:label>
