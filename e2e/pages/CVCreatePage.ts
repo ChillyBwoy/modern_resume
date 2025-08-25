@@ -19,7 +19,7 @@ export class CVCreatePage {
   constructor(protected readonly page: Page) {
     this.modal = page.getByTestId("create-new-cv-modal");
 
-    this.modalTitle = this.modal.getByTestId("modal-title");
+    this.modalTitle = this.modal.getByTestId("modal-dailog-title");
 
     this.fieldTitle = this.modal.getByTestId("title");
     this.fieldName = this.modal.getByTestId("name");
