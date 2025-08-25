@@ -1,7 +1,7 @@
 defmodule ModernResumeWeb.CV.LatexPreview do
   use Phoenix.Component
 
-  import ModernResumeWeb.CoreComponents
+  import ModernUI.Components.Icon
 
   attr :title, :string, required: true
   attr :variant, :atom, values: [:default, :error], default: :default

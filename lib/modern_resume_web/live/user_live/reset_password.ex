@@ -1,13 +1,17 @@
-defmodule ModernResumeWeb.UserResetPasswordLive do
+defmodule ModernResumeWeb.UserLive.ResetPassword do
   use ModernResumeWeb, :live_view
 
-  import ModernResumeWeb.FormComponents.Error
+  import ModernUI.Components.Button
+  import ModernUI.Components.ErrorMessage
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
 
   alias ModernResume.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">Reset Password</.header>
 
       <.simple_form
@@ -16,9 +20,9 @@ defmodule ModernResumeWeb.UserResetPasswordLive do
         phx-submit="reset_password"
         phx-change="validate"
       >
-        <.error :if={@form.errors != []}>
+        <.error_message :if={@form.errors != []}>
           Oops, something went wrong! Please check the errors below.
-        </.error>
+        </.error_message>
 
         <.form_field field={@form[:password]}>
           <:label>New password</:label>
@@ -36,14 +40,13 @@ defmodule ModernResumeWeb.UserResetPasswordLive do
 
         <:actions>
           <.button phx-disable-with="Resetting..." class="w-full">Reset Password</.button>
+          <p class="text-center text-sm">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
         </:actions>
       </.simple_form>
-
-      <p class="text-center text-sm">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
-    </div>
+    </Layouts.auth>
     """
   end
 

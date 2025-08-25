@@ -38,9 +38,7 @@ defmodule ModernResumeWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: ModernResumeWeb.Layouts]
+      use Phoenix.Controller, formats: [:html, :json]
 
       use Gettext, backend: ModernResumeWeb.Gettext
 
@@ -52,9 +50,7 @@ defmodule ModernResumeWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {ModernResumeWeb.Layouts, :app},
-        container: {:div, [class: "h-full"]}
+      use Phoenix.LiveView, container: {:div, class: "h-full block"}
 
       import ModernResume.Guards
 
@@ -92,12 +88,10 @@ defmodule ModernResumeWeb do
       import Phoenix.HTML
       # Core UI components
       import ModernResumeWeb.CoreComponents
-      import ModernResumeWeb.FormComponents.Input
-      import ModernResumeWeb.FormComponents.FormField
-      import ModernResumeWeb.CV.CommonComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+      alias ModernResumeWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

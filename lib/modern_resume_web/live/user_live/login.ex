@@ -1,9 +1,14 @@
-defmodule ModernResumeWeb.UserLoginLive do
+defmodule ModernResumeWeb.UserLive.Login do
   use ModernResumeWeb, :live_view
+
+  import ModernUI.Components.Button
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         Sign in to account
         <:subtitle>
@@ -26,7 +31,7 @@ defmodule ModernResumeWeb.UserLoginLive do
           <.input field={@form[:password]} type="password" required />
         </.form_field>
 
-        <.form_field field={@form[:remember_me]} data-testid="keep-logged-in">
+        <.form_field field={@form[:remember_me]} position="left" data-testid="keep-logged-in">
           <:label>Keep me logged in</:label>
           <.input field={@form[:remember_me]} type="checkbox" />
         </.form_field>
@@ -36,25 +41,31 @@ defmodule ModernResumeWeb.UserLoginLive do
             Forgot your password?
           </.link>
         </:actions>
+
         <:actions>
           <.button phx-disable-with="Logging in..." class="w-full" data-testid="button-signin">
             Sign in
           </.button>
+        </:actions>
+
+        <:actions>
           <.social_button
             provider="github"
-            url={~p"/auth/github"}
-            label="Sign in with GitHub"
+            phx-click={JS.navigate(~p"/auth/github")}
             data-testid="button-signin-github"
-          />
+          >
+            Sign in with GitHub
+          </.social_button>
           <.social_button
             provider="google"
-            url={~p"/auth/google"}
-            label="Sign in with Google"
+            phx-click={JS.navigate(~p"/auth/google")}
             data-testid="button-signin-google"
-          />
+          >
+            Sign in with Google
+          </.social_button>
         </:actions>
       </.simple_form>
-    </div>
+    </Layouts.auth>
     """
   end
 

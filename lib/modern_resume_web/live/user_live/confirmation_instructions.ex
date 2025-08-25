@@ -1,11 +1,15 @@
-defmodule ModernResumeWeb.UserConfirmationInstructionsLive do
+defmodule ModernResumeWeb.UserLive.ConfirmationInstructions do
   use ModernResumeWeb, :live_view
+
+  import ModernUI.Components.Button
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
 
   alias ModernResume.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         No confirmation instructions received?
         <:subtitle>We'll send a new confirmation link to your inbox</:subtitle>
@@ -13,18 +17,18 @@ defmodule ModernResumeWeb.UserConfirmationInstructionsLive do
 
       <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
+
         <:actions>
           <.button phx-disable-with="Sending..." class="w-full">
             Resend confirmation instructions
           </.button>
+          <p class="text-center">
+            <.link href={~p"/users/register"}>Register</.link>
+            | <.link href={~p"/users/log_in"}>Log in</.link>
+          </p>
         </:actions>
       </.simple_form>
-
-      <p class="text-center">
-        <.link href={~p"/users/register"}>Register</.link>
-        | <.link href={~p"/users/log_in"}>Log in</.link>
-      </p>
-    </div>
+    </Layouts.auth>
     """
   end
 

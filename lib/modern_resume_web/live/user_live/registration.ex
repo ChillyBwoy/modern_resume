@@ -1,14 +1,18 @@
-defmodule ModernResumeWeb.UserRegistrationLive do
+defmodule ModernResumeWeb.UserLive.Registration do
   use ModernResumeWeb, :live_view
+
+  import ModernUI.Components.Button
+  import ModernUI.Components.ErrorMessage
+  import ModernUI.Components.FormField
+  import ModernUI.Components.Header
+  import ModernUI.Components.Input
 
   alias ModernResume.Accounts
   alias ModernResume.Accounts.User
 
-  import ModernResumeWeb.FormComponents.Error
-
   def render(assigns) do
     ~H"""
-    <div class="mx-auto w-sm flex flex-col gap-4">
+    <Layouts.auth flash={@flash}>
       <.header class="text-center">
         Register for an account
         <:subtitle>
@@ -29,9 +33,9 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
-        <.error :if={@check_errors} data-testid="error-form">
+        <.error_message :if={@check_errors} data-testid="error-form">
           Oops, something went wrong! Please check the errors below.
-        </.error>
+        </.error_message>
 
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
@@ -53,24 +57,32 @@ defmodule ModernResumeWeb.UserRegistrationLive do
         </.form_field>
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full" data-testid="button-register">
+          <.button
+            phx-disable-with="Creating account..."
+            class="w-full"
+            data-testid="button-register"
+          >
             Create an account
           </.button>
+        </:actions>
+        <:actions>
           <.social_button
             provider="github"
-            url={~p"/auth/github"}
-            label="Sign up with GitHub"
+            phx-click={JS.navigate(~p"/auth/github")}
             data-testid="button-register-github"
-          />
+          >
+            Sign up with GitHub
+          </.social_button>
           <.social_button
             provider="google"
-            url={~p"/auth/google"}
-            label="Sign up with Google"
+            phx-click={JS.navigate(~p"/auth/google")}
             data-testid="button-register-google"
-          />
+          >
+            Sign up with Google
+          </.social_button>
         </:actions>
       </.simple_form>
-    </div>
+    </Layouts.auth>
     """
   end
 
