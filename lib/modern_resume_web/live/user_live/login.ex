@@ -31,7 +31,7 @@ defmodule ModernResumeWeb.UserLive.Login do
           <.input field={@form[:password]} type="password" required />
         </.form_field>
 
-        <.form_field field={@form[:remember_me]} position={:left} data-testid="keep-logged-in">
+        <.form_field field={@form[:remember_me]} position="left" data-testid="keep-logged-in">
           <:label>Keep me logged in</:label>
           <.input field={@form[:remember_me]} type="checkbox" />
         </.form_field>

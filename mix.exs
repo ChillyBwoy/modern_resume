@@ -64,8 +64,8 @@ defmodule ModernResume.MixProject do
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.10"},
       {:modern_ui, "~> 0.1",
-       git: "git@github.com:ChillyBwoy/modern_ui.git",
-       ref: "5c4fda684866a72f3caeb23787495344b5985806"}
+       git: "https://github.com/ChillyBwoy/modern_ui.git",
+       ref: "dec474f3e4304268366f3af0e7e90406e7839c4f"}
     ]
   end
 
