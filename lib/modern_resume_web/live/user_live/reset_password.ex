@@ -26,16 +26,20 @@ defmodule ModernResumeWeb.UserLive.ResetPassword do
 
         <.form_field field={@form[:password]}>
           <:label>New password</:label>
-          <.input field={@form[:password]} type="password" required />
+          <:content :let={field}>
+            <.input field={field} type="password" required />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:password_confirmation]}>
           <:label>Confirm new password</:label>
-          <.input
-            field={@form[:password_confirmation]}
-            type="password"
-            required
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              type="password"
+              required
+            />
+          </:content>
         </.form_field>
 
         <:actions>

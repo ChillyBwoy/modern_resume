@@ -23,17 +23,23 @@ defmodule ModernResumeWeb.UserLive.Login do
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
-          <.input field={@form[:email]} type="email" required />
+          <:content :let={field}>
+            <.input field={field} type="email" required />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:password]} data-testid="password">
           <:label>Password</:label>
-          <.input field={@form[:password]} type="password" required />
+          <:content :let={field}>
+            <.input field={field} type="password" required />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:remember_me]} position="left" data-testid="keep-logged-in">
           <:label>Keep me logged in</:label>
-          <.input field={@form[:remember_me]} type="checkbox" />
+          <:content :let={field}>
+            <.input field={field} type="checkbox" />
+          </:content>
         </.form_field>
 
         <:actions>

@@ -38,21 +38,25 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <div class="grid grid-cols-[2fr_1fr] gap-2">
       <.form_field field={@month}>
         <:label>Month</:label>
-        <.input
-          type="select"
-          field={@month}
-          prompt="--"
-          options={get_date_options(:month)}
-        />
+        <:content :let={field}>
+          <.input
+            type="select"
+            field={field}
+            prompt="--"
+            options={get_date_options(:month)}
+          />
+        </:content>
       </.form_field>
       <.form_field field={@year}>
         <:label>Year</:label>
-        <.input
-          type="select"
-          field={@year}
-          prompt="--"
-          options={get_date_options(:year)}
-        />
+        <:content :let={field}>
+          <.input
+            type="select"
+            field={field}
+            prompt="--"
+            options={get_date_options(:year)}
+          />
+        </:content>
       </.form_field>
     </div>
     """
@@ -191,16 +195,20 @@ defmodule ModernResumeWeb.CV.ContentForm do
       <div class="grid grid-cols-2 gap-4">
         <.form_field field={@form[:name]}>
           <:label>Name</:label>
-          <.input field={@form[:name]} phx-debounce="blur" maxlength="50" show_counter />
+          <:content :let={field}>
+            <.input field={field} phx-debounce="blur" maxlength="50" show_counter />
+          </:content>
         </.form_field>
         <.form_field field={@form[:fluency]}>
           <:label>Fluency</:label>
-          <.input
-            type="select"
-            field={@form[:fluency]}
-            prompt="--"
-            options={Language.fluency_types()}
-          />
+          <:content :let={field}>
+            <.input
+              type="select"
+              field={field}
+              prompt="--"
+              options={Language.fluency_types()}
+            />
+          </:content>
         </.form_field>
       </div>
     </.entity>
@@ -217,27 +225,33 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.form_field field={@form[:degree]}>
         <:label>Degree</:label>
-        <.input field={@form[:degree]} phx-debounce="blur" maxlength="100" show_counter />
+        <:content :let={field}>
+          <.input field={field} phx-debounce="blur" maxlength="100" show_counter />
+        </:content>
       </.form_field>
 
       <div class="grid grid-cols-[2fr_1fr] gap-4">
         <.form_field field={@form[:institution]}>
           <:label>Institution</:label>
-          <.input
-            field={@form[:institution]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
         <.form_field field={@form[:location]}>
           <:label>Country, City, etc.</:label>
-          <.input
-            field={@form[:location]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -246,22 +260,26 @@ defmodule ModernResumeWeb.CV.ContentForm do
       </div>
       <.form_field field={@form[:field_of_study]}>
         <:label>Field of Study</:label>
-        <.input
-          field={@form[:field_of_study]}
-          phx-debounce="blur"
-          maxlength="100"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            phx-debounce="blur"
+            maxlength="100"
+            show_counter
+          />
+        </:content>
       </.form_field>
       <.form_field field={@form[:description]}>
         <:label>Description</:label>
-        <.input
-          field={@form[:description]}
-          type="textarea"
-          phx-debounce="blur"
-          maxlength="500"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            type="textarea"
+            phx-debounce="blur"
+            maxlength="500"
+            show_counter
+          />
+        </:content>
       </.form_field>
     </.entity>
     """
@@ -277,28 +295,34 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.form_field field={@form[:header]}>
         <:label>Header</:label>
-        <.input
-          field={@form[:header]}
-          phx-debounce="blur"
-          maxlength="100"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            phx-debounce="blur"
+            maxlength="100"
+            show_counter
+          />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:title]}>
         <:label>Title</:label>
-        <.input field={@form[:title]} phx-debounce="blur" maxlength="100" show_counter />
+        <:content :let={field}>
+          <.input field={field} phx-debounce="blur" maxlength="100" show_counter />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:description]}>
         <:label>Description</:label>
-        <.input
-          field={@form[:description]}
-          type="textarea"
-          phx-debounce="blur"
-          maxlength="500"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            type="textarea"
+            phx-debounce="blur"
+            maxlength="500"
+            show_counter
+          />
+        </:content>
       </.form_field>
     </.entity>
     """
@@ -314,18 +338,22 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity id={@form.data.id} sortable={@sortable} on_delete={@on_delete} index={@form.index}>
       <.form_field field={@form[:title]}>
         <:label>Title</:label>
-        <.input field={@form[:title]} phx-debounce="blur" maxlength="100" show_counter />
+        <:content :let={field}>
+          <.input field={field} phx-debounce="blur" maxlength="100" show_counter />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:content]}>
         <:label>Content</:label>
-        <.input
-          field={@form[:content]}
-          type="textarea"
-          phx-debounce="blur"
-          maxlength="500"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            type="textarea"
+            phx-debounce="blur"
+            maxlength="500"
+            show_counter
+          />
+        </:content>
       </.form_field>
     </.entity>
     """
@@ -343,36 +371,44 @@ defmodule ModernResumeWeb.CV.ContentForm do
       <div class="grid grid-cols-[2fr_1fr] gap-4">
         <.form_field field={@form[:title]}>
           <:label>Title</:label>
-          <.input field={@form[:title]} phx-debounce="blur" maxlength="100" show_counter />
+          <:content :let={field}>
+            <.input field={field} phx-debounce="blur" maxlength="100" show_counter />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:employment_type]}>
           <:label>Employment Type</:label>
-          <.input
-            type="select"
-            field={@form[:employment_type]}
-            prompt="--"
-            options={Experience.employment_types()}
-          />
+          <:content :let={field}>
+            <.input
+              type="select"
+              field={field}
+              prompt="--"
+              options={Experience.employment_types()}
+            />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:organization]}>
           <:label>Company, Organization, etc.</:label>
-          <.input
-            field={@form[:organization]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
         <.form_field field={@form[:location]}>
           <:label>Country, City, etc.</:label>
-          <.input
-            field={@form[:location]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -381,13 +417,15 @@ defmodule ModernResumeWeb.CV.ContentForm do
       </div>
       <.form_field field={@form[:description]}>
         <:label>Description</:label>
-        <.input
-          field={@form[:description]}
-          type="textarea"
-          phx-debounce="blur"
-          maxlength="500"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            type="textarea"
+            phx-debounce="blur"
+            maxlength="500"
+            show_counter
+          />
+        </:content>
       </.form_field>
 
       <:extra title="Work Details">
@@ -419,55 +457,67 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity>
       <.form_field field={@form[:position]}>
         <:label>Title</:label>
-        <.input
-          field={@form[:position]}
-          phx-debounce="blur"
-          maxlength="100"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            phx-debounce="blur"
+            maxlength="100"
+            show_counter
+          />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:name]}>
         <:label>Name</:label>
-        <.input field={@form[:name]} phx-debounce="blur" maxlength="50" show_counter />
+        <:content :let={field}>
+          <.input field={field} phx-debounce="blur" maxlength="50" show_counter />
+        </:content>
       </.form_field>
 
       <div class="grid grid-cols-2 gap-4">
         <.form_field field={@form[:email]}>
           <:label>Email</:label>
-          <.input
-            field={@form[:email]}
-            type="email"
-            phx-debounce="blur"
-            maxlength="320"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              type="email"
+              phx-debounce="blur"
+              maxlength="320"
+              show_counter
+            />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:phone]}>
           <:label>Phone</:label>
-          <.input
-            field={@form[:phone]}
-            type="tel"
-            phx-debounce="blur"
-            maxlength="15"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              type="tel"
+              phx-debounce="blur"
+              maxlength="15"
+              show_counter
+            />
+          </:content>
         </.form_field>
       </div>
       <.form_field field={@form[:location]}>
         <:label>Country, City, etc.</:label>
-        <.input
-          field={@form[:location]}
-          phx-debounce="blur"
-          maxlength="50"
-          show_counter
-        />
+        <:content :let={field}>
+          <.input
+            field={field}
+            phx-debounce="blur"
+            maxlength="50"
+            show_counter
+          />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:birthdate]}>
         <:label>Birthdate</:label>
-        <.input field={@form[:birthdate]} type="date" phx-debounce="blur" />
+        <:content :let={field}>
+          <.input field={field} type="date" phx-debounce="blur" />
+        </:content>
       </.form_field>
     </.entity>
     """
@@ -480,35 +530,45 @@ defmodule ModernResumeWeb.CV.ContentForm do
     <.entity>
       <.form_field field={@form[:style]}>
         <:label>Style</:label>
-        <.input type="select" field={@form[:style]} options={Settings.style_choices()} />
+        <:content :let={field}>
+          <.input type="select" field={field} options={Settings.style_choices()} />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:color]}>
         <:label>Color</:label>
-        <.input type="select" field={@form[:color]} options={Settings.color_choices()} />
+        <:content :let={field}>
+          <.input type="select" field={field} options={Settings.color_choices()} />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:font_size]}>
         <:label>Font Size</:label>
-        <.input
-          type="select"
-          field={@form[:font_size]}
-          options={Settings.font_size_choices()}
-        />
+        <:content :let={field}>
+          <.input
+            type="select"
+            field={field}
+            options={Settings.font_size_choices()}
+          />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:font_family]}>
         <:label>Font Family</:label>
-        <.input
-          type="select"
-          field={@form[:font_family]}
-          options={Settings.font_family_choices()}
-        />
+        <:content :let={field}>
+          <.input
+            type="select"
+            field={field}
+            options={Settings.font_family_choices()}
+          />
+        </:content>
       </.form_field>
 
       <.form_field field={@form[:use_icons]} position="left">
         <:label>Use Icons</:label>
-        <.input type="checkbox" field={@form[:use_icons]} />
+        <:content :let={field}>
+          <.input type="checkbox" field={field} />
+        </:content>
       </.form_field>
     </.entity>
     """
@@ -525,31 +585,37 @@ defmodule ModernResumeWeb.CV.ContentForm do
       <div class="grid grid-cols-3 gap-1">
         <.form_field field={@form[:platform]}>
           <:label>Platform</:label>
-          <.input
-            type="select"
-            field={@form[:platform]}
-            options={SocialNetwork.platform_choices()}
-          />
+          <:content :let={field}>
+            <.input
+              type="select"
+              field={field}
+              options={SocialNetwork.platform_choices()}
+            />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:content]}>
           <:label>Username or Handle</:label>
-          <.input
-            field={@form[:content]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:alias]}>
           <:label>Alias</:label>
-          <.input
-            field={@form[:alias]}
-            phx-debounce="blur"
-            maxlength="100"
-            show_counter
-          />
+          <:content :let={field}>
+            <.input
+              field={field}
+              phx-debounce="blur"
+              maxlength="100"
+              show_counter
+            />
+          </:content>
         </.form_field>
       </div>
     </.entity>
