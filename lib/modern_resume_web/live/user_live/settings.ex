@@ -31,19 +31,23 @@ defmodule ModernResumeWeb.UserLive.Settings do
               >
                 <.form_field field={@email_form[:email]}>
                   <:label>Email</:label>
-                  <.input field={@email_form[:email]} type="email" required />
+                  <:content :let={field}>
+                    <.input field={field} type="email" required />
+                  </:content>
                 </.form_field>
 
                 <.form_field field={@email_form[:current_password]}>
                   <:label>Current password</:label>
-                  <.input
-                    field={@email_form[:current_password]}
-                    name="current_password"
-                    id="current_password_for_email"
-                    type="password"
-                    value={@email_form_current_password}
-                    required
-                  />
+                  <:content :let={field}>
+                    <.input
+                      field={field}
+                      name="current_password"
+                      id="current_password_for_email"
+                      type="password"
+                      value={@email_form_current_password}
+                      required
+                    />
+                  </:content>
                 </.form_field>
 
                 <:actions>
@@ -69,31 +73,30 @@ defmodule ModernResumeWeb.UserLive.Settings do
                 />
                 <.form_field field={@password_form[:password]}>
                   <:label>New password</:label>
-                  <.input
-                    field={@password_form[:password]}
-                    type="password"
-                    required
-                  />
+                  <:content :let={field}>
+                    <.input field={field} type="password" required />
+                  </:content>
                 </.form_field>
 
                 <.form_field field={@password_form[:password_confirmation]}>
                   <:label>Confirm new password</:label>
-                  <.input
-                    field={@password_form[:password_confirmation]}
-                    type="password"
-                  />
+                  <:content :let={field}>
+                    <.input field={field} type="password" />
+                  </:content>
                 </.form_field>
 
                 <.form_field field={@password_form[:current_password]}>
                   <:label>Current password</:label>
-                  <.input
-                    field={@password_form[:current_password]}
-                    name="current_password"
-                    type="password"
-                    id="current_password_for_password"
-                    value={@current_password}
-                    required
-                  />
+                  <:content :let={field}>
+                    <.input
+                      field={field}
+                      name="current_password"
+                      type="password"
+                      id="current_password_for_password"
+                      value={@current_password}
+                      required
+                    />
+                  </:content>
                 </.form_field>
 
                 <:actions>

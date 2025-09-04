@@ -39,21 +39,23 @@ defmodule ModernResumeWeb.UserLive.Registration do
 
         <.form_field field={@form[:email]} data-testid="email">
           <:label>Email</:label>
-          <.input field={@form[:email]} type="email" />
+          <:content :let={field}>
+            <.input field={field} type="email" />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:password]} data-testid="password">
           <:label>Password</:label>
-          <.input field={@form[:password]} type="password" />
+          <:content :let={field}>
+            <.input field={field} type="password" />
+          </:content>
         </.form_field>
 
         <.form_field field={@form[:password_confirmation]} data-testid="password-confirmation">
           <:label>Confirm Password</:label>
-          <.input
-            field={@form[:password_confirmation]}
-            type="password"
-            data-testid="input-password-confirmation"
-          />
+          <:content :let={field}>
+            <.input field={field} type="password" data-testid="input-password-confirmation" />
+          </:content>
         </.form_field>
 
         <:actions>
