@@ -22,8 +22,9 @@ defmodule ModernResume.ResumeTest do
     end
 
     test "create_cv/1 with valid data creates a cv" do
+      user = user_fixture()
+
       valid_attrs = %{
-        user_id: user_fixture().id,
         title: "some title",
         content: %{
           name: "John Doe",
@@ -31,7 +32,7 @@ defmodule ModernResume.ResumeTest do
         }
       }
 
-      assert {:ok, %CV{} = cv} = Resume.create_cv(valid_attrs)
+      assert {:ok, %CV{} = cv} = Resume.create_cv(user, valid_attrs)
 
       assert cv.title == "some title"
       assert cv.content.name == "John Doe"
@@ -39,7 +40,8 @@ defmodule ModernResume.ResumeTest do
     end
 
     test "create_cv/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Resume.create_cv(@invalid_attrs)
+      user = user_fixture()
+      assert {:error, %Ecto.Changeset{}} = Resume.create_cv(user, @invalid_attrs)
     end
 
     test "update_cv/2 with valid data updates the cv" do

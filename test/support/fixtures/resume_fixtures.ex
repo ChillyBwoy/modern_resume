@@ -8,10 +8,10 @@ defmodule ModernResume.ResumeFixtures do
   Generate a cv.
   """
   def cv_fixture(attrs \\ %{}) do
-    {:ok, cv} =
-      attrs
-      |> add_user_if_exists()
-      |> Enum.into(%{
+    user = ModernResume.AccountsFixtures.user_fixture()
+
+    payload =
+      Enum.into(attrs, %{
         content: %{
           name: "John Doe",
           position: "Test Sampe",
@@ -29,8 +29,8 @@ defmodule ModernResume.ResumeFixtures do
         },
         title: "some title"
       })
-      |> ModernResume.Resume.create_cv()
 
+    {:ok, cv} = ModernResume.Resume.create_cv(user, payload)
     cv
   end
 

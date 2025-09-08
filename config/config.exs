@@ -8,6 +8,9 @@
 import Config
 
 config :modern_resume,
+  cv_max_per_user: 3
+
+config :modern_resume,
   ecto_repos: [ModernResume.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 

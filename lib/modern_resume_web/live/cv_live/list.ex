@@ -19,6 +19,8 @@ defmodule ModernResumeWeb.CVLive.List do
     {:ok,
      socket
      |> assign(cvs: Resume.list_cvs_for(user))
+     |> assign(count: Resume.count_cvs(user))
+     |> assign(user_can_create_cv: Resume.user_can_create_cv(user))
      |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())
      |> assign_cv_operation(params)}
   end
@@ -35,7 +37,9 @@ defmodule ModernResumeWeb.CVLive.List do
 
   @impl true
   def handle_event("delete", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
-    case Resume.delete_cv(socket.assigns.current_user, cv_id) do
+    user = socket.assigns.current_user
+
+    case Resume.delete_cv(user, cv_id) do
       {:ok, _} ->
         {:noreply,
          socket
@@ -52,7 +56,9 @@ defmodule ModernResumeWeb.CVLive.List do
 
   @impl true
   def handle_event("duplicate", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
-    case Resume.duplicate_cv(socket.assigns.current_user, cv_id) do
+    user = socket.assigns.current_user
+
+    case Resume.duplicate_cv(user, cv_id) do
       {:ok, %CV{} = new_cv} ->
         {:noreply,
          socket
@@ -68,27 +74,23 @@ defmodule ModernResumeWeb.CVLive.List do
   end
 
   @impl true
-  def handle_event("validate", %{"cv" => params}, socket) do
-    changeset = CV.changeset(%CV{}, params) |> Map.put(:action, :validate)
-
-    {:noreply,
-     socket
-     |> assign(:form, to_form(changeset))}
-  end
-
-  @impl true
   def handle_event("create", %{"cv" => params}, socket) do
     user = socket.assigns.current_user
-    payload = Map.put(params, "user_id", user.id)
 
-    with {:ok, %CV{} = cv} <- Resume.create_cv(payload) do
+    with {:ok, %CV{} = cv} <- Resume.create_cv(user, params) do
       {:noreply,
        socket
        |> put_flash(:info, "CV created successfully.")
        |> redirect(to: ~p"/cvs/#{cv.id}", replace: true)}
     else
-      {:error, changeset} ->
+      {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(create_form: to_form(changeset))}
+
+      {:error, :maximum_cv_count_reached} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Maximum CV count reached.")
+         |> redirect(to: ~p"/", replace: true)}
     end
   end
 
@@ -103,7 +105,7 @@ defmodule ModernResumeWeb.CVLive.List do
         data-testid="create-new-cv-modal"
       >
         <:title>Create new CV</:title>
-        <.simple_form for={@create_form} phx-change="validate" phx-submit="create">
+        <.simple_form for={@create_form} phx-submit="create">
           <.form_field field={@create_form[:title]} data-testid="title">
             <:label>Title</:label>
             <:content :let={field}>
@@ -150,6 +152,7 @@ defmodule ModernResumeWeb.CVLive.List do
         <h1 class="text-3xl font-bold text-gray-900" data-testid="cv-list-page-title">My CVs</h1>
 
         <.button
+          :if={@user_can_create_cv}
           type="button"
           variant="primary"
           phx-click={JS.navigate(~p"/cvs/new")}
@@ -179,6 +182,7 @@ defmodule ModernResumeWeb.CVLive.List do
 
           <.dropdown_menu id={"#{cv.id}-menu"}>
             <:item
+              :if={@user_can_create_cv}
               variant="secondary"
               icon="mdi-file-document-multiple-outline"
               action={JS.push("duplicate", value: %{id: cv.id})}

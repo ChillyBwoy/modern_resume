@@ -20,13 +20,24 @@ defmodule ModernResume.Resume do
   alias ModernResume.Resume.Skill
   alias ModernResume.Resume.SocialNetwork
 
+  @error_codes %{
+    invalid_list: :invalid_list,
+    not_found: :not_found,
+    resume_limit_reached: :resume_limit_reached
+  }
+
+  def max_cv_per_user, do: Application.fetch_env!(:modern_resume, :cv_max_per_user)
+
   def list_cvs do
     Repo.all(CV)
   end
 
+  def count_cvs(%User{} = user) do
+    from(cv in CV, where: cv.user_id == ^user.id) |> Repo.aggregate(:count)
+  end
+
   def list_cvs_for(%User{} = user) do
-    query = from(cv in CV, where: cv.user_id == ^user.id, order_by: [desc: cv.updated_at])
-    Repo.all(query)
+    from(cv in CV, where: cv.user_id == ^user.id, order_by: [desc: cv.updated_at]) |> Repo.all()
   end
 
   def get_cv(id) when is_uuid(id) do
@@ -37,10 +48,18 @@ defmodule ModernResume.Resume do
     from(cv in CV, where: cv.user_id == ^user.id) |> Repo.get(cv_id)
   end
 
-  def create_cv(attrs \\ %{}) do
-    %CV{}
-    |> CV.changeset(attrs)
-    |> Repo.insert()
+  def user_can_create_cv(%User{} = user) do
+    count_cvs(user) < max_cv_per_user()
+  end
+
+  def create_cv(%User{} = user, attrs) do
+    if user_can_create_cv(user) do
+      %CV{user_id: user.id}
+      |> CV.changeset(attrs)
+      |> Repo.insert()
+    else
+      {:error, @error_codes.resume_limit_reached}
+    end
   end
 
   def update_cv(%CV{} = cv, attrs) do
@@ -49,33 +68,33 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  def update_cv(%Ecto.Changeset{} = changeset) do
-    changeset |> Repo.update()
-  end
-
   def delete_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
     case get_cv_for(user, cv_id) do
       %CV{} = cv ->
         Repo.delete(cv)
 
       _ ->
-        {:error, :not_found}
+        {:error, @error_codes.not_found}
     end
   end
 
   def duplicate_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
-    case get_cv_for(user, cv_id) do
-      %CV{} = cv ->
-        %CV{}
-        |> CV.changeset(%{
-          title: "#{cv.title} (copy)",
-          user_id: cv.user_id
-        })
-        |> Ecto.Changeset.put_change(:content, cv.content)
-        |> Repo.insert()
+    if user_can_create_cv(user) do
+      case get_cv_for(user, cv_id) do
+        %CV{} = cv ->
+          %CV{}
+          |> CV.changeset(%{
+            title: "#{cv.title} (copy)",
+            user_id: cv.user_id
+          })
+          |> Ecto.Changeset.put_change(:content, cv.content)
+          |> Repo.insert()
 
-      _ ->
-        {:error, :not_found}
+        _ ->
+          {:error, @error_codes.not_found}
+      end
+    else
+      {:error, @error_codes.resume_limit_reached}
     end
   end
 
@@ -112,7 +131,7 @@ defmodule ModernResume.Resume do
     {:ok, entities} = Map.fetch(cv.content, key)
 
     if length(entities) != length(ordered_ids) do
-      {:error, :invalid_list}
+      {:error, @error_codes.invalid_list}
     else
       entities_map = Enum.map(entities, &{&1.id, &1}) |> Map.new()
 
