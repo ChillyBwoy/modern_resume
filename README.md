@@ -2,6 +2,11 @@
 
 Modern Resume is a Phoenix application for building and serving CVs based on the `moderncv` template.
 
+<p align="center">
+    <img src="./assets/docs/preview_01.png" width="400" />
+    <img src="./assets/docs/preview_02.png" width="400" />
+</p>
+
 ## Run Locally
 
 ### 1. Prerequisites
