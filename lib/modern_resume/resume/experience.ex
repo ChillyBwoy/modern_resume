@@ -1,9 +1,35 @@
 defmodule ModernResume.Resume.Experience do
+  @moduledoc """
+  Experience section schema
+  """
   use Ecto.Schema
-  import Ecto.Changeset
 
-  alias ModernResume.Validation
+  alias Ecto.Changeset
+
   alias ModernResume.Resume.ExperienceDetail
+  alias ModernResume.Validation
+
+  @type employment_type ::
+          :part_time
+          | :permanent
+          | :self_employed
+          | :freelance
+          | :contract
+          | :internship
+          | :apprenticeship
+          | :indirect_contract
+  @type t :: %__MODULE__{
+          title: String.t(),
+          description: String.t(),
+          location: String.t(),
+          organization: String.t(),
+          date_start_month: integer(),
+          date_start_year: integer(),
+          date_end_month: integer() | nil,
+          date_end_year: integer() | nil,
+          employment_type: employment_type() | nil,
+          details: list(ExperienceDetail.t())
+        }
 
   @employment_types [
     :part_time,
@@ -30,10 +56,10 @@ defmodule ModernResume.Resume.Experience do
     embeds_many :details, ExperienceDetail, on_replace: :delete
   end
 
-  @doc false
-  def changeset(experience \\ %__MODULE__{}, attrs \\ %{}) do
+  @spec changeset(t() | %__MODULE__{}, map()) :: Changeset.t(t())
+  def changeset(%__MODULE__{} = experience, attrs \\ %{}) do
     experience
-    |> cast(attrs, [
+    |> Changeset.cast(attrs, [
       :title,
       :description,
       :location,
@@ -44,12 +70,12 @@ defmodule ModernResume.Resume.Experience do
       :employment_type,
       :organization
     ])
-    |> cast_embed(:details)
-    |> validate_required([:title, :date_start_month, :date_start_year])
-    |> validate_length(:title, max: 100)
-    |> validate_length(:description, max: 500)
-    |> validate_length(:location, max: 100)
-    |> validate_length(:organization, max: 100)
+    |> Changeset.cast_embed(:details)
+    |> Changeset.validate_required([:title, :date_start_month, :date_start_year])
+    |> Changeset.validate_length(:title, max: 100)
+    |> Changeset.validate_length(:description, max: 500)
+    |> Changeset.validate_length(:location, max: 100)
+    |> Changeset.validate_length(:organization, max: 100)
     |> Validation.validate_latex_chars([
       :title,
       :description,
@@ -58,12 +84,10 @@ defmodule ModernResume.Resume.Experience do
     ])
   end
 
-  def employment_types do
-    Enum.map(@employment_types, fn item ->
-      {display_employment_type(item), item}
-    end)
-  end
+  @spec employment_types :: list({String.t(), employment_type()})
+  def employment_types, do: Enum.map(@employment_types, &{display_employment_type(&1), &1})
 
+  @spec display_employment_type(employment_type()) :: String.t()
   def display_employment_type(:part_time), do: "Part-time"
   def display_employment_type(:permanent), do: "Permanent"
   def display_employment_type(:self_employed), do: "Self-employed"

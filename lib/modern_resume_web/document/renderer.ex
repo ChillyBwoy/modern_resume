@@ -1,4 +1,9 @@
 defmodule ModernResumeWeb.Document.Renderer do
+  @moduledoc """
+  Document renderer module
+   - Renders CV to LaTeX string or PDF
+   - Uses Iona for LaTeX rendering and PDF generation
+  """
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Language
@@ -26,7 +31,8 @@ defmodule ModernResumeWeb.Document.Renderer do
   # https://tex.stackexchange.com/questions/15516/how-to-write-japanese-with-latex
 
   defp get_template(%CV{} = cv) do
-    Template.new(:moderncv)
+    :moderncv
+    |> Template.new()
     |> Template.eval(
       cv: cv.content,
       str: &str/1,

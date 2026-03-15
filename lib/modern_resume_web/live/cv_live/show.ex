@@ -12,8 +12,8 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
-  alias ModernResumeWeb.Document.RenderWorker
   alias ModernResumeWeb.Document.RenderState
+  alias ModernResumeWeb.Document.RenderWorker
   alias ModernResumeWeb.Formatters
 
   @allowed_tabs ~w(personal skills experiences educations social_networks languages settings)

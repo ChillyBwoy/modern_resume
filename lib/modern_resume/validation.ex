@@ -31,7 +31,8 @@ defmodule ModernResume.Validation do
       {:ok, value}
     else
       invalid_chars =
-        Regex.replace(@latex_allowed_char, value, "", global: true)
+        @latex_allowed_char
+        |> Regex.replace(value, "", global: true)
         |> String.split("", trim: true)
 
       {:error, invalid_chars}

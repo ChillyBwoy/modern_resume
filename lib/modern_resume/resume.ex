@@ -7,6 +7,8 @@ defmodule ModernResume.Resume do
   import Ecto.Query, warn: false
   import ModernResume.Guards
 
+  alias Ecto.Changeset
+
   alias ModernResume.Repo
 
   alias ModernResume.Accounts.User
@@ -49,7 +51,7 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  def update_cv(%Ecto.Changeset{} = changeset) do
+  def update_cv(%Changeset{} = changeset) do
     changeset |> Repo.update()
   end
 
@@ -71,7 +73,7 @@ defmodule ModernResume.Resume do
           title: "#{cv.title} (copy)",
           user_id: cv.user_id
         })
-        |> Ecto.Changeset.put_change(:content, cv.content)
+        |> Changeset.put_change(:content, cv.content)
         |> Repo.insert()
 
       _ ->
@@ -82,29 +84,29 @@ defmodule ModernResume.Resume do
   def add_entity(%CV{} = cv, key, new_entity) when is_atom(key) do
     changeset = CV.changeset(cv)
 
-    content = Ecto.Changeset.get_embed(changeset, :content)
-    entities = Ecto.Changeset.get_embed(content, key)
-    content = Ecto.Changeset.put_embed(content, key, entities ++ [new_entity])
+    content = Changeset.get_embed(changeset, :content)
+    entities = Changeset.get_embed(content, key)
+    content = Changeset.put_embed(content, key, entities ++ [new_entity])
 
     changeset
-    |> Ecto.Changeset.put_embed(:content, content)
+    |> Changeset.put_embed(:content, content)
     |> Repo.update()
   end
 
   def add_entity(%CV{} = cv, :skills),
-    do: add_entity(cv, :skills, %Skill{} |> Skill.changeset())
+    do: add_entity(cv, :skills, Skill.changeset(%Skill{}))
 
   def add_entity(%CV{} = cv, :educations),
-    do: add_entity(cv, :educations, %Education{} |> Education.changeset())
+    do: add_entity(cv, :educations, Education.changeset(%Education{}))
 
   def add_entity(%CV{} = cv, :languages),
-    do: add_entity(cv, :languages, %Language{} |> Language.changeset())
+    do: add_entity(cv, :languages, Language.changeset(%Language{}))
 
   def add_entity(%CV{} = cv, :experiences),
-    do: add_entity(cv, :experiences, %Experience{} |> Experience.changeset())
+    do: add_entity(cv, :experiences, Experience.changeset(%Experience{}))
 
   def add_entity(%CV{} = cv, :social_networks),
-    do: add_entity(cv, :social_networks, %SocialNetwork{} |> SocialNetwork.changeset())
+    do: add_entity(cv, :social_networks, SocialNetwork.changeset(%SocialNetwork{}))
 
   def add_entity(_, _), do: raise("Can not add an invalid entity")
 
@@ -124,11 +126,11 @@ defmodule ModernResume.Resume do
       content =
         cv.content
         |> Content.changeset()
-        |> Ecto.Changeset.put_embed(key, new_entities)
+        |> Changeset.put_embed(key, new_entities)
 
       cv
       |> CV.changeset()
-      |> Ecto.Changeset.put_embed(:content, content)
+      |> Changeset.put_embed(:content, content)
       |> Repo.update()
     end
   end
@@ -140,31 +142,31 @@ defmodule ModernResume.Resume do
     content =
       cv.content
       |> Content.changeset()
-      |> Ecto.Changeset.put_embed(key, new_entities)
+      |> Changeset.put_embed(key, new_entities)
 
     cv
     |> CV.changeset()
-    |> Ecto.Changeset.put_embed(:content, content)
+    |> Changeset.put_embed(:content, content)
     |> Repo.update()
   end
 
-  def add_nested_entity(%Ecto.Changeset{} = changeset, {parent_key, child_key}, parent_id) do
-    content = Ecto.Changeset.get_embed(changeset, :content)
+  def add_nested_entity(%Changeset{} = changeset, {parent_key, child_key}, parent_id) do
+    content = Changeset.get_embed(changeset, :content)
     new_entity = get_child_changeset({parent_key, child_key})
 
     entities =
-      Ecto.Changeset.get_embed(content, parent_key)
+      Changeset.get_embed(content, parent_key)
       |> Enum.map(fn entity ->
         if entity.data.id == parent_id do
-          target_list = Ecto.Changeset.get_embed(entity, child_key)
-          Ecto.Changeset.put_embed(entity, child_key, target_list ++ [new_entity])
+          target_list = Changeset.get_embed(entity, child_key)
+          Changeset.put_embed(entity, child_key, target_list ++ [new_entity])
         else
           entity
         end
       end)
 
-    content = Ecto.Changeset.put_embed(content, parent_key, entities)
-    Ecto.Changeset.put_embed(changeset, :content, content)
+    content = Changeset.put_embed(content, parent_key, entities)
+    Changeset.put_embed(changeset, :content, content)
   end
 
   def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, child_id)
@@ -179,17 +181,17 @@ defmodule ModernResume.Resume do
 
         parent
         |> get_parent_changeset(parent_key)
-        |> Ecto.Changeset.put_embed(child_key, new_children)
+        |> Changeset.put_embed(child_key, new_children)
       end)
 
     content =
       cv.content
       |> Content.changeset()
-      |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
+      |> Changeset.put_embed(parent_key, new_parent_entities)
 
     cv
     |> CV.changeset()
-    |> Ecto.Changeset.put_embed(:content, content)
+    |> Changeset.put_embed(:content, content)
     |> Repo.update()
   end
 
@@ -211,7 +213,7 @@ defmodule ModernResume.Resume do
 
           parent
           |> get_parent_changeset(parent_key)
-          |> Ecto.Changeset.put_embed(child_key, sorted_children)
+          |> Changeset.put_embed(child_key, sorted_children)
         else
           parent
         end
@@ -220,16 +222,16 @@ defmodule ModernResume.Resume do
     content =
       cv.content
       |> Content.changeset()
-      |> Ecto.Changeset.put_embed(parent_key, new_parent_entities)
+      |> Changeset.put_embed(parent_key, new_parent_entities)
 
     cv
     |> CV.changeset()
-    |> Ecto.Changeset.put_embed(:content, content)
+    |> Changeset.put_embed(:content, content)
     |> Repo.update()
   end
 
   defp get_child_changeset({:experiences, :details}),
-    do: %ExperienceDetail{} |> ExperienceDetail.changeset()
+    do: ExperienceDetail.changeset(%ExperienceDetail{})
 
   defp get_parent_changeset(exp, :experiences), do: Experience.changeset(exp)
 end

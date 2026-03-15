@@ -91,6 +91,7 @@ defmodule ModernResumeWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
       alias ModernResumeWeb.Layouts
 
       # Routes generation with the ~p sigil

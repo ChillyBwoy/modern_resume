@@ -63,6 +63,7 @@ defmodule ModernResume.MixProject do
       {:timex, "~> 3.0"},
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.10"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:modern_ui, "~> 0.1",
        git: "https://github.com/ChillyBwoy/modern_ui.git",
        ref: "eb92947dad8626121f239f4d3dfecc506ef65c0c"}

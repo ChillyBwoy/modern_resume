@@ -1,8 +1,18 @@
 defmodule ModernResume.Resume.Language do
+  @moduledoc """
+  Language section schema
+  """
   use Ecto.Schema
-  import Ecto.Changeset
+
+  alias Ecto.Changeset
 
   alias ModernResume.Validation
+
+  @type fluency_type :: :elementary | :limited | :minimum | :full | :native
+  @type t :: %__MODULE__{
+          name: String.t(),
+          fluency: fluency_type()
+        }
 
   @fluency_types [
     :elementary,
@@ -17,21 +27,19 @@ defmodule ModernResume.Resume.Language do
     field :fluency, Ecto.Enum, values: @fluency_types
   end
 
-  @doc false
-  def changeset(language \\ %__MODULE__{}, attrs \\ %{}) do
+  @spec changeset(t() | %__MODULE__{}, map()) :: Changeset.t(t())
+  def changeset(%__MODULE__{} = language, attrs \\ %{}) do
     language
-    |> cast(attrs, [:name, :fluency])
-    |> validate_required([:name, :fluency])
-    |> validate_length(:name, min: 1, max: 50)
+    |> Changeset.cast(attrs, [:name, :fluency])
+    |> Changeset.validate_required([:name, :fluency])
+    |> Changeset.validate_length(:name, min: 1, max: 50)
     |> Validation.validate_latex_chars([:name])
   end
 
-  def fluency_types do
-    Enum.map(@fluency_types, fn item ->
-      {display_fluency(item), item}
-    end)
-  end
+  @spec fluency_types :: list({String.t(), fluency_type()})
+  def fluency_types, do: Enum.map(@fluency_types, &{display_fluency(&1), &1})
 
+  @spec display_fluency(fluency_type()) :: String.t()
   def display_fluency(:elementary), do: "Elementary Proficiency"
   def display_fluency(:limited), do: "Limited Working Proficiency"
   def display_fluency(:minimum), do: "Minimum Professional Proficiency"
