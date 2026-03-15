@@ -1,4 +1,8 @@
 defmodule ModernResume.Guards do
+  @moduledoc """
+  Custom guards for the ModernResume application
+  """
+
   defguard is_uuid(value)
            when is_binary(value) and byte_size(value) == 36 and
                   binary_part(value, 1, 1) in ~w|0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F| and

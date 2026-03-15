@@ -1,4 +1,7 @@
 defmodule ModernResumeWeb.CV.ContentForm do
+  @moduledoc """
+  CV content form components
+  """
   use Phoenix.Component
 
   import ModernUI.Components.FormField

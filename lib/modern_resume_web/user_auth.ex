@@ -1,4 +1,7 @@
 defmodule ModernResumeWeb.UserAuth do
+  @moduledoc """
+  Auth module
+  """
   use ModernResumeWeb, :verified_routes
 
   import Plug.Conn

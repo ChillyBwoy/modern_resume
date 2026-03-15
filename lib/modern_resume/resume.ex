@@ -200,24 +200,10 @@ defmodule ModernResume.Resume do
     {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
     new_parent_entities =
-      parent_entities
-      |> Enum.map(fn parent ->
-        if parent.id == parent_id do
-          {:ok, children} = Map.fetch(parent, child_key)
-          children_map = Enum.map(children, &{&1.id, &1}) |> Map.new()
-
-          sorted_children =
-            Enum.map(ordered_ids, fn id ->
-              Map.fetch!(children_map, id)
-            end)
-
-          parent
-          |> get_parent_changeset(parent_key)
-          |> Changeset.put_embed(child_key, sorted_children)
-        else
-          parent
-        end
-      end)
+      Enum.map(
+        parent_entities,
+        &map_parent_entity(&1, parent_key, child_key, parent_id, ordered_ids)
+      )
 
     content =
       cv.content
@@ -228,6 +214,24 @@ defmodule ModernResume.Resume do
     |> CV.changeset()
     |> Changeset.put_embed(:content, content)
     |> Repo.update()
+  end
+
+  defp map_parent_entity(entity, parent_key, child_key, parent_id, ordered_ids) do
+    if entity.id == parent_id do
+      {:ok, children} = Map.fetch(entity, child_key)
+      children_map = Enum.map(children, &{&1.id, &1}) |> Map.new()
+
+      sorted_children =
+        Enum.map(ordered_ids, fn id ->
+          Map.fetch!(children_map, id)
+        end)
+
+      entity
+      |> get_parent_changeset(parent_key)
+      |> Changeset.put_embed(child_key, sorted_children)
+    else
+      entity
+    end
   end
 
   defp get_child_changeset({:experiences, :details}),

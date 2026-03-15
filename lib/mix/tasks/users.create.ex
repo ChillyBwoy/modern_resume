@@ -1,4 +1,10 @@
 defmodule Mix.Tasks.Users.Create do
+  @moduledoc """
+  Mix task to create a user from the CLI
+
+  Usage:
+    mix users.create <email> <pasword>
+  """
   use Mix.Task
 
   alias ModernResume.Accounts

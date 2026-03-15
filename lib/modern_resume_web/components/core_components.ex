@@ -1,4 +1,7 @@
 defmodule ModernResumeWeb.CoreComponents do
+  @moduledoc """
+  Defaul Phoenix LiveView components
+  """
   use Phoenix.Component
 
   import ModernUI.Components.Icon

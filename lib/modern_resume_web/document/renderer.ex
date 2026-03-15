@@ -49,20 +49,18 @@ defmodule ModernResumeWeb.Document.Renderer do
   end
 
   def render(%CV{} = cv, :pdf) do
-    try do
-      case get_template(cv)
-           |> Iona.source()
-           |> Iona.to(:pdf) do
-        {:ok, pdf} ->
-          {:ok, Base.encode64(pdf)}
+    case get_template(cv)
+         |> Iona.source()
+         |> Iona.to(:pdf) do
+      {:ok, pdf} ->
+        {:ok, Base.encode64(pdf)}
 
-        _ ->
-          {:error, "Error creating PDF"}
-      end
-    rescue
       _ ->
         {:error, "Error creating PDF"}
     end
+  rescue
+    _ ->
+      {:error, "Error creating PDF"}
   end
 
   def render(_, _), do: {:error, "Unsupported format or CV"}

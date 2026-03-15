@@ -1,24 +1,27 @@
 defmodule ModernResume.Validation do
-  import Ecto.Changeset
+  @moduledoc """
+  Validation functions
+  """
+  alias Ecto.Changeset
 
   @latex_allowed_char ~r/[\s\d\w\@\+\-_\.,'"\(\)\{\}\&\%\^\|\~\#\/\\]/ui
   @latex_allowed_string ~r/^[\s\d\w\@\+\-_\.,'"\(\)\{\}\&\%\^\|\~\#\/\\]+$/ui
 
-  def validate_latex_chars(%Ecto.Changeset{valid?: false} = changeset, fields)
+  def validate_latex_chars(%Changeset{valid?: false} = changeset, fields)
       when is_list(fields) do
     changeset
   end
 
-  def validate_latex_chars(%Ecto.Changeset{} = changeset, fields) when is_list(fields) do
+  def validate_latex_chars(%Changeset{} = changeset, fields) when is_list(fields) do
     Enum.reduce(fields, changeset, fn field, ch ->
-      case get_field(ch, field) |> validate_latex_field() do
+      case Changeset.get_field(ch, field) |> validate_latex_field() do
         {:ok, _} ->
           ch
 
         {:error, invalid_chars} ->
           msg = "Invalid chars: #{Enum.join(invalid_chars, ", ")}"
 
-          add_error(ch, field, msg)
+          Changeset.add_error(ch, field, msg)
       end
     end)
   end

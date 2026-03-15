@@ -1,4 +1,8 @@
 defmodule ModernResumeWeb.CV.LatexPreview do
+  @moduledoc """
+  CV LaTeX preview component
+  """
+
   use Phoenix.Component
 
   import ModernUI.Components.Icon
