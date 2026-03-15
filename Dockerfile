@@ -11,8 +11,8 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.18.3-erlang-27.3-debian-bullseye-20250317-slim
 #
-ARG ELIXIR_VERSION="1.18.3"
-ARG OTP_VERSION="27.3"
+ARG ELIXIR_VERSION="1.19.5"
+ARG OTP_VERSION="28.4.1"
 ARG DEBIAN_VERSION="bullseye-20250317-slim"
 ARG NODEJS_VERSION="22.17-bullseye"
 ARG RUST_VERSION="1.88-bullseye"
