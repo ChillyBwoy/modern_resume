@@ -12,8 +12,8 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   alias ModernResume.Resume
   alias ModernResume.Resume.CV
-  alias ModernResumeWeb.Document.RenderWorker
   alias ModernResumeWeb.Document.RenderState
+  alias ModernResumeWeb.Document.RenderWorker
   alias ModernResumeWeb.Formatters
 
   @allowed_tabs ~w(personal skills experiences educations social_networks languages settings)
@@ -21,15 +21,13 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   @impl true
   def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
-    if connected?(socket) do
-      RenderWorker.subscribe()
-    end
-
     user = socket.assigns.current_user
 
     case Resume.get_cv_for(user, id) do
       %CV{} = cv ->
         initial_state = RenderState.init() |> RenderState.content_type(:str)
+
+        RenderWorker.subscribe(cv)
 
         {:ok,
          socket
@@ -46,6 +44,13 @@ defmodule ModernResumeWeb.CVLive.Show do
          |> put_flash(:error, "CV not found")
          |> redirect(to: ~p"/")}
     end
+  end
+
+  @impl true
+  def terminate(_, socket) do
+    cv = socket.assigns.cv
+    RenderWorker.unsubscribe(cv)
+    :normal
   end
 
   @impl true
@@ -97,27 +102,27 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   @impl true
   def handle_event("skills:" <> action, params, socket) do
-    {:noreply, socket |> dispatch_entity(action, :skills, params)}
+    {:noreply, dispatch_entity(socket, action, :skills, params)}
   end
 
   @impl true
   def handle_event("educations:" <> action, params, socket) do
-    {:noreply, socket |> dispatch_entity(action, :educations, params)}
+    {:noreply, dispatch_entity(socket, action, :educations, params)}
   end
 
   @impl true
   def handle_event("languages:" <> action, params, socket) do
-    {:noreply, socket |> dispatch_entity(action, :languages, params)}
+    {:noreply, dispatch_entity(socket, action, :languages, params)}
   end
 
   @impl true
   def handle_event("experiences:" <> action, params, socket) do
-    {:noreply, socket |> dispatch_entity(action, :experiences, params)}
+    {:noreply, dispatch_entity(socket, action, :experiences, params)}
   end
 
   @impl true
   def handle_event("social_networks:" <> action, params, socket) do
-    {:noreply, socket |> dispatch_entity(action, :social_networks, params)}
+    {:noreply, dispatch_entity(socket, action, :social_networks, params)}
   end
 
   @impl true
@@ -125,7 +130,9 @@ defmodule ModernResumeWeb.CVLive.Show do
     {:noreply,
      socket
      |> update(:form, fn %{source: changeset} ->
-       changeset |> Resume.add_nested_entity({:experiences, :details}, parent_id) |> to_form()
+       changeset
+       |> Resume.add_nested_entity({:experiences, :details}, parent_id)
+       |> to_form()
      end)}
   end
 
@@ -136,13 +143,11 @@ defmodule ModernResumeWeb.CVLive.Show do
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: CV.changeset(cv, %{}) |> to_form())
+         |> assign(form: CV.changeset(cv) |> to_form())
          |> render_cv(cv)}
 
       {:error, changeset} ->
-        {:noreply,
-         socket
-         |> assign(form: changeset |> to_form())}
+        {:noreply, assign(socket, form: changeset |> to_form())}
     end
   end
 
@@ -168,7 +173,7 @@ defmodule ModernResumeWeb.CVLive.Show do
          |> render_cv(cv)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(form: to_form(changeset))}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -182,7 +187,7 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   @impl true
   def handle_event("toggle:fullscreen", _, socket) do
-    {:noreply, socket |> assign(fullscreen: not socket.assigns.fullscreen)}
+    {:noreply, assign(socket, fullscreen: not socket.assigns.fullscreen)}
   end
 
   @impl true
@@ -201,8 +206,7 @@ defmodule ModernResumeWeb.CVLive.Show do
         |> render_cv(cv)
 
       {:error, changeset} ->
-        socket
-        |> assign(form: changeset |> to_form())
+        assign(socket, form: changeset |> to_form())
     end
   end
 
@@ -215,8 +219,7 @@ defmodule ModernResumeWeb.CVLive.Show do
         |> render_cv(cv)
 
       {:error, changeset} ->
-        socket
-        |> assign(form: changeset |> to_form())
+        assign(socket, form: changeset |> to_form())
     end
   end
 
@@ -231,10 +234,10 @@ defmodule ModernResumeWeb.CVLive.Show do
         |> render_cv(cv)
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        socket |> assign(form: to_form(changeset))
+        assign(socket, form: to_form(changeset))
 
       {:error, _} ->
-        socket |> put_flash(:error, "Unknown error")
+        put_flash(socket, :error, "Unknown error")
     end
   end
 
@@ -248,7 +251,7 @@ defmodule ModernResumeWeb.CVLive.Show do
       strategy: :one_for_one
     )
 
-    socket |> assign(state: RenderState.loading(socket.assigns.state))
+    assign(socket, state: RenderState.loading(socket.assigns.state))
   end
 
   @impl true

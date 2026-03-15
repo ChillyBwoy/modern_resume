@@ -1,4 +1,7 @@
 defmodule ModernResume.Accounts.UserNotifier do
+  @moduledoc """
+  User Notifier for sending emails to users
+  """
   import Swoosh.Email
 
   alias ModernResume.Mailer

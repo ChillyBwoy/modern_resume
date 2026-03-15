@@ -1,8 +1,15 @@
 defmodule ModernResumeWeb.Document.Template do
+  @moduledoc """
+  TeX Document template
+  """
+
+  @type t :: %__MODULE__{
+          name: atom(),
+          content: Macro.t()
+        }
+
   @enforce_keys [:name, :content]
   defstruct [:name, :content]
-
-  alias ModernResumeWeb.Document.Template
 
   # Collection of templates: https://www.overleaf.com/latex/templates/tagged/cv/page/2
 
@@ -105,10 +112,11 @@ defmodule ModernResumeWeb.Document.Template do
     \\end{document}
     """
 
-    %Template{name: :moderncv, content: content |> EEx.compile_string()}
+    %__MODULE__{name: :moderncv, content: content |> EEx.compile_string()}
   end
 
-  def eval(%Template{content: content}, assigns) do
+  @spec eval(t() | %__MODULE__{}, keyword()) :: String.t()
+  def eval(%__MODULE__{content: content}, assigns) do
     with {tpl, _} <- Code.eval_quoted(content, assigns: assigns) do
       tpl
       |> String.replace(~r/\\\\/, "\\")

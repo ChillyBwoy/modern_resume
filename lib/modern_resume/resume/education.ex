@@ -1,9 +1,24 @@
 defmodule ModernResume.Resume.Education do
+  @moduledoc """
+  Education section schema
+  """
   use Ecto.Schema
 
-  import Ecto.Changeset
+  alias Ecto.Changeset
 
   alias ModernResume.Validation
+
+  @type t :: %__MODULE__{
+          degree: String.t() | nil,
+          description: String.t() | nil,
+          field_of_study: String.t() | nil,
+          institution: String.t(),
+          location: String.t() | nil,
+          date_start_year: integer(),
+          date_start_month: integer(),
+          date_end_year: integer() | nil,
+          date_end_month: integer() | nil
+        }
 
   embedded_schema do
     field :degree, :string
@@ -17,12 +32,10 @@ defmodule ModernResume.Resume.Education do
     field :date_end_month, :integer
   end
 
-  alias ModernResume.Resume.Education
-
-  @doc false
-  def changeset(%Education{} = education, attrs \\ %{}) do
+  @spec changeset(t() | %__MODULE__{}, map()) :: Changeset.t(t())
+  def changeset(%__MODULE__{} = education, attrs \\ %{}) do
     education
-    |> cast(attrs, [
+    |> Changeset.cast(attrs, [
       :institution,
       :location,
       :degree,
@@ -33,12 +46,12 @@ defmodule ModernResume.Resume.Education do
       :date_end_year,
       :date_end_month
     ])
-    |> validate_required([:institution, :date_start_year, :date_start_month])
-    |> validate_length(:degree, max: 100)
-    |> validate_length(:institution, max: 100)
-    |> validate_length(:location, max: 100)
-    |> validate_length(:field_of_study, max: 100)
-    |> validate_length(:description, max: 1000)
+    |> Changeset.validate_required([:institution, :date_start_year, :date_start_month])
+    |> Changeset.validate_length(:degree, max: 100)
+    |> Changeset.validate_length(:institution, max: 100)
+    |> Changeset.validate_length(:location, max: 100)
+    |> Changeset.validate_length(:field_of_study, max: 100)
+    |> Changeset.validate_length(:description, max: 1000)
     |> Validation.validate_latex_chars([
       :institution,
       :location,

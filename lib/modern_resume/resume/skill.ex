@@ -1,9 +1,18 @@
 defmodule ModernResume.Resume.Skill do
+  @moduledoc """
+  Skill section schema
+  """
   use Ecto.Schema
-  import Ecto.Changeset
+
+  alias Ecto.Changeset
 
   alias ModernResume.Validation
-  alias ModernResume.Resume.Skill
+
+  @type t :: %__MODULE__{
+          header: String.t() | nil,
+          title: String.t(),
+          description: String.t()
+        }
 
   embedded_schema do
     field :header, :string
@@ -11,14 +20,14 @@ defmodule ModernResume.Resume.Skill do
     field :description, :string
   end
 
-  @doc false
-  def changeset(%Skill{} = skill, attrs \\ %{}) do
+  @spec changeset(t() | %__MODULE__{}, map()) :: Changeset.t(t())
+  def changeset(%__MODULE__{} = skill, attrs \\ %{}) do
     skill
-    |> cast(attrs, [:header, :title, :description])
-    |> validate_required([:title, :description])
-    |> validate_length(:header, max: 100)
-    |> validate_length(:title, max: 100)
-    |> validate_length(:description, max: 500)
+    |> Changeset.cast(attrs, [:header, :title, :description])
+    |> Changeset.validate_required([:title, :description])
+    |> Changeset.validate_length(:header, max: 100)
+    |> Changeset.validate_length(:title, max: 100)
+    |> Changeset.validate_length(:description, max: 500)
     |> Validation.validate_latex_chars([:header, :title, :description])
   end
 end

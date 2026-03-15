@@ -1,10 +1,12 @@
 defmodule ModernResumeWeb.UserAuthTest do
   use ModernResumeWeb.ConnCase, async: true
 
+  import ModernResume.AccountsFixtures
+
   alias Phoenix.LiveView
+
   alias ModernResume.Accounts
   alias ModernResumeWeb.UserAuth
-  import ModernResume.AccountsFixtures
 
   @remember_me_cookie "_modern_resume_web_user_remember_me"
 

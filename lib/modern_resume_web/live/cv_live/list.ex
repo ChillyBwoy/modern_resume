@@ -81,12 +81,13 @@ defmodule ModernResumeWeb.CVLive.List do
     user = socket.assigns.current_user
     payload = Map.put(params, "user_id", user.id)
 
-    with {:ok, %CV{} = cv} <- Resume.create_cv(payload) do
-      {:noreply,
-       socket
-       |> put_flash(:info, "CV created successfully.")
-       |> redirect(to: ~p"/cvs/#{cv.id}", replace: true)}
-    else
+    case Resume.create_cv(payload) do
+      {:ok, %CV{} = cv} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "CV created successfully.")
+         |> redirect(to: ~p"/cvs/#{cv.id}", replace: true)}
+
       {:error, changeset} ->
         {:noreply, socket |> assign(create_form: to_form(changeset))}
     end

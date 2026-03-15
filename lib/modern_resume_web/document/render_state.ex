@@ -1,4 +1,18 @@
 defmodule ModernResumeWeb.Document.RenderState do
+  @moduledoc """
+  Document render state
+  """
+
+  @type status :: :idle | :loading | :success | :error
+
+  @type t :: %__MODULE__{
+          status: status(),
+          content_pdf: String.t() | nil,
+          content_str: String.t() | nil,
+          content_type: :pdf | :str | nil,
+          error: String.t() | nil
+        }
+
   @enforce_keys [:status, :content_pdf, :content_str, :content_type, :error]
   defstruct [
     :status,
@@ -8,24 +22,22 @@ defmodule ModernResumeWeb.Document.RenderState do
     :error
   ]
 
-  alias ModernResumeWeb.Document.RenderState
-
-  def init() do
-    %RenderState{status: :idle, content_pdf: nil, content_str: nil, content_type: nil, error: nil}
+  def init do
+    %__MODULE__{status: :idle, content_pdf: nil, content_str: nil, content_type: nil, error: nil}
   end
 
-  def loading(%RenderState{} = state) do
-    %RenderState{state | status: :loading, error: nil}
+  def loading(%__MODULE__{} = state) do
+    %__MODULE__{state | status: :loading, error: nil}
   end
 
-  def error(%RenderState{} = state, msg) when is_binary(msg) do
-    %RenderState{state | status: :error, error: msg}
+  def error(%__MODULE__{} = state, msg) when is_binary(msg) do
+    %__MODULE__{state | status: :error, error: msg}
   end
 
-  def success(%RenderState{} = state, type, content) when is_atom(type) and is_binary(content) do
+  def success(%__MODULE__{} = state, type, content) when is_atom(type) and is_binary(content) do
     case type do
       :pdf ->
-        %RenderState{
+        %__MODULE__{
           state
           | status: :success,
             content_pdf: content,
@@ -33,7 +45,7 @@ defmodule ModernResumeWeb.Document.RenderState do
         }
 
       :str ->
-        %RenderState{
+        %__MODULE__{
           state
           | status: :success,
             content_str: content,
@@ -46,16 +58,16 @@ defmodule ModernResumeWeb.Document.RenderState do
     raise "Invalid type"
   end
 
-  def content_type(%RenderState{} = state, :str), do: %RenderState{state | content_type: :str}
-  def content_type(%RenderState{} = state, :pdf), do: %RenderState{state | content_type: :pdf}
+  def content_type(%__MODULE__{} = state, :str), do: %__MODULE__{state | content_type: :str}
+  def content_type(%__MODULE__{} = state, :pdf), do: %__MODULE__{state | content_type: :pdf}
   def content_type(_, _), do: raise("Invalid content type")
 
-  def toggle_content_type(%RenderState{content_type: :pdf} = state) do
-    %RenderState{state | content_type: :str}
+  def toggle_content_type(%__MODULE__{content_type: :pdf} = state) do
+    %__MODULE__{state | content_type: :str}
   end
 
-  def toggle_content_type(%RenderState{content_type: :str} = state) do
-    %RenderState{state | content_type: :pdf}
+  def toggle_content_type(%__MODULE__{content_type: :str} = state) do
+    %__MODULE__{state | content_type: :pdf}
   end
 
   def toggle_content_type(_), do: raise("Toggle invalid content type")

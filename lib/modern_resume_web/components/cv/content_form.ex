@@ -1,4 +1,7 @@
 defmodule ModernResumeWeb.CV.ContentForm do
+  @moduledoc """
+  CV content form components
+  """
   use Phoenix.Component
 
   import ModernUI.Components.FormField
@@ -7,8 +10,8 @@ defmodule ModernResumeWeb.CV.ContentForm do
 
   alias Phoenix.LiveView.JS
 
-  alias ModernResume.Resume.Language
   alias ModernResume.Resume.Experience
+  alias ModernResume.Resume.Language
   alias ModernResume.Resume.Settings
   alias ModernResume.Resume.SocialNetwork
 
@@ -589,7 +592,7 @@ defmodule ModernResumeWeb.CV.ContentForm do
             <.input
               type="select"
               field={field}
-              options={SocialNetwork.platform_choices()}
+              options={SocialNetwork.platform_options()}
             />
           </:content>
         </.form_field>

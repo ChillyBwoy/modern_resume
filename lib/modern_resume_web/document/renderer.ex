@@ -1,4 +1,9 @@
 defmodule ModernResumeWeb.Document.Renderer do
+  @moduledoc """
+  Document renderer module
+   - Renders CV to LaTeX string or PDF
+   - Uses Iona for LaTeX rendering and PDF generation
+  """
   alias ModernResume.Resume.CV
   alias ModernResume.Resume.Experience
   alias ModernResume.Resume.Language
@@ -26,7 +31,8 @@ defmodule ModernResumeWeb.Document.Renderer do
   # https://tex.stackexchange.com/questions/15516/how-to-write-japanese-with-latex
 
   defp get_template(%CV{} = cv) do
-    Template.new(:moderncv)
+    :moderncv
+    |> Template.new()
     |> Template.eval(
       cv: cv.content,
       str: &str/1,
@@ -43,20 +49,18 @@ defmodule ModernResumeWeb.Document.Renderer do
   end
 
   def render(%CV{} = cv, :pdf) do
-    try do
-      case get_template(cv)
-           |> Iona.source()
-           |> Iona.to(:pdf) do
-        {:ok, pdf} ->
-          {:ok, Base.encode64(pdf)}
+    case get_template(cv)
+         |> Iona.source()
+         |> Iona.to(:pdf) do
+      {:ok, pdf} ->
+        {:ok, Base.encode64(pdf)}
 
-        _ ->
-          {:error, "Error creating PDF"}
-      end
-    rescue
       _ ->
         {:error, "Error creating PDF"}
     end
+  rescue
+    _ ->
+      {:error, "Error creating PDF"}
   end
 
   def render(_, _), do: {:error, "Unsupported format or CV"}

@@ -1,6 +1,48 @@
 defmodule ModernResume.Resume.SocialNetwork do
+  @moduledoc """
+  Social network section schema
+  """
   use Ecto.Schema
-  import Ecto.Changeset
+
+  alias Ecto.Changeset
+
+  @type platform ::
+          :github
+          | :linkedin
+          | :gitlab
+          | :arxiv
+          | :battlenet
+          | :mastodon
+          | :bitbucket
+          | :googlescholar
+          | :matrix
+          | :codeberg
+          | :inspire
+          | :orcid
+          | :discord
+          | :instagram
+          | :researcherid
+          | :researchgate
+          | :signal
+          | :skype
+          | :playstation
+          | :soundcloud
+          | :stackoverflow
+          | :tiktok
+          | :steam
+          | :telegram
+          | :twitch
+          | :twitter
+          | :whatsapp
+          | :xbox
+          | :xing
+          | :youtube
+
+  @type t :: %__MODULE__{
+          platform: platform(),
+          content: String.t(),
+          alias: String.t() | nil
+        }
 
   @platforms [
     :github,
@@ -41,17 +83,15 @@ defmodule ModernResume.Resume.SocialNetwork do
     field :alias, :string
   end
 
-  def changeset(network \\ %__MODULE__{}, attrs \\ %{}) do
-    network
-    |> cast(attrs, [:platform, :content, :alias])
-    |> validate_required([:platform, :content])
-    |> validate_length(:content, max: 100)
-    |> validate_length(:alias, max: 100)
+  @spec changeset(t() | %__MODULE__{}, map()) :: Changeset.t(t())
+  def changeset(%__MODULE__{} = social_network, attrs \\ %{}) do
+    social_network
+    |> Changeset.cast(attrs, [:platform, :content, :alias])
+    |> Changeset.validate_required([:platform, :content])
+    |> Changeset.validate_length(:content, max: 100)
+    |> Changeset.validate_length(:alias, max: 100)
   end
 
-  def platform_choices do
-    Enum.map(@platforms, fn item ->
-      {item, item}
-    end)
-  end
+  @spec platform_options() :: list({String.t(), platform()})
+  def platform_options, do: Enum.map(@platforms, &{"#{&1}", &1})
 end

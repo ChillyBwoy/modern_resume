@@ -6,7 +6,7 @@ defmodule ModernResume.Accounts do
   import Ecto.Query, warn: false
   alias ModernResume.Repo
 
-  alias ModernResume.Accounts.{User, UserToken, UserNotifier}
+  alias ModernResume.Accounts.{User, UserNotifier, UserToken}
 
   ## Database getters
 
