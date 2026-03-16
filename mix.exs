@@ -11,7 +11,12 @@ defmodule ModernResume.MixProject do
       aliases: aliases(),
       deps: deps(Mix.env()),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      dialyzer: [
+        plt_add_apps: [:mix],
+        plt_local_path: "priv/plts",
+        flags: [:missing_return, :extra_return, :no_opaque]
+      ]
     ]
   end
 
@@ -64,6 +69,7 @@ defmodule ModernResume.MixProject do
       {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.10"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:modern_ui, "~> 0.1",
        git: "https://github.com/ChillyBwoy/modern_ui.git",
        ref: "eb92947dad8626121f239f4d3dfecc506ef65c0c"}
@@ -106,7 +112,12 @@ defmodule ModernResume.MixProject do
         "esbuild modern_resume --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"],
+      check: [
+        "format --check-formatted",
+        "credo --strict",
+        "dialyzer"
+      ]
     ]
   end
 end
