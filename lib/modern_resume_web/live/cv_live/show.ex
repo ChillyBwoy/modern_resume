@@ -29,11 +29,13 @@ defmodule ModernResumeWeb.CVLive.Show do
 
         RenderWorker.subscribe(cv)
 
+        form = cv |> CV.changeset() |> to_form()
+
         {:ok,
          socket
          |> assign(cv: cv)
          |> assign(state: initial_state)
-         |> assign(form: CV.changeset(cv) |> to_form())
+         |> assign(form: form)
          |> assign(fullscreen: false)
          |> assign(page_title: cv.title)
          |> render_cv(cv)}
@@ -81,10 +83,12 @@ defmodule ModernResumeWeb.CVLive.Show do
   def handle_event("cv:save", %{"cv" => attrs}, socket) do
     case Resume.update_cv(socket.assigns.cv, attrs) do
       {:ok, %CV{} = cv} ->
+        form = cv |> CV.changeset() |> to_form()
+
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: CV.changeset(cv) |> to_form())
+         |> assign(form: form)
          |> render_cv(cv)}
 
       {:error, changeset} ->
@@ -132,10 +136,12 @@ defmodule ModernResumeWeb.CVLive.Show do
   def handle_event("experience_details:delete", %{"id" => id}, socket) do
     case Resume.delete_nested_entity(socket.assigns.cv, {:experiences, :details}, id) do
       {:ok, cv} ->
+        form = cv |> CV.changeset() |> to_form()
+
         {:noreply,
          socket
          |> assign(cv: cv)
-         |> assign(form: CV.changeset(cv) |> to_form())
+         |> assign(form: form)
          |> render_cv(cv)}
 
       {:error, changeset} ->
@@ -156,7 +162,7 @@ defmodule ModernResumeWeb.CVLive.Show do
            ordered_ids
          ) do
       {:ok, cv} ->
-        form = CV.changeset(cv) |> to_form()
+        form = cv |> CV.changeset() |> to_form()
 
         {:noreply,
          socket
@@ -190,9 +196,11 @@ defmodule ModernResumeWeb.CVLive.Show do
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
     case Resume.add_entity(socket.assigns.cv, key) do
       {:ok, cv} ->
+        form = cv |> CV.changeset() |> to_form()
+
         socket
         |> assign(cv: cv)
-        |> assign(form: CV.changeset(cv) |> to_form())
+        |> assign(form: form)
         |> render_cv(cv)
 
       {:error, changeset} ->
@@ -203,9 +211,11 @@ defmodule ModernResumeWeb.CVLive.Show do
   defp dispatch_entity(socket, "delete", key, %{"id" => id}) when is_atom(key) do
     case Resume.delete_entity(socket.assigns.cv, key, id) do
       {:ok, cv} ->
+        form = cv |> CV.changeset() |> to_form()
+
         socket
         |> assign(cv: cv)
-        |> assign(form: CV.changeset(cv) |> to_form())
+        |> assign(form: form)
         |> render_cv(cv)
 
       {:error, changeset} ->

@@ -370,7 +370,8 @@ defmodule ModernResume.Accounts do
   end
 
   defp random_password(size \\ 32) do
-    :crypto.strong_rand_bytes(size)
+    size
+    |> :crypto.strong_rand_bytes()
     |> Base.encode64()
     |> binary_part(0, size)
   end

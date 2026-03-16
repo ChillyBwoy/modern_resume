@@ -18,7 +18,8 @@ defmodule ModernResumeWeb.CV.ContentForm do
   defp get_date_options(:year) do
     year = Date.utc_today().year
 
-    Range.new(year, year - 100, -1)
+    year
+    |> Range.new(year - 100, -1)
     |> Enum.map(&{"#{&1}", "#{&1}"})
   end
 

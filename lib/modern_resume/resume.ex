@@ -40,20 +40,21 @@ defmodule ModernResume.Resume do
     from(cv in CV, where: cv.user_id == ^user.id) |> Repo.get(cv_id)
   end
 
-  @spec create_cv(map) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_cv(map) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def create_cv(attrs \\ %{}) do
     %CV{}
     |> CV.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec update_cv(CV.t(), map) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec update_cv(CV.t(), map) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def update_cv(%CV{} = cv, attrs) do
     cv
     |> CV.changeset(attrs)
     |> Repo.update()
   end
 
+  @spec update_cv(Changeset.t()) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def update_cv(%Changeset{} = changeset) do
     Repo.update(changeset)
   end
@@ -86,8 +87,8 @@ defmodule ModernResume.Resume do
     end
   end
 
-  @spec add_entity(CV.t(), atom(), Ecto.Changeset.t()) ::
-          {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec add_entity(CV.t(), atom(), Changeset.t()) ::
+          {:ok, CV.t()} | {:error, Changeset.t()}
   def add_entity(%CV{} = cv, key, new_entity) when is_atom(key) do
     changeset = CV.changeset(cv)
 
@@ -100,7 +101,7 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  @spec add_entity(CV.t(), atom) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec add_entity(CV.t(), atom) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def add_entity(%CV{} = cv, :skills),
     do: add_entity(cv, :skills, Skill.changeset(%Skill{}))
 
@@ -118,7 +119,7 @@ defmodule ModernResume.Resume do
 
   def add_entity(_, _), do: raise("Can not add an invalid entity")
 
-  @spec sort_entities(CV.t(), atom(), [UUID.t()]) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec sort_entities(CV.t(), atom(), [UUID.t()]) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def sort_entities(%CV{} = cv, key, ordered_ids) when is_atom(key) and is_list(ordered_ids) do
     {:ok, entities} = Map.fetch(cv.content, key)
 
@@ -140,7 +141,7 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  @spec delete_entity(CV.t(), atom(), UUID.t()) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+  @spec delete_entity(CV.t(), atom(), UUID.t()) :: {:ok, CV.t()} | {:error, Changeset.t()}
   def delete_entity(%CV{} = cv, key, id) when is_atom(key) do
     {:ok, entities} = Map.fetch(cv.content, key)
     new_entities = Enum.filter(entities, &(&1.id != id))
@@ -156,13 +157,14 @@ defmodule ModernResume.Resume do
     |> Repo.update()
   end
 
-  @spec add_nested_entity(Ecto.Changeset.t(), {atom(), atom()}, UUID.t()) :: Ecto.Changeset.t()
+  @spec add_nested_entity(Changeset.t(), {atom(), atom()}, UUID.t()) :: Changeset.t()
   def add_nested_entity(%Changeset{} = changeset, {parent_key, child_key}, parent_id) do
     content = Changeset.get_embed(changeset, :content)
     new_entity = get_child_changeset({parent_key, child_key})
 
     entities =
-      Changeset.get_embed(content, parent_key)
+      content
+      |> Changeset.get_embed(parent_key)
       |> Enum.map(fn entity ->
         if entity.data.id == parent_id do
           target_list = Changeset.get_embed(entity, child_key)
@@ -177,7 +179,7 @@ defmodule ModernResume.Resume do
   end
 
   @spec delete_nested_entity(CV.t(), {atom(), atom()}, UUID.t()) ::
-          {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+          {:ok, CV.t()} | {:error, Changeset.t()}
   def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, child_id) do
     {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
@@ -204,7 +206,7 @@ defmodule ModernResume.Resume do
   end
 
   @spec sort_nested_entities(CV.t(), {atom(), atom()}, UUID.t(), [UUID.t()]) ::
-          {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
+          {:ok, CV.t()} | {:error, Changeset.t()}
   def sort_nested_entities(%CV{} = cv, {parent_key, child_key}, parent_id, ordered_ids)
       when is_list(ordered_ids) do
     {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
@@ -229,7 +231,7 @@ defmodule ModernResume.Resume do
   defp map_parent_entity(entity, parent_key, child_key, parent_id, ordered_ids) do
     if entity.id == parent_id do
       {:ok, children} = Map.fetch(entity, child_key)
-      children_map = Enum.map(children, &{&1.id, &1}) |> Map.new()
+      children_map = children |> Enum.map(&{&1.id, &1}) |> Map.new()
 
       sorted_children =
         Enum.map(ordered_ids, fn id ->

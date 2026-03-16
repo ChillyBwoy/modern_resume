@@ -16,10 +16,12 @@ defmodule ModernResumeWeb.CVLive.List do
   def mount(params, _session, socket) do
     user = socket.assigns.current_user
 
+    form = %CV{} |> CV.changeset(%{email: user.email}) |> to_form()
+
     {:ok,
      socket
      |> assign(cvs: Resume.list_cvs_for(user))
-     |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())
+     |> assign(create_form: form)
      |> assign_cv_operation(params)}
   end
 
