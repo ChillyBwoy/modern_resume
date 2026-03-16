@@ -52,8 +52,6 @@ defmodule ModernResumeWeb do
     quote do
       use Phoenix.LiveView, container: {:div, class: "h-full block"}
 
-      import ModernResume.Guards
-
       unquote(html_helpers())
     end
   end

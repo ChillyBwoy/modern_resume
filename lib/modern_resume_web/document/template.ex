@@ -13,6 +13,7 @@ defmodule ModernResumeWeb.Document.Template do
 
   # Collection of templates: https://www.overleaf.com/latex/templates/tagged/cv/page/2
 
+  @spec new(:moderncv) :: t()
   def new(:moderncv) do
     content = """
     \\documentclass[<%= @cv.settings.font_family %>,<%= @font_size.(@cv.settings.font_size) %>]{moderncv}
@@ -112,15 +113,15 @@ defmodule ModernResumeWeb.Document.Template do
     \\end{document}
     """
 
-    %__MODULE__{name: :moderncv, content: content |> EEx.compile_string()}
+    %__MODULE__{name: :moderncv, content: EEx.compile_string(content)}
   end
 
   @spec eval(t() | %__MODULE__{}, keyword()) :: String.t()
   def eval(%__MODULE__{content: content}, assigns) do
-    with {tpl, _} <- Code.eval_quoted(content, assigns: assigns) do
-      tpl
-      |> String.replace(~r/\\\\/, "\\")
-      |> String.replace(~r/\n\n\n/, "\n")
-    end
+    {tpl, _} = Code.eval_quoted(content, assigns: assigns)
+
+    tpl
+    |> String.replace(~r/\\\\/, "\\")
+    |> String.replace(~r/\n\n\n/, "\n")
   end
 end

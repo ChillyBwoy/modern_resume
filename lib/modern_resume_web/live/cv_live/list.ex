@@ -16,25 +16,27 @@ defmodule ModernResumeWeb.CVLive.List do
   def mount(params, _session, socket) do
     user = socket.assigns.current_user
 
+    form = %CV{} |> CV.changeset(%{email: user.email}) |> to_form()
+
     {:ok,
      socket
      |> assign(cvs: Resume.list_cvs_for(user))
-     |> assign(create_form: CV.changeset(%CV{}, %{email: user.email}) |> to_form())
+     |> assign(create_form: form)
      |> assign_cv_operation(params)}
   end
 
   defp assign_cv_operation(socket, params) do
     case Map.fetch(params, "cv_id") do
       {:ok, cv_id} ->
-        socket |> assign(cv_id: cv_id)
+        assign(socket, cv_id: cv_id)
 
       _ ->
-        socket |> assign(cv_id: nil)
+        assign(socket, cv_id: nil)
     end
   end
 
   @impl true
-  def handle_event("delete", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
+  def handle_event("delete", %{"id" => cv_id}, socket) do
     case Resume.delete_cv(socket.assigns.current_user, cv_id) do
       {:ok, _} ->
         {:noreply,
@@ -51,7 +53,7 @@ defmodule ModernResumeWeb.CVLive.List do
   end
 
   @impl true
-  def handle_event("duplicate", %{"id" => cv_id}, socket) when is_uuid(cv_id) do
+  def handle_event("duplicate", %{"id" => cv_id}, socket) do
     case Resume.duplicate_cv(socket.assigns.current_user, cv_id) do
       {:ok, %CV{} = new_cv} ->
         {:noreply,
@@ -69,11 +71,12 @@ defmodule ModernResumeWeb.CVLive.List do
 
   @impl true
   def handle_event("validate", %{"cv" => params}, socket) do
-    changeset = CV.changeset(%CV{}, params) |> Map.put(:action, :validate)
+    changeset =
+      %CV{}
+      |> CV.changeset(params)
+      |> Map.put(:action, :validate)
 
-    {:noreply,
-     socket
-     |> assign(:form, to_form(changeset))}
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   @impl true
@@ -89,7 +92,7 @@ defmodule ModernResumeWeb.CVLive.List do
          |> redirect(to: ~p"/cvs/#{cv.id}", replace: true)}
 
       {:error, changeset} ->
-        {:noreply, socket |> assign(create_form: to_form(changeset))}
+        {:noreply, assign(socket, create_form: to_form(changeset))}
     end
   end
 
