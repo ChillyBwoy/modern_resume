@@ -2,10 +2,7 @@ defmodule ModernResume.Resume do
   @moduledoc """
   The Resume context.
   """
-  import ModernResume.Guards
-
   import Ecto.Query, warn: false
-  import ModernResume.Guards
 
   alias Ecto.Changeset
   alias Ecto.UUID
@@ -34,12 +31,12 @@ defmodule ModernResume.Resume do
   end
 
   @spec get_cv(UUID.t()) :: CV.t() | nil
-  def get_cv(id) when is_uuid(id) do
+  def get_cv(id) do
     Repo.get(CV, id)
   end
 
   @spec get_cv_for(User.t(), UUID.t()) :: CV.t() | nil
-  def get_cv_for(%User{} = user, cv_id) when is_uuid(cv_id) do
+  def get_cv_for(%User{} = user, cv_id) do
     from(cv in CV, where: cv.user_id == ^user.id) |> Repo.get(cv_id)
   end
 
@@ -62,7 +59,7 @@ defmodule ModernResume.Resume do
   end
 
   @spec delete_cv(User.t(), UUID.t()) :: {:ok, CV.t()} | {:error, :not_found}
-  def delete_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
+  def delete_cv(%User{} = user, cv_id) do
     case get_cv_for(user, cv_id) do
       %CV{} = cv ->
         Repo.delete(cv)
@@ -73,7 +70,7 @@ defmodule ModernResume.Resume do
   end
 
   @spec duplicate_cv(User.t(), UUID.t()) :: {:ok, CV.t()} | {:error, :not_found}
-  def duplicate_cv(%User{} = user, cv_id) when is_uuid(cv_id) do
+  def duplicate_cv(%User{} = user, cv_id) do
     case get_cv_for(user, cv_id) do
       %CV{} = cv ->
         %CV{}
@@ -125,7 +122,11 @@ defmodule ModernResume.Resume do
   def sort_entities(%CV{} = cv, key, ordered_ids) when is_atom(key) and is_list(ordered_ids) do
     {:ok, entities} = Map.fetch(cv.content, key)
 
-    entities_map = entities |> Enum.map(&{&1.id, &1}) |> Map.new()
+    entities_map =
+      entities
+      |> Enum.map(&{&1.id, &1})
+      |> Map.new()
+
     new_entities = Enum.map(ordered_ids, &Map.fetch!(entities_map, &1))
 
     content =
@@ -140,7 +141,7 @@ defmodule ModernResume.Resume do
   end
 
   @spec delete_entity(CV.t(), atom(), UUID.t()) :: {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
-  def delete_entity(%CV{} = cv, key, id) when is_atom(key) and is_uuid(id) do
+  def delete_entity(%CV{} = cv, key, id) when is_atom(key) do
     {:ok, entities} = Map.fetch(cv.content, key)
     new_entities = Enum.filter(entities, &(&1.id != id))
 
@@ -177,8 +178,7 @@ defmodule ModernResume.Resume do
 
   @spec delete_nested_entity(CV.t(), {atom(), atom()}, UUID.t()) ::
           {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
-  def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, child_id)
-      when is_uuid(child_id) do
+  def delete_nested_entity(%CV{} = cv, {parent_key, child_key}, child_id) do
     {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
     new_parent_entities =
@@ -206,7 +206,7 @@ defmodule ModernResume.Resume do
   @spec sort_nested_entities(CV.t(), {atom(), atom()}, UUID.t(), [UUID.t()]) ::
           {:ok, CV.t()} | {:error, Ecto.Changeset.t()}
   def sort_nested_entities(%CV{} = cv, {parent_key, child_key}, parent_id, ordered_ids)
-      when is_uuid(parent_id) and is_list(ordered_ids) do
+      when is_list(ordered_ids) do
     {:ok, parent_entities} = Map.fetch(cv.content, parent_key)
 
     new_parent_entities =

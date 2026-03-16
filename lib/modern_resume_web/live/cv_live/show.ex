@@ -20,7 +20,7 @@ defmodule ModernResumeWeb.CVLive.Show do
   @default_tab "personal"
 
   @impl true
-  def mount(%{"cv_id" => id} = _params, _session, socket) when is_uuid(id) do
+  def mount(%{"cv_id" => id} = _params, _session, socket) do
     user = socket.assigns.current_user
 
     case Resume.get_cv_for(user, id) do
@@ -58,7 +58,7 @@ defmodule ModernResumeWeb.CVLive.Show do
     section = Map.get(params, "section", @default_tab)
     selected_tab = if section in @allowed_tabs, do: section, else: @default_tab
 
-    {:noreply, socket |> assign(selected_tab: selected_tab)}
+    {:noreply, assign(socket, selected_tab: selected_tab)}
   end
 
   @impl true
@@ -67,19 +67,13 @@ defmodule ModernResumeWeb.CVLive.Show do
 
     case data do
       {:ok, :str, content} ->
-        {:noreply,
-         socket
-         |> assign(state: RenderState.success(state, :str, content))}
+        {:noreply, assign(socket, state: RenderState.success(state, :str, content))}
 
       {:ok, :pdf, content} ->
-        {:noreply,
-         socket
-         |> assign(state: RenderState.success(state, :pdf, content))}
+        {:noreply, assign(socket, state: RenderState.success(state, :pdf, content))}
 
       {:error, msg} ->
-        {:noreply,
-         socket
-         |> assign(state: RenderState.error(state, msg))}
+        {:noreply, assign(socket, state: RenderState.error(state, msg))}
     end
   end
 
@@ -94,9 +88,7 @@ defmodule ModernResumeWeb.CVLive.Show do
          |> render_cv(cv)}
 
       {:error, changeset} ->
-        {:noreply,
-         socket
-         |> assign(form: changeset |> to_form())}
+        {:noreply, assign(socket, form: changeset |> to_form())}
     end
   end
 
@@ -192,9 +184,7 @@ defmodule ModernResumeWeb.CVLive.Show do
 
   @impl true
   def handle_event("tabs:select", %{"tab" => tab}, socket) do
-    {:noreply,
-     socket
-     |> push_patch(to: ~p"/cvs/#{socket.assigns.cv.id}/#{tab}")}
+    {:noreply, push_patch(socket, to: ~p"/cvs/#{socket.assigns.cv.id}/#{tab}")}
   end
 
   defp dispatch_entity(socket, "add", key, _) when is_atom(key) do
@@ -226,7 +216,10 @@ defmodule ModernResumeWeb.CVLive.Show do
   defp dispatch_entity(socket, "sort", key, %{"ids" => ordered_ids}) when is_atom(key) do
     case Resume.sort_entities(socket.assigns.cv, key, ordered_ids) do
       {:ok, cv} ->
-        form = cv |> CV.changeset() |> to_form()
+        form =
+          cv
+          |> CV.changeset()
+          |> to_form()
 
         socket
         |> assign(cv: cv)
