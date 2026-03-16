@@ -9,6 +9,8 @@ defmodule Mix.Tasks.Users.Create do
 
   alias ModernResume.Accounts
 
+  @shortdoc "Creates a user with the given email and password"
+  @impl true
   def run(args) do
     Mix.Task.run("app.start")
 

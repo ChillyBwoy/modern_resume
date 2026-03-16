@@ -16,7 +16,7 @@ defmodule ModernResumeWeb.Layouts do
   embed_templates "layouts/*"
 
   attr :flash, :map, required: true, doc: "the map of flash messages"
-  attr :current_user, User, required: true
+  attr :current_user, User, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -66,13 +66,13 @@ defmodule ModernResumeWeb.Layouts do
     """
   end
 
-  attr :current_user, User, required: true
+  attr :current_user, User, default: nil
 
   defp top_menu(assigns) do
     ~H"""
     <nav class="h-full flex items-center">
       <ul class="relative flex items-center gap-4 p-4 w-full justify-end ">
-        <%= if @current_user do %>
+        <%= if @current_user != nil do %>
           <li>
             <.link href={~p"/users/settings"}>Settings</.link>
           </li>

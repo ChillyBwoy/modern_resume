@@ -226,18 +226,15 @@ defmodule ModernResumeWeb.CVLive.Show do
   defp dispatch_entity(socket, "sort", key, %{"ids" => ordered_ids}) when is_atom(key) do
     case Resume.sort_entities(socket.assigns.cv, key, ordered_ids) do
       {:ok, cv} ->
-        form = CV.changeset(cv) |> to_form()
+        form = cv |> CV.changeset() |> to_form()
 
         socket
         |> assign(cv: cv)
         |> assign(form: form)
         |> render_cv(cv)
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         assign(socket, form: to_form(changeset))
-
-      {:error, _} ->
-        put_flash(socket, :error, "Unknown error")
     end
   end
 

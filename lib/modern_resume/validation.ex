@@ -7,23 +7,28 @@ defmodule ModernResume.Validation do
   @latex_allowed_char ~r/[\s\d\w\@\+\-_\.,'"\(\)\{\}\&\%\^\|\~\#\/\\]/ui
   @latex_allowed_string ~r/^[\s\d\w\@\+\-_\.,'"\(\)\{\}\&\%\^\|\~\#\/\\]+$/ui
 
+  @spec validate_latex_chars(Changeset.t(), list(atom())) :: Changeset.t()
   def validate_latex_chars(%Changeset{valid?: false} = changeset, fields)
       when is_list(fields) do
     changeset
   end
 
   def validate_latex_chars(%Changeset{} = changeset, fields) when is_list(fields) do
-    Enum.reduce(fields, changeset, fn field, ch ->
-      case Changeset.get_field(ch, field) |> validate_latex_field() do
-        {:ok, _} ->
-          ch
+    Enum.reduce(fields, changeset, &validate_field/2)
+  end
 
-        {:error, invalid_chars} ->
-          msg = "Invalid chars: #{Enum.join(invalid_chars, ", ")}"
+  defp validate_field(field, changeset) do
+    field = Changeset.get_field(changeset, field)
 
-          Changeset.add_error(ch, field, msg)
-      end
-    end)
+    case validate_latex_field(field) do
+      {:ok, _} ->
+        changeset
+
+      {:error, invalid_chars} ->
+        msg = "Invalid chars: #{Enum.join(invalid_chars, ", ")}"
+
+        Changeset.add_error(changeset, field, msg)
+    end
   end
 
   defp validate_latex_field(value) when not is_binary(value), do: {:ok, value}
