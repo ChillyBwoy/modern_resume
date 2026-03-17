@@ -21,9 +21,9 @@ defmodule ModernResumeWeb.Document.Template do
     \\moderncvcolor{<%= @cv.settings.color %>}
     \\moderncvstyle{<%= @cv.settings.style %>}
 
-    \\usepackage[scale=0.8]{geometry}
+    \\usepackage[scale=0.9, top=1.5cm, bottom=1.5cm, left=1.5cm, right=1.5cm]{geometry}
 
-    \\setlength{\\hintscolumnwidth}{3.5cm}
+    \\setlength{\\hintscolumnwidth}{4cm}
     \\recomputelengths
 
     \\usepackage[english]{babel}
@@ -87,6 +87,8 @@ defmodule ModernResumeWeb.Document.Template do
     {<%= if detail.title != nil do %>\\textbf{<%= @str.(detail.title) %>}. <% end %><%= @str.(detail.content) %>}
     <% end %>
     <% end %>
+
+    \\vspace*{0.5cm}
     <% end %>
     <% end %>
 
@@ -100,6 +102,8 @@ defmodule ModernResumeWeb.Document.Template do
       {<%= @str.(education.location) %>}
       {<%= @str.(education.field_of_study) %>}
       {<%= @str.(education.description) %>}
+
+      \\vspace*{0.5cm}
     <% end %>
     <% end %>
 
