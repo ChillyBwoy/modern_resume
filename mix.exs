@@ -70,9 +70,15 @@ defmodule ModernResume.MixProject do
       {:ueberauth_google, "~> 0.10"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:modern_ui, "~> 0.1",
-       git: "https://github.com/ChillyBwoy/modern_ui.git",
-       ref: "eb92947dad8626121f239f4d3dfecc506ef65c0c"}
+      {:materialdesignicons,
+       github: "Templarian/MaterialDesign",
+       sparse: "svg",
+       app: false,
+       compile: false,
+       depth: 1,
+       only: [:dev, :test],
+       runtime: false},
+      {:modern_ui, "~> 0.1"}
     ]
   end
 
