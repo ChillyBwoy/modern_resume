@@ -23,7 +23,7 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "./vendor/topbar";
 
 import hooks from "./hooks";
-import * as ModernUIHooks from "../../deps/modern_ui/priv/modern_ui_static/js/modern_ui.mjs";
+import ModernUIHooks from "../../deps/modern_ui/priv/modern_ui_static/js/modern_ui.mjs";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
